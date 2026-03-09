@@ -14,8 +14,18 @@ class JournalManager {
     // Biarkan dashboard_user.js yang handle render untuk user
     if (window.location.pathname.includes("dashboard_user.html")) {
       console.warn(
-        "User dashboard page - JournalManager DISABLED (handled by dashboard_user.js)"
+        "User dashboard page - JournalManager DISABLED (handled by dashboard_user.js)",
       );
+      return;
+    }
+
+    if (window.location.pathname.includes("journals.html")) {
+      console.warn("journals.html - JournalManager DISABLED...");
+      return;
+    }
+
+    if (window.location.pathname.includes("opinions.html")) {
+      console.warn("opinions.html - JournalManager DISABLED");
       return;
     }
 
@@ -49,65 +59,98 @@ class JournalManager {
   // ===== LOAD JOURNALS FROM DATABASE =====
   async loadJournals() {
     try {
-      console.log("Loading journals from database...");
-
-      // Add timestamp to prevent caching (THIS IS THE FIX)
       const timestamp = Date.now();
-      const response = await fetch(
-        `/ksmaja/api/list_journals.php?limit=100&offset=0&_=${timestamp}`, // <--- Changed here
+      const journalRes = await fetch(
+        `/ksmaja/api/list_journals.php?limit=100&offset=0&_=${timestamp}`,
         {
           cache: "no-store",
-          headers: {
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            Pragma: "no-cache",
-            Expires: "0",
-          },
-        }
+        },
       );
-      const data = await response.json();
+      const journalData = await journalRes.json();
 
-      if (data.ok && data.results) {
-        this.journals = data.results.map((j) => {
-          const parseJsonField = (field) => {
-            if (!field) return [];
-            if (Array.isArray(field)) return field;
-            try {
-              return JSON.parse(field);
-            } catch (e) {
-              return [];
-            }
-          };
+      let journals = [];
+      if (journalData.ok && journalData.results) {
+        journals = journalData.results.map((j) => ({
+          ...this.transformJournal(j),
+          _type: "jurnal",
+        }));
+      }
 
-          return {
-            id: String(j.id),
-            title: j.title || "Untitled",
-            abstract: j.abstract || "",
-            authors: parseJsonField(j.authors),
-            tags: parseJsonField(j.tags),
-            pengurus: parseJsonField(j.pengurus),
-            volume: j.volume,
-            date: j.created_at,
-            uploadDate: j.created_at,
-            fileData: j.file_url,
-            file: j.file_url,
+      // Kalau di dashboard, ambil juga opinions
+      if (window.location.pathname.includes("dashboard_admin.html")) {
+        const opiniRes = await fetch(
+          `/ksmaja/api/list_opinions.php?limit=100&offset=0&_=${timestamp}`,
+          {
+            cache: "no-store",
+          },
+        );
+        const opiniData = await opiniRes.json();
+
+        let opinions = [];
+        if (opiniData.ok && opiniData.results) {
+          opinions = opiniData.results.map((o) => ({
+            id: String(o.id),
+            title: o.title || "Untitled",
+            abstract: o.description || "",
+            authors: [o.author_name || "Anonymous"],
+            tags: (() => {
+              try {
+                return JSON.parse(o.tags || "[]");
+              } catch (e) {
+                return [];
+              }
+            })(),
+            uploadDate: o.created_at,
             coverImage:
-              j.cover_url ||
+              o.cover_url ||
               "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=400&fit=crop",
-            email: j.email || "",
-            contact: j.contact || "",
-            phone: j.contact || "",
-            views: parseInt(j.views) || 0,
-          };
-        });
-        console.log(` Loaded ${this.journals.length} journals from database`);
+            views: parseInt(o.views) || 0,
+            _type: "opini",
+          }));
+        }
+
+        // Merge & sort by date
+        this.journals = [...journals, ...opinions].sort(
+          (a, b) => new Date(b.uploadDate) - new Date(a.uploadDate),
+        );
       } else {
-        console.warn("No journals found or database empty");
-        this.journals = [];
+        this.journals = journals;
       }
     } catch (error) {
-      console.error(" Error loading journals from database:", error);
+      console.error("Error loading:", error);
       this.journals = [];
     }
+  }
+
+  transformJournal(j) {
+    const parseJsonField = (field) => {
+      if (!field) return [];
+      if (Array.isArray(field)) return field;
+      try {
+        return JSON.parse(field);
+      } catch (e) {
+        return [];
+      }
+    };
+    return {
+      id: String(j.id),
+      title: j.title || "Untitled",
+      abstract: j.abstract || "",
+      authors: parseJsonField(j.authors),
+      tags: parseJsonField(j.tags),
+      pengurus: parseJsonField(j.pengurus),
+      volume: j.volume,
+      date: j.created_at,
+      uploadDate: j.created_at,
+      fileData: j.file_url,
+      file: j.file_url,
+      coverImage:
+        j.cover_url ||
+        "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=400&fit=crop",
+      email: j.email || "",
+      contact: j.contact || "",
+      views: parseInt(j.views) || 0,
+    };
   }
 
   // ===== RENDER JOURNALS =====
@@ -131,7 +174,14 @@ class JournalManager {
       return;
     }
 
-    this.journals.forEach((journal) => {
+    const isDashboard = window.location.pathname.includes(
+      "dashboard_admin.html",
+    );
+    const journalsToShow = isDashboard
+      ? this.journals.slice(0, 6)
+      : this.journals;
+
+    journalsToShow.forEach((journal) => {
       const card = this.createJournalCard(journal);
       this.journalContainer.appendChild(card);
     });
@@ -211,28 +261,33 @@ class JournalManager {
             journal.views
           }
         </div>
+        <div style="position:absolute; top:12px; left:12px; background:${
+          journal._type === "opini" ? "#9b59b6" : "#3498db"
+        }; color:white; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">
+  ${journal._type === "opini" ? "OPINI" : "JURNAL"}
+</div>
       </div>
       
       <div style="padding: 20px; display: flex; flex-direction: column; flex: 1;">
         <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #2c3e50; line-height: 1.4;">${truncateText(
           journal.title,
-          60
+          60,
         )}</h3>
         
         <p style="font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 16px;">${truncateText(
           journal.abstract || "No abstract available",
-          150
+          150,
         )}</p>
         
         <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #888; margin-top: auto; padding-top: 12px; border-top: 1px solid #f0f0f0;">
           <span style="display: flex; align-items: center; gap: 4px;">
             <i data-feather="user" style="width: 14px; height: 14px;"></i> ${getFirstAuthor(
-              journal.authors
+              journal.authors,
             )}
           </span>
           <span style="display: flex; align-items: center; gap: 4px;">
             <i data-feather="calendar" style="width: 14px; height: 14px;"></i> ${formatDate(
-              journal.uploadDate
+              journal.uploadDate,
             )}
           </span>
         </div>
@@ -245,7 +300,7 @@ class JournalManager {
               .slice(0, 3)
               .map(
                 (tag) =>
-                  `<span style="background: #f0f0f0; color: #666; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 500;">${tag}</span>`
+                  `<span style="background: #f0f0f0; color: #666; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 500;">${tag}</span>`,
               )
               .join("")}
             ${
@@ -277,9 +332,9 @@ class JournalManager {
             <button class="btn-delete" onclick="event.stopPropagation(); journalManager.deleteJournal('${
               journal.id
             }', '${journal.title.replace(
-                /'/g,
-                "\\'"
-              )}')" style="flex:1; padding: 8px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex !important; align-items:center; justify-content:center; gap:5px;">
+              /'/g,
+              "\\'",
+            )}')" style="flex:1; padding: 8px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex !important; align-items:center; justify-content:center; gap:5px;">
               <i data-feather="trash-2" style="width:14px; height:14px;"></i> Hapus
             </button>
             <button
@@ -324,25 +379,28 @@ class JournalManager {
         card.style.pointerEvents = "none";
       }
 
-      const response = await fetch(
-        `/ksmaja/api/delete_journal.php?id=${encodeURIComponent(id)}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const item = this.journals.find((j) => String(j.id) === String(id));
+      const isOpini = item?._type === "opini";
+      const deleteEndpoint = isOpini
+        ? `/ksmaja/api/delete_opinion.php?id=${encodeURIComponent(id)}`
+        : `/ksmaja/api/delete_journal.php?id=${encodeURIComponent(id)}`;
+
+      const response = await fetch(deleteEndpoint, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
 
       const result = await response.json();
       if (result.ok) {
         alert(" Jurnal berhasil dihapus!");
         this.journals = this.journals.filter(
-          (j) => String(j.id) !== String(id)
+          (j) => String(j.id) !== String(id),
         );
         this.renderJournals();
         window.dispatchEvent(
           new CustomEvent("journals:changed", {
             detail: { action: "deleted", id: id },
-          })
+          }),
         );
 
         if (window.statisticManager) {
@@ -355,7 +413,7 @@ class JournalManager {
         }, 1000);
       } else {
         throw new Error(
-          result.message || "Gagal menghapus jurnal dari database"
+          result.message || "Gagal menghapus jurnal dari database",
         );
       }
     } catch (error) {
@@ -378,7 +436,7 @@ class JournalManager {
       const result = await response.json();
       if (result.ok) {
         const journal = this.journals.find(
-          (j) => j.id === id || j.id === String(id)
+          (j) => j.id === id || j.id === String(id),
         );
         if (journal) journal.views = (journal.views || 0) + 1;
       }
@@ -399,7 +457,7 @@ class JournalManager {
         journal.abstract.toLowerCase().includes(searchQuery) ||
         (Array.isArray(journal.authors) &&
           journal.authors.some((author) =>
-            author.toLowerCase().includes(searchQuery)
+            author.toLowerCase().includes(searchQuery),
           )) ||
         (Array.isArray(journal.tags) &&
           journal.tags.some((tag) => tag.toLowerCase().includes(searchQuery)))
@@ -451,7 +509,7 @@ class JournalManager {
   getTotalViews() {
     return this.journals.reduce(
       (total, journal) => total + (journal.views || 0),
-      0
+      0,
     );
   }
 }

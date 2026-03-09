@@ -17,7 +17,7 @@ class PaginationManager {
     this.currentFilter = "all";
 
     console.log(
-      `📚 PaginationManager initializing for ${this.dataType} (Database Mode)...`
+      `📚 PaginationManager initializing for ${this.dataType} (Database Mode)...`,
     );
     this.init();
   }
@@ -37,7 +37,7 @@ class PaginationManager {
     });
 
     console.log(
-      `PaginationManager initialized with ${this.allItems.length} ${this.dataType}s`
+      `PaginationManager initialized with ${this.allItems.length} ${this.dataType}s`,
     );
   }
 
@@ -67,7 +67,7 @@ class PaginationManager {
         this.filteredItems = [...this.allItems];
 
         console.log(
-          `Loaded ${this.allItems.length} ${this.dataType}s from database`
+          `Loaded ${this.allItems.length} ${this.dataType}s from database`,
         );
       } else {
         console.warn(`No ${this.dataType}s found in database`);
@@ -86,7 +86,7 @@ class PaginationManager {
           this.allItems = JSON.parse(stored);
           this.filteredItems = [...this.allItems];
           console.log(
-            `Loaded ${this.allItems.length} ${this.dataType}s from localStorage`
+            `Loaded ${this.allItems.length} ${this.dataType}s from localStorage`,
           );
         } catch (e) {
           console.error("Failed to parse localStorage:", e);
@@ -222,7 +222,7 @@ class PaginationManager {
           ? item.authors[0]
           : "Unknown";
 
-      const exploreUrl = `explore_jurnal_user.html?id=${item.id}&type=jurnal`;
+      const exploreUrl = `explore_jurnal_admin.html?id=${item.id}&type=jurnal`;
 
       card.innerHTML = `
         <div class="journal-cover" data-explore-url="${exploreUrl}">
@@ -238,7 +238,7 @@ class PaginationManager {
           <div class="journal-meta">
             <span class="journal-author"><i data-feather="user"></i> ${author}</span>
             <span class="journal-date"><i data-feather="calendar"></i> ${formatDate(
-              item.uploadDate
+              item.uploadDate,
             )}</span>
           </div>
           ${
@@ -259,34 +259,46 @@ class PaginationManager {
               : ""
           }
           <div class="journal-actions">
-            <button class="btn-share" data-journal-id="${item.id}" 
-                    data-journal-title="${item.title}"
-                    data-journal-url="${exploreUrl}">
-              <i data-feather="share-2"></i> Share
-            </button>
-          </div>
+  <button class="btn-view" onclick="event.stopPropagation(); window.journalManager?.viewJournal('${item.id}')" 
+    style="flex:1; padding:8px; border:none; background:#3498db; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
+    <i data-feather="eye" style="width:14px;height:14px;"></i> Detail
+  </button>
+  <button class="btn-edit" onclick="event.stopPropagation(); window.editJournalManager?.openEditModal('${item.id}')"
+    style="flex:1; padding:8px; border:none; background:#f39c12; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
+    <i data-feather="edit" style="width:14px;height:14px;"></i> Edit
+  </button>
+  <button class="btn-delete" onclick="event.stopPropagation(); window.journalManager?.deleteJournal('${item.id}', '${item.title.replace(/'/g, "\\'")}')"
+    style="flex:1; padding:8px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
+    <i data-feather="trash-2" style="width:14px;height:14px;"></i> Hapus
+  </button>
+  <button class="btn-share" data-journal-id="${item.id}" 
+    data-journal-title="${item.title}"
+    data-journal-url="${exploreUrl}"
+    style="flex:1; padding:8px; border:none; background:#27ae60; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
+    <i data-feather="share-2" style="width:14px;height:14px;"></i> Share
+  </button>
+</div>
         </div>
       `;
 
       // Add click handler for cover image
-      const coverDiv = card.querySelector('.journal-cover');
+      const coverDiv = card.querySelector(".journal-cover");
       if (coverDiv) {
-        coverDiv.addEventListener('click', () => {
+        coverDiv.addEventListener("click", () => {
           window.location.href = exploreUrl;
         });
       }
 
       // Add share button handler
-      const shareBtn = card.querySelector('.btn-share');
+      const shareBtn = card.querySelector(".btn-share");
       if (shareBtn) {
-        shareBtn.addEventListener('click', (e) => {
+        shareBtn.addEventListener("click", (e) => {
           e.preventDefault();
           this.handleShare(item, exploreUrl);
         });
       }
-
     } else {
-      const exploreUrl = `explore_opini_user.html?id=${item.id}&type=opini`;
+      const exploreUrl = `explore_opini_admin.html?id=${item.id}&type=opini`;
 
       card.innerHTML = `
         <div class="opinion-cover" data-explore-url="${exploreUrl}">
@@ -305,7 +317,7 @@ class PaginationManager {
               item.author_name
             }</span>
             <span class="opinion-date"><i data-feather="calendar"></i> ${formatDate(
-              item.uploadDate
+              item.uploadDate,
             )}</span>
           </div>
           <div class="opinion-tags">
@@ -319,28 +331,40 @@ class PaginationManager {
                   : ""
               }
             </div>
-          <div class="opinion-actions">
-            <button class="btn-share" data-opinion-id="${item.id}" 
-                    data-opinion-title="${item.title}"
-                    data-opinion-url="${exploreUrl}">
-              <i data-feather="share-2"></i> Share
-            </button>
-          </div>
-        </div>
+          <div class="opinion-actions" style="display:flex; flex-direction:row; gap:6px; margin-top:15px; padding-top:15px; border-top:1px solid #eee; flex-wrap:wrap;">
+  <button class="btn-view" onclick="event.stopPropagation(); window.location.href='${exploreUrl}'"
+    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#3498db; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
+    <i data-feather="eye" style="width:13px;height:13px;"></i> Detail
+  </button>
+  <button class="btn-edit" onclick="event.stopPropagation(); window.openEditOpinionModal('${item.id}')"
+    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#f39c12; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
+    <i data-feather="edit" style="width:13px;height:13px;"></i> Edit
+  </button>
+  <button onclick="event.stopPropagation(); window.deleteOpinion('${item.id}', '${item.title.replace(/'/g, "\\'")}')"
+    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
+    <i data-feather="trash-2" style="width:13px;height:13px;"></i> Hapus
+  </button>
+  <button class="btn-share" data-opinion-id="${item.id}"
+    data-opinion-title="${item.title}"
+    data-opinion-url="${exploreUrl}"
+    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#27ae60; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
+    <i data-feather="share-2" style="width:13px;height:13px;"></i> Share
+  </button>
+</div>
       `;
 
       // Add click handler for cover image
-      const coverDiv = card.querySelector('.opinion-cover');
+      const coverDiv = card.querySelector(".opinion-cover");
       if (coverDiv) {
-        coverDiv.addEventListener('click', () => {
+        coverDiv.addEventListener("click", () => {
           window.location.href = exploreUrl;
         });
       }
 
       // Add share button handler
-      const shareBtn = card.querySelector('.btn-share');
+      const shareBtn = card.querySelector(".btn-share");
       if (shareBtn) {
-        shareBtn.addEventListener('click', (e) => {
+        shareBtn.addEventListener("click", (e) => {
           e.preventDefault();
           this.handleShare(item, exploreUrl);
         });
@@ -352,22 +376,23 @@ class PaginationManager {
 
   // ===== HANDLE SHARE =====
   handleShare(item, url) {
-    const fullUrl = window.location.origin + '/' + url;
+    const fullUrl = window.location.origin + "/" + url;
     const shareText = `Lihat ${this.dataType}: ${item.title}`;
 
     // Try native share API first (mobile)
     if (navigator.share) {
-      navigator.share({
-        title: item.title,
-        text: shareText,
-        url: fullUrl
-      })
-      .then(() => console.log('Shared successfully'))
-      .catch((error) => {
-        if (error.name !== 'AbortError') {
-          this.fallbackShare(fullUrl, shareText);
-        }
-      });
+      navigator
+        .share({
+          title: item.title,
+          text: shareText,
+          url: fullUrl,
+        })
+        .then(() => console.log("Shared successfully"))
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            this.fallbackShare(fullUrl, shareText);
+          }
+        });
     } else {
       // Fallback to copy to clipboard
       this.fallbackShare(fullUrl, shareText);
@@ -377,9 +402,10 @@ class PaginationManager {
   fallbackShare(url, text) {
     // Copy to clipboard
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url)
+      navigator.clipboard
+        .writeText(url)
         .then(() => {
-          alert('Link berhasil disalin ke clipboard! 📋');
+          alert("Link berhasil disalin ke clipboard! 📋");
         })
         .catch(() => {
           this.legacyCopy(url);
@@ -390,20 +416,20 @@ class PaginationManager {
   }
 
   legacyCopy(text) {
-    const textarea = document.createElement('textarea');
+    const textarea = document.createElement("textarea");
     textarea.value = text;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
     document.body.appendChild(textarea);
     textarea.select();
-    
+
     try {
-      document.execCommand('copy');
-      alert('Link berhasil disalin! 📋');
+      document.execCommand("copy");
+      alert("Link berhasil disalin! 📋");
     } catch (err) {
-      prompt('Copy link ini:', text);
+      prompt("Copy link ini:", text);
     }
-    
+
     document.body.removeChild(textarea);
   }
 
@@ -496,7 +522,7 @@ class PaginationManager {
       if (element) {
         element.textContent = this.filteredItems.length;
         console.log(
-          ` Total count updated (${id}): ${this.filteredItems.length}`
+          ` Total count updated (${id}): ${this.filteredItems.length}`,
         );
         return;
       }
@@ -644,26 +670,29 @@ class PaginationManager {
 
 // ===== AUTO-INITIALIZE =====
 document.addEventListener("DOMContentLoaded", () => {
+  // Admin pages dihandle script.js, skip di sini
+  const path = window.location.pathname;
+  const isAdminPage =
+    path.includes("journals.html") ||
+    path.includes("opinions.html") ||
+    path.includes("dashboard_admin.html");
+  if (isAdminPage) return;
+
   const container = document.getElementById("journalContainer");
+  if (!container) return;
 
-  if (container) {
-    console.log("Initializing PaginationManager...");
+  const isOpinionsPage = path.includes("opinions_user");
+  const dataType = isOpinionsPage ? "opini" : "jurnal";
 
-    const isOpinionsPage = window.location.pathname.includes("opinions");
-    const dataType = isOpinionsPage ? "opini" : "jurnal";
-
-    window.paginationManager = new PaginationManager({
-      containerSelector: "#journalContainer",
-      paginationSelector: "#pagination",
-      searchInputSelector: "#searchInput",
-      sortSelectSelector: "#sortSelect",
-      filterSelectSelector: "#filterSelect",
-      itemsPerPage: 9,
-      dataType: dataType,
-    });
-
-    console.log(`PaginationManager initialized for ${dataType}`);
-  }
+  window.paginationManager = new PaginationManager({
+    containerSelector: "#journalContainer",
+    paginationSelector: "#pagination",
+    searchInputSelector: "#searchInput",
+    sortSelectSelector: "#sortSelect",
+    filterSelectSelector: "#filterSelect",
+    itemsPerPage: 9,
+    dataType: dataType,
+  });
 });
 
 console.log("pagination.js loaded (Support Journals & Opinions + Share)");

@@ -241,7 +241,7 @@ class EditJournalManager {
 
   addPengurusField() {
     const pengurusGroups = this.pengurusContainer.querySelectorAll(
-      ".pengurus-input-group"
+      ".pengurus-input-group",
     );
     const nextIndex = pengurusGroups.length;
 
@@ -275,7 +275,7 @@ class EditJournalManager {
 
   updatePengurusPlaceholders() {
     const pengurusGroups = this.pengurusContainer.querySelectorAll(
-      ".pengurus-input-group"
+      ".pengurus-input-group",
     );
     pengurusGroups.forEach((group, index) => {
       const input = group.querySelector(".pengurus-input");
@@ -293,7 +293,7 @@ class EditJournalManager {
   async fetchJournalData(journalId) {
     try {
       const response = await fetch(
-        `/ksmaja/api/get_journal.php?id=${journalId}`
+        `/ksmaja/api/get_journal.php?id=${journalId}`,
       );
       const result = await response.json();
 
@@ -453,7 +453,7 @@ class EditJournalManager {
 
   addAuthorField() {
     const authorGroups = this.authorsContainer.querySelectorAll(
-      ".author-input-group"
+      ".author-input-group",
     );
     const nextIndex = authorGroups.length;
 
@@ -486,7 +486,7 @@ class EditJournalManager {
 
   removeAuthorField(authorGroup) {
     const authorGroups = this.authorsContainer.querySelectorAll(
-      ".author-input-group"
+      ".author-input-group",
     );
     if (authorGroups.length <= 1) {
       alert("Minimal harus ada 1 penulis!");
@@ -498,7 +498,7 @@ class EditJournalManager {
 
   updateAuthorButtons() {
     const authorGroups = this.authorsContainer.querySelectorAll(
-      ".author-input-group"
+      ".author-input-group",
     );
     authorGroups.forEach((group, index) => {
       const removeBtn = group.querySelector(".btn-remove-author");
@@ -678,7 +678,7 @@ function syncLoginStatusUI() {
   window.dispatchEvent(
     new CustomEvent("loginStatusChanged", {
       detail: { isLoggedIn, isAdmin },
-    })
+    }),
   );
 
   if (
@@ -695,6 +695,63 @@ function syncLoginStatusUI() {
     window.paginationManager.render();
   }
 }
+
+// ===== GLOBAL DELETE OPINION =====
+window.deleteOpinion = async function (id, title) {
+  if (!confirm(`Yakin ingin menghapus opini "${title}"?`)) return;
+
+  const card = document.querySelector(`[data-opinion-id="${id}"]`);
+  if (card) {
+    card.style.opacity = "0.5";
+    card.style.pointerEvents = "none";
+  }
+
+  try {
+    const response = await fetch(`/ksmaja/api/delete_opinion.php?id=${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+    const result = await response.json();
+    if (result.ok) {
+      alert("Opini berhasil dihapus!");
+      setTimeout(() => window.location.reload(), 500);
+    } else {
+      throw new Error(result.message || "Gagal menghapus");
+    }
+  } catch (error) {
+    alert("Gagal menghapus: " + error.message);
+    if (card) {
+      card.style.opacity = "1";
+      card.style.pointerEvents = "auto";
+    }
+  }
+};
+
+// ===== GLOBAL EDIT OPINION =====
+window.openEditOpinionModal = async function (id) {
+  try {
+    const response = await fetch(`/ksmaja/api/get_opinion.php?id=${id}`);
+    const result = await response.json();
+    if (!result.ok) throw new Error("Gagal load data opini");
+
+    const o = result.result || result.opinion;
+
+    document.getElementById("editJournalId").value = id;
+    document.getElementById("editJudulJurnal").value = o.title || "";
+    document.getElementById("editEmail").value = o.email || "";
+    document.getElementById("editKontak").value = o.contact || "";
+    document.getElementById("editAbstrak").value = o.description || "";
+
+    // Flag sebagai opini
+    document.getElementById("editModal").dataset.type = "opini";
+    document.getElementById("editModal").classList.add("active");
+    document.body.style.overflow = "hidden";
+
+    if (typeof feather !== "undefined") feather.replace();
+  } catch (error) {
+    alert("Gagal memuat data: " + error.message);
+  }
+};
 
 window.addEventListener("adminLoginStatusChanged", syncLoginStatusUI);
 
@@ -785,35 +842,86 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Page: journals.html
-  if (document.getElementById("journalFullContainer")) {
+  if (window.location.pathname.includes("journals.html")) {
     if (typeof EditJournalManager !== "undefined")
       window.editJournalManager = new EditJournalManager();
-    if (typeof PaginationManager !== "undefined")
-      window.paginationManager = new PaginationManager();
+    if (typeof PaginationManager !== "undefined") {
+      window.paginationManager = new PaginationManager({
+        containerSelector: "#journalContainer",
+        paginationSelector: "#pagination",
+        searchInputSelector: "#searchInput",
+        sortSelectSelector: "#sortSelect",
+        filterSelectSelector: "#filterSelect",
+        itemsPerPage: 9,
+        dataType: "jurnal",
+      });
+    }
     window.previewViewer = new PreviewViewer();
-    console.log("📚 Journals page systems initialized");
-
     syncLoginStatusUI();
     return;
   }
 
   // Page: opinions.html (ADMIN MODE)
-  if (
-    window.location.pathname.includes("opinions.html") &&
-    document.getElementById("journalContainer")
-  ) {
-    console.log("📝 Opinions page (ADMIN MODE) detected");
-
+  if (window.location.pathname.includes("opinions.html")) {
     if (typeof EditJournalManager !== "undefined") {
       window.editJournalManager = new EditJournalManager();
     }
 
-    // Setup sort & search controls
-    setTimeout(() => {
-      setupOpinionsPageControls();
-    }, 500);
+    // Override submit untuk opini
+    const editForm = document.getElementById("editForm");
+    if (editForm) {
+      editForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const id = document.getElementById("editJournalId").value;
+        const formData = new FormData();
+        formData.append("id", id);
+        formData.append(
+          "title",
+          document.getElementById("editJudulJurnal").value,
+        );
+        formData.append(
+          "description",
+          document.getElementById("editAbstrak").value,
+        );
+        formData.append("email", document.getElementById("editEmail").value);
+        formData.append("contact", document.getElementById("editKontak").value);
 
-    console.log(" Opinions admin controls initialized");
+        const fileInput = document.getElementById("editFileInput");
+        if (fileInput?.files[0]) formData.append("file", fileInput.files[0]);
+        const coverInput = document.getElementById("editCoverInput");
+        if (coverInput?.files[0]) formData.append("cover", coverInput.files[0]);
+
+        try {
+          const response = await fetch("/ksmaja/api/update_opinion.php", {
+            method: "POST",
+            body: formData,
+          });
+          const result = await response.json();
+          if (result.ok) {
+            alert("Opini berhasil diupdate!");
+            document.getElementById("editModal").classList.remove("active");
+            document.body.style.overflow = "auto";
+            setTimeout(() => window.location.reload(), 500);
+          } else {
+            throw new Error(result.message);
+          }
+        } catch (err) {
+          alert("Gagal update: " + err.message);
+        }
+      });
+    }
+
+    if (typeof PaginationManager !== "undefined") {
+      window.paginationManager = new PaginationManager({
+        containerSelector: "#journalContainer",
+        paginationSelector: "#pagination",
+        searchInputSelector: "#searchInput",
+        sortSelectSelector: "#sortSelect",
+        filterSelectSelector: "#filterSelect",
+        itemsPerPage: 9,
+        dataType: "opini",
+      });
+    }
     return;
   }
 
@@ -822,7 +930,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.pathname.includes("opinions_user.html") ||
     document.getElementById("opinionsContainer")
   ) {
-    console.log("📝 Opinions page (USER MODE) detected");
+    console.log("Opinions page (USER MODE) detected");
     return;
   }
 
@@ -867,4 +975,4 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log(" All systems initialized successfully");
 });
 
-console.log("📄 script.js loaded");
+console.log("script.js loaded");

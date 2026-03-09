@@ -194,6 +194,10 @@ class PaginationManager {
 
   // ===== CREATE CARD =====
   createCard(item) {
+    const isUserPage =
+      window.location.pathname.includes("journals_user") ||
+      window.location.pathname.includes("opinions_user");
+
     const card = document.createElement("div");
     card.className =
       this.dataType === "jurnal" ? "journal-card" : "opinion-card";
@@ -258,27 +262,32 @@ class PaginationManager {
           `
               : ""
           }
-          <div class="journal-actions">
-  <button class="btn-view" onclick="event.stopPropagation(); window.journalManager?.viewJournal('${item.id}')" 
-    style="flex:1; padding:8px; border:none; background:#3498db; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
-    <i data-feather="eye" style="width:14px;height:14px;"></i> Detail
-  </button>
-  <button class="btn-edit" onclick="event.stopPropagation(); window.editJournalManager?.openEditModal('${item.id}')"
-    style="flex:1; padding:8px; border:none; background:#f39c12; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
-    <i data-feather="edit" style="width:14px;height:14px;"></i> Edit
-  </button>
-  <button class="btn-delete" onclick="event.stopPropagation(); window.journalManager?.deleteJournal('${item.id}', '${item.title.replace(/'/g, "\\'")}')"
-    style="flex:1; padding:8px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
-    <i data-feather="trash-2" style="width:14px;height:14px;"></i> Hapus
-  </button>
-  <button class="btn-share" data-journal-id="${item.id}" 
+          <div class="journal-actions" style="display:flex; flex-direction:row; gap:6px; margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
+  ${
+    !isUserPage
+      ? `
+    <button class="btn-view" onclick="event.stopPropagation(); window.journalManager?.viewJournal('${item.id}')"
+      style="flex:1; padding:8px 4px; border:none; background:#3498db; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
+      <i data-feather="eye" style="width:13px;height:13px;"></i> Detail
+    </button>
+    <button class="btn-edit" onclick="event.stopPropagation(); window.editJournalManager?.openEditModal('${item.id}')"
+      style="flex:1; padding:8px 4px; border:none; background:#f39c12; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
+      <i data-feather="edit" style="width:13px;height:13px;"></i> Edit
+    </button>
+    <button class="btn-delete" onclick="event.stopPropagation(); window.journalManager?.deleteJournal('${item.id}', '${item.title.replace(/'/g, "\\'")}')"
+      style="flex:1; padding:8px 4px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
+      <i data-feather="trash-2" style="width:13px;height:13px;"></i> Hapus
+    </button>
+  `
+      : ""
+  }
+  <button class="btn-share" data-journal-id="${item.id}"
     data-journal-title="${item.title}"
     data-journal-url="${exploreUrl}"
-    style="flex:1; padding:8px; border:none; background:#27ae60; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px; font-size:13px;">
-    <i data-feather="share-2" style="width:14px;height:14px;"></i> Share
+    style="flex:1; padding:8px 4px; border:none; background:#2c3e50; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
+    <i data-feather="share-2" style="width:13px;height:13px;"></i> Share
   </button>
 </div>
-        </div>
       `;
 
       // Add click handler for cover image
@@ -331,23 +340,27 @@ class PaginationManager {
                   : ""
               }
             </div>
-          <div class="opinion-actions" style="display:flex; flex-direction:row; gap:6px; margin-top:15px; padding-top:15px; border-top:1px solid #eee; flex-wrap:wrap;">
-  <button class="btn-view" onclick="event.stopPropagation(); window.location.href='${exploreUrl}'"
-    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#3498db; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
-    <i data-feather="eye" style="width:13px;height:13px;"></i> Detail
-  </button>
-  <button class="btn-edit" onclick="event.stopPropagation(); window.openEditOpinionModal('${item.id}')"
-    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#f39c12; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
-    <i data-feather="edit" style="width:13px;height:13px;"></i> Edit
-  </button>
-  <button onclick="event.stopPropagation(); window.deleteOpinion('${item.id}', '${item.title.replace(/'/g, "\\'")}')"
-    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
-    <i data-feather="trash-2" style="width:13px;height:13px;"></i> Hapus
-  </button>
+          <div class="opinion-actions" style="display:flex; flex-direction:row; gap:6px; margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
+  ${
+    !isUserPage
+      ? `
+    <button class="btn-view" onclick="event.stopPropagation(); window.location.href='${exploreUrl}'"
+      style="flex:1; padding:8px 4px; border:none; background:#3498db; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
+      <i data-feather="eye" style="width:13px;height:13px;"></i> Detail
+    </button>
+    <button class="btn-edit" onclick="event.stopPropagation(); window.openEditOpinionModal('${item.id}')"
+      style="flex:1; padding:8px 4px; border:none; background:#f39c12; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
+      <i data-feather="edit" style="width:13px;height:13px;"></i> Edit
+    </button>
+    <button class="btn-delete" onclick="event.stopPropagation(); window.deleteOpinion('${item.id}', '${item.title.replace(/'/g, "\\'")}')"
+      style="flex:1; padding:8px 4px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
+      <i data-feather="trash-2" style="width:13px;height:13px;"></i> Hapus
+    </button>
+  `
+      : ""
+  }
   <button class="btn-share" data-opinion-id="${item.id}"
-    data-opinion-title="${item.title}"
-    data-opinion-url="${exploreUrl}"
-    style="flex:1; min-width:60px; padding:8px 4px; border:none; background:#27ae60; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px; white-space:nowrap;">
+    style="flex:1; padding:8px 4px; border:none; background:#2c3e50; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; font-size:12px;">
     <i data-feather="share-2" style="width:13px;height:13px;"></i> Share
   </button>
 </div>

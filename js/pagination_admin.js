@@ -683,7 +683,6 @@ class PaginationManager {
 
 // ===== AUTO-INITIALIZE =====
 document.addEventListener("DOMContentLoaded", () => {
-  // Admin pages dihandle script.js, skip di sini
   const path = window.location.pathname;
   const isAdminPage =
     path.includes("journals.html") ||

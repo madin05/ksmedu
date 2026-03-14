@@ -5,7 +5,7 @@ feather.replace();
 
 // ===== TRACK VIEWED ARTICLES (PREVENT DUPLICATE VIEWS) =====
 const viewedArticles = new Set(
-  JSON.parse(localStorage.getItem("viewedArticles") || "[]")
+  JSON.parse(localStorage.getItem("viewedArticles") || "[]"),
 );
 
 function markAsViewed(articleId) {
@@ -22,6 +22,14 @@ function checkLoginStatus() {
   return sessionStorage.getItem("userLoggedIn") === "true";
 }
 
+function fetchWithTimeout(url, options = {}, timeout = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+    clearTimeout(timer),
+  );
+}
+
 // ===== LOAD ARTICLES FROM DATABASE =====
 async function loadArticles() {
   try {
@@ -29,12 +37,9 @@ async function loadArticles() {
 
     const timestamp = Date.now();
 
-    const journalsResponse = await fetch(
+    const journalsResponse = await fetchWithTimeout(
       `/ksmaja/api/list_journals.php?limit=50&offset=0&t=${timestamp}`,
-      {
-        cache: "no-store",
-        headers: { "Cache-Control": "no-cache" },
-      }
+      { cache: "no-store", headers: { "Cache-Control": "no-cache" } },
     );
     const journalsData = await journalsResponse.json();
 
@@ -45,7 +50,7 @@ async function loadArticles() {
         {
           cache: "no-store",
           headers: { "Cache-Control": "no-cache" },
-        }
+        },
       );
       opinionsData = await opinionsResponse.json();
     } catch (e) {
@@ -209,8 +214,8 @@ async function renderArticles() {
       const author = Array.isArray(article.authors)
         ? article.authors[0]
         : Array.isArray(article.author)
-        ? article.author[0]
-        : article.author || article.penulis || "ADMIN";
+          ? article.author[0]
+          : article.author || article.penulis || "ADMIN";
 
       const date =
         article.date || article.uploadDate || new Date().toISOString();
@@ -328,7 +333,7 @@ function setupNewsletter() {
       if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         showToast(
           "Terima kasih! Anda telah berhasil subscribe newsletter.",
-          "success"
+          "success",
         );
         newsletterEmail.value = "";
       } else {
@@ -412,7 +417,7 @@ function setupSearch() {
         const query = searchInput.value.trim();
         if (query) {
           window.location.href = `journals_user.html?search=${encodeURIComponent(
-            query
+            query,
           )}`;
         }
       }
@@ -484,7 +489,7 @@ class ShareManager {
     console.log("Initializing Share Manager...");
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () =>
-        this.setupEventListeners()
+        this.setupEventListeners(),
       );
     } else {
       this.setupEventListeners();
@@ -515,7 +520,7 @@ class ShareManager {
           return false;
         }
       },
-      true
+      true,
     );
 
     console.log("✓ Share event listeners attached");
@@ -525,7 +530,7 @@ class ShareManager {
     const baseUrl = window.location.origin;
     const path = window.location.pathname.substring(
       0,
-      window.location.pathname.lastIndexOf("/")
+      window.location.pathname.lastIndexOf("/"),
     );
 
     const targetPage =
@@ -602,18 +607,18 @@ class DynamicCategoriesManager {
 
       const [journalsResponse, opinionsResponse] = await Promise.all([
         fetch(
-          `/ksmaja/api/list_journals.php?limit=1000&offset=0&t=${timestamp}`,
+          `/ksmaja/api/list_journals.php?limit=100&offset=0&t=${timestamp}`,
           {
             cache: "no-store",
             headers: { "Cache-Control": "no-cache" },
-          }
+          },
         ),
         fetch(
           `/ksmaja/api/list_opinions.php?limit=1000&offset=0&t=${timestamp}`,
           {
             cache: "no-store",
             headers: { "Cache-Control": "no-cache" },
-          }
+          },
         ).catch(() => ({ json: async () => ({ ok: false, results: [] }) })),
       ]);
 
@@ -663,7 +668,7 @@ class DynamicCategoriesManager {
     });
 
     this.categories = new Map(
-      [...this.categories.entries()].sort((a, b) => b[1] - a[1])
+      [...this.categories.entries()].sort((a, b) => b[1] - a[1]),
     );
   }
 
@@ -696,12 +701,12 @@ class DynamicCategoriesManager {
       .map(
         ([category, count]) => `
       <div class="category-card" onclick="window.location.href='journals_user.html?category=${encodeURIComponent(
-        category
+        category,
       )}'" style="cursor: pointer;">
         <span class="category-name">${this.escapeHtml(category)}</span>
         <span class="category-count">(${count})</span>
       </div>
-    `
+    `,
       )
       .join("");
 

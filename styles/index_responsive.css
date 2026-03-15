@@ -255,17 +255,15 @@ body.menu-open {
   }
 
   .journal-card {
-    padding: 1rem;
+    padding: 0;
+    border-radius: 10px;
+    overflow: visible;
   }
 
   .journal-actions {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: flex-end;
     gap: 0.5rem;
-  }
-
-  .journal-actions button {
-    width: 100%;
-    justify-content: center;
   }
 
   /* Upload Section */

@@ -143,7 +143,7 @@ try {
     $stmt = $pdo->prepare("
         UPDATE opinions 
         SET title = ?, description = ?, author_name = ?, email = ?, contact = ?, 
-            category = ?, file_upload_id = ?, cover_upload_id = ?, updated_at = NOW()
+            category = ?, file_upload_id = ?, cover_upload_id = ?
         WHERE id = ?
     ");
 

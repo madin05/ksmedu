@@ -5,8 +5,8 @@ let currentShareTitle = "";
 function openShareModal(id) {
   const article =
     (window.journalManager && window.journalManager.getJournalById(id)) ||
-    (window.paginationManager && window.paginationManager.getJournalById
-      ? window.paginationManager.getJournalById(id)
+    (window.paginationManager && typeof window.paginationManager.getItemById === "function"
+      ? window.paginationManager.getItemById(id)
       : null);
 
   if (!article) {
@@ -20,11 +20,10 @@ function openShareModal(id) {
     window.location.pathname.lastIndexOf("/")
   );
 
-  const articleType = article.type || "jurnal";
-  const explorePage =
-    articleType === "opini"
-      ? "explore_jurnal_user.html"
-      : "explore_jurnal_user.html";
+  // Detect type from page URL or article data
+  const isOpiniPage = window.location.pathname.includes("opini");
+  const articleType = article._type || article.type || (isOpiniPage ? "opini" : "jurnal");
+  const explorePage = "explore_jurnal_user.html";
 
   currentShareUrl = `${baseUrl}${path}/${explorePage}?id=${id}&type=${articleType}`;
   currentShareTitle = article.title || "Artikel";

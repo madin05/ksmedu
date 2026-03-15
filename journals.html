@@ -53,7 +53,6 @@
               </svg>
             </button>
             <div class="dropdown-menu">
-              <a href="./journals_user.html" class="active">Jurnal</a>
               <a href="./opinions.html">Opini & Berita</a>
             </div>
           </div>
@@ -111,7 +110,6 @@
       <section class="back-section">
         <a href="./dashboard_admin.html" class="btn-back">
           <i data-feather="arrow-left"></i>
-          
         </a>
       </section>
 
@@ -126,6 +124,42 @@
       <section class="pagination-section">
         <div id="pagination" class="pagination"></div>
       </section>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="modal">
+      <div class="modal-overlay"></div>
+      <div class="modal-content" style="max-width: 400px">
+        <button type="button" class="close-modal" onclick="closeShareModal()">
+          <i data-feather="x"></i>
+        </button>
+        <h2 style="margin-bottom: 20px">Bagikan Jurnal</h2>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <input
+            type="text"
+            id="shareUrlInput"
+            readonly
+            style="
+              padding: 12px;
+              border: 1px solid #ddd;
+              border-radius: 6px;
+              font-size: 14px;
+            "
+          />
+          <button onclick="copyShareLink()" class="share-btn copy">
+            <i data-feather="copy"></i> Copy Link
+          </button>
+          <button onclick="shareToWhatsApp()" class="share-btn wa">
+            <i data-feather="message-circle"></i> Share ke WhatsApp
+          </button>
+          <button onclick="shareToFacebook()" class="share-btn fb">
+            <i data-feather="facebook"></i> Share ke Facebook
+          </button>
+          <button onclick="shareToTwitter()" class="share-btn x">
+            <i data-feather="x"></i> Share ke X
+          </button>
+        </div>
+      </div>
     </div>
 
     <div id="editModal" class="modal">
@@ -245,6 +279,7 @@
     <script src="./js/jurnal.js"></script>
     <script src="./js/mobile_menu.js"></script>
     <script src="./js/login.js"></script>
+    <script src="./js/social.js"></script>
     <script src="./js/script.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/storage.js"></script>

@@ -131,106 +131,34 @@
     <!-- Share Modal -->
     <div id="shareModal" class="modal">
       <div class="modal-overlay"></div>
-      <div class="modal-content" style="max-width: 500px">
-        <button onclick="closeShareModal()" class="modal-close" type="button">
-          &times;
+      <div class="modal-content" style="max-width: 400px">
+        <button type="button" class="close-modal" onclick="closeShareModal()">
+          <i data-feather="x"></i>
         </button>
-
         <h2 style="margin-bottom: 20px">Bagikan Artikel</h2>
-
-        <div
-          class="share-url-box"
-          style="display: flex; gap: 10px; margin-bottom: 20px"
-        >
+        <div style="display: flex; flex-direction: column; gap: 12px">
           <input
             type="text"
             id="shareUrlInput"
             readonly
             style="
-              flex: 1;
               padding: 12px;
               border: 1px solid #ddd;
-              border-radius: 8px;
+              border-radius: 6px;
               font-size: 14px;
             "
           />
-          <button
-            onclick="copyShareLink()"
-            class="btn-primary"
-            type="button"
-            style="padding: 12px 20px; white-space: nowrap"
-          >
-            <i data-feather="copy"></i> Salin
+          <button onclick="copyShareLink()" class="share-btn copy">
+            <i data-feather="copy"></i> Copy Link
           </button>
-        </div>
-
-        <div
-          class="share-social"
-          style="
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-          "
-        >
-          <button
-            onclick="shareToWhatsApp()"
-            class="btn-social whatsapp"
-            type="button"
-            style="
-              padding: 12px;
-              background: #25d366;
-              color: white;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 8px;
-              font-weight: 600;
-            "
-          >
-            <i data-feather="message-circle"></i> WhatsApp
+          <button onclick="shareToWhatsApp()" class="share-btn wa">
+            <i data-feather="message-circle"></i> Share ke WhatsApp
           </button>
-          <button
-            onclick="shareToFacebook()"
-            class="btn-social facebook"
-            type="button"
-            style="
-              padding: 12px;
-              background: #1877f2;
-              color: white;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 8px;
-              font-weight: 600;
-            "
-          >
-            <i data-feather="facebook"></i> Facebook
+          <button onclick="shareToFacebook()" class="share-btn fb">
+            <i data-feather="facebook"></i> Share ke Facebook
           </button>
-          <button
-            onclick="shareToTwitter()"
-            class="btn-social twitter"
-            type="button"
-            style="
-              padding: 12px;
-              background: #1da1f2;
-              color: white;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 8px;
-              font-weight: 600;
-            "
-          >
-            <i data-feather="twitter"></i> Twitter
+          <button onclick="shareToTwitter()" class="share-btn x">
+            <i data-feather="x"></i> Share ke X
           </button>
         </div>
       </div>

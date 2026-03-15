@@ -213,7 +213,7 @@ class JournalManager {
       flex-direction: column; 
       background: white; 
       border-radius: 10px; 
-      overflow: hidden; 
+      overflow: visible; 
       box-shadow: 0 2px 15px rgba(0,0,0,0.08); 
       transition: transform 0.3s;
       height: 100%;
@@ -318,39 +318,44 @@ class JournalManager {
         ${
           isAdmin
             ? `
-          <div class="journal-actions" style="display: flex !important; gap: 8px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-            <button class="btn-view" onclick="event.stopPropagation(); journalManager.viewJournal('${
-              journal.id
-            }')" style="flex:1; padding: 8px; border:none; background:#3498db; color:white; border-radius:4px; cursor:pointer; display:flex !important; align-items:center; justify-content:center; gap:5px;">
-              <i data-feather="eye" style="width:14px; height:14px;"></i> Detail
-            </button>
-            <button class="btn-edit" onclick="event.stopPropagation(); window.editJournalManager.openEditModal('${
-              journal.id
-            }')" style="flex:1; padding: 8px; border:none; background:#f39c12; color:white; border-radius:4px; cursor:pointer; display:flex !important; align-items:center; justify-content:center; gap:5px;">
-              <i data-feather="edit" style="width:14px; height:14px;"></i> Edit
-            </button>
-            <button class="btn-delete" onclick="event.stopPropagation(); journalManager.deleteJournal('${
-              journal.id
-            }', '${journal.title.replace(
-              /'/g,
-              "\\'",
-            )}')" style="flex:1; padding: 8px; border:none; background:#e74c3c; color:white; border-radius:4px; cursor:pointer; display:flex !important; align-items:center; justify-content:center; gap:5px;">
-              <i data-feather="trash-2" style="width:14px; height:14px;"></i> Hapus
-            </button>
-            <button
-              class="btn-share"
-              onclick="event.stopPropagation(); openShareModal('${journal.id}')"
-              style="flex:1; padding: 8px; border:none; background:#27ae60; color:white; border-radius:4px; cursor:pointer; display:flex !important; align-items:center; justify-content:center; gap:5px;"
-            >
-              <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
-            </button>
-
+          <div class="journal-actions" style="display: flex !important; justify-content: flex-end; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+            <div class="dropdown-menu-container" style="position: relative;">
+              <button class="dropdown-toggle" onclick="event.stopPropagation(); toggleDropdown('${journal.id}')" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: background 0.2s; color: #666;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
+                <i data-feather="more-vertical" style="width: 20px; height: 20px;"></i>
+              </button>
+              <div id="dropdown-${journal.id}" class="dropdown-content" style="display: none; position: absolute; right: 0; bottom: 100%; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 1000; min-width: 140px; padding: 4px 0; margin-bottom: 4px;">
+                <button onclick="event.stopPropagation(); journalManager.viewJournal('${journal.id}'); closeDropdown('${journal.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #3498db;">
+                  <i data-feather="eye" style="width:14px; height:14px;"></i> Detail
+                </button>
+                <button onclick="event.stopPropagation(); window.editJournalManager.openEditModal('${journal.id}'); closeDropdown('${journal.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #f39c12;">
+                  <i data-feather="edit" style="width:14px; height:14px;"></i> Edit
+                </button>
+                <button onclick="event.stopPropagation(); journalManager.deleteJournal('${journal.id}', '${journal.title.replace(/'/g, "\\'")}'); closeDropdown('${journal.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #e74c3c;">
+                  <i data-feather="trash-2" style="width:14px; height:14px;"></i> Hapus
+                </button>
+                <button onclick="event.stopPropagation(); openShareModal('${journal.id}'); closeDropdown('${journal.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #27ae60;">
+                  <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
+                </button>
+              </div>
+            </div>
           </div>
         `
             : ""
         }
       </div>
     `;
+
+    // Cover click → explore page (admin & user)
+    const coverDiv = card.querySelector('div[style*="height: 200px"]');
+    if (coverDiv) {
+      coverDiv.style.cursor = "pointer";
+      const exploreType = journal._type === "opini" ? "opini" : "jurnal";
+      const explorePage = journal._type === "opini" ? "explore_opini_admin.html" : "explore_jurnal_admin.html";
+      coverDiv.addEventListener("click", (e) => {
+        e.stopPropagation();
+        window.location.href = `${explorePage}?id=${journal.id}&type=${exploreType}`;
+      });
+    }
 
     return card;
   }
@@ -558,5 +563,34 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log(" JournalManager initialized (Full Database Integration)");
   window.journalManager = journalManager;
 });
+
+// ===== DROPDOWN FUNCTIONS FOR ADMIN ACTIONS =====
+function toggleDropdown(journalId) {
+  const dropdown = document.getElementById(`dropdown-${journalId}`);
+  const isVisible = dropdown.style.display === 'block';
+  
+  // Close all other dropdowns first
+  document.querySelectorAll('.dropdown-content').forEach(d => {
+    d.style.display = 'none';
+  });
+  
+  // Toggle current dropdown
+  dropdown.style.display = isVisible ? 'none' : 'block';
+  
+  // Close dropdown when clicking outside
+  if (!isVisible) {
+    document.addEventListener('click', function closeDropdown(e) {
+      if (!dropdown.contains(e.target) && !e.target.closest('.dropdown-toggle')) {
+        dropdown.style.display = 'none';
+        document.removeEventListener('click', closeDropdown);
+      }
+    });
+  }
+}
+
+function closeDropdown(journalId) {
+  const dropdown = document.getElementById(`dropdown-${journalId}`);
+  dropdown.style.display = 'none';
+}
 
 console.log("jurnal.js loaded (Database Mode)");

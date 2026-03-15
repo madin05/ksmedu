@@ -1,6 +1,6 @@
 // ===== PAGINATION USER - journals_user.html & opinions_user.html =====
-// Cuma Share button, tidak ada Edit/Hapus/Detail admin
-// Zero konflik: tidak load script.js / jurnal.js / opinions.js
+// User-only: Share button saja, tidak ada Edit/Hapus/Detail admin
+// Self-init via DOMContentLoaded
 
 class PaginationUser {
   constructor(options = {}) {
@@ -13,8 +13,9 @@ class PaginationUser {
     this.allItems = [];
     this.filteredItems = [];
     this.currentSort = "newest";
+    this.searchQuery = "";
 
-    console.log(`PaginationUser init for: ${this.dataType}`);
+    console.log(`PaginationUser init: ${this.dataType}`);
     this.init();
   }
 
@@ -22,11 +23,11 @@ class PaginationUser {
     await this.loadData();
     this.setupSearch();
     this.setupIconSort();
-    this.applySort();
+    this.applyFiltersAndSort();
 
     window.addEventListener(`${this.dataType}s:changed`, async () => {
       await this.loadData();
-      this.applySort();
+      this.applyFiltersAndSort();
     });
   }
 
@@ -44,16 +45,12 @@ class PaginationUser {
 
       if (data.ok && data.results) {
         this.allItems = data.results.map((item) => this.transform(item));
-        this.filteredItems = [...this.allItems];
-        console.log(`Loaded ${this.allItems.length} ${this.dataType}s`);
       } else {
         this.allItems = [];
-        this.filteredItems = [];
       }
     } catch (err) {
       console.error("Load error:", err);
       this.allItems = [];
-      this.filteredItems = [];
     }
   }
 
@@ -134,6 +131,7 @@ class PaginationUser {
 
     const truncate = (text, max) =>
       !text ? "" : text.length > max ? text.substring(0, max) + "..." : text;
+
     const formatDate = (d) => {
       try {
         return new Date(d).toLocaleDateString("id-ID", {
@@ -150,6 +148,8 @@ class PaginationUser {
       this.dataType === "jurnal"
         ? `explore_jurnal_user.html?id=${item.id}&type=jurnal`
         : `explore_opini_user.html?id=${item.id}&type=opini`;
+
+    const tags = Array.isArray(item.tags) ? item.tags : [];
 
     if (this.dataType === "jurnal") {
       const author =
@@ -170,20 +170,19 @@ class PaginationUser {
             <span class="journal-date"><i data-feather="calendar"></i> ${formatDate(item.uploadDate)}</span>
           </div>
           ${
-            item.tags && item.tags.length > 0
+            tags.length > 0
               ? `
             <div class="journal-tags">
-              ${item.tags
+              ${tags
                 .slice(0, 3)
                 .map((t) => `<span class="tag">${t}</span>`)
                 .join("")}
-              ${item.tags.length > 3 ? `<span class="tag-more">+${item.tags.length - 3}</span>` : ""}
+              ${tags.length > 3 ? `<span class="tag-more">+${tags.length - 3}</span>` : ""}
             </div>`
               : ""
           }
           <div class="journal-actions" style="margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
-            <button class="btn-share"
-              style="width:100%; padding:10px; border:none; background:#2c3e50; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px; font-weight:500;">
+            <button class="btn-share">
               <i data-feather="share-2" style="width:14px;height:14px;"></i> SHARE
             </button>
           </div>
@@ -204,20 +203,19 @@ class PaginationUser {
             <span class="opinion-date"><i data-feather="calendar"></i> ${formatDate(item.uploadDate)}</span>
           </div>
           ${
-            item.tags && item.tags.length > 0
+            tags.length > 0
               ? `
             <div class="opinion-tags">
-              ${item.tags
+              ${tags
                 .slice(0, 3)
                 .map((t) => `<span class="tag">${t}</span>`)
                 .join("")}
-              ${item.tags.length > 3 ? `<span class="tag-more">+${item.tags.length - 3}</span>` : ""}
+              ${tags.length > 3 ? `<span class="tag-more">+${tags.length - 3}</span>` : ""}
             </div>`
               : ""
           }
           <div class="opinion-actions" style="margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
-            <button class="btn-share"
-              style="width:100%; padding:10px; border:none; background:#2c3e50; color:white; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; font-size:13px; font-weight:500;">
+            <button class="btn-share">
               <i data-feather="share-2" style="width:14px;height:14px;"></i> SHARE
             </button>
           </div>
@@ -226,19 +224,18 @@ class PaginationUser {
 
     // Cover click → explore
     const cover = card.querySelector(".journal-cover, .opinion-cover");
-    if (cover)
-      cover.addEventListener(
-        "click",
-        () => (window.location.href = exploreUrl),
-      );
+    if (cover) {
+      cover.addEventListener("click", () => (window.location.href = exploreUrl));
+    }
 
     // Share button
     const shareBtn = card.querySelector(".btn-share");
-    if (shareBtn)
+    if (shareBtn) {
       shareBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         this.handleShare(item, exploreUrl);
       });
+    }
 
     return card;
   }
@@ -280,30 +277,11 @@ class PaginationUser {
   setupSearch() {
     const input = document.querySelector(this.searchInputSelector);
     if (!input) return;
+
     input.addEventListener("input", (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      if (!q) {
-        this.filteredItems = [...this.allItems];
-      } else {
-        this.filteredItems = this.allItems.filter((item) => {
-          if (this.dataType === "jurnal") {
-            return (
-              item.title.toLowerCase().includes(q) ||
-              item.abstract.toLowerCase().includes(q) ||
-              item.authors.some((a) => a.toLowerCase().includes(q)) ||
-              item.tags.some((t) => t.toLowerCase().includes(q))
-            );
-          } else {
-            return (
-              item.title.toLowerCase().includes(q) ||
-              item.description.toLowerCase().includes(q) ||
-              item.author_name.toLowerCase().includes(q)
-            );
-          }
-        });
-      }
+      this.searchQuery = e.target.value.toLowerCase().trim();
       this.currentPage = 1;
-      this.applySort();
+      this.applyFiltersAndSort();
     });
   }
 
@@ -328,7 +306,7 @@ class PaginationUser {
         e.currentTarget.classList.add("active");
         dropdown.classList.remove("active");
         this.currentPage = 1;
-        this.applySort();
+        this.applyFiltersAndSort();
       });
     });
 
@@ -337,17 +315,50 @@ class PaginationUser {
     });
   }
 
-  // ===== APPLY SORT =====
-  applySort() {
-    let items = [...this.filteredItems];
-    if (this.currentSort === "newest")
-      items.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
-    else if (this.currentSort === "oldest")
-      items.sort((a, b) => new Date(a.uploadDate) - new Date(b.uploadDate));
-    else if (this.currentSort === "title")
-      items.sort((a, b) => a.title.localeCompare(b.title));
-    else if (this.currentSort === "views")
-      items.sort((a, b) => (b.views || 0) - (a.views || 0));
+  // ===== APPLY SEARCH + SORT (single pipeline) =====
+  applyFiltersAndSort() {
+    // 1. Start from all items
+    let items = [...this.allItems];
+
+    // 2. Apply search filter
+    const query = this.searchQuery;
+    if (query) {
+      items = items.filter((item) => {
+        if (this.dataType === "jurnal") {
+          return (
+            item.title.toLowerCase().includes(query) ||
+            item.abstract.toLowerCase().includes(query) ||
+            (Array.isArray(item.authors) &&
+              item.authors.some((a) => a.toLowerCase().includes(query))) ||
+            (Array.isArray(item.tags) &&
+              item.tags.some((t) => t.toLowerCase().includes(query)))
+          );
+        } else {
+          return (
+            item.title.toLowerCase().includes(query) ||
+            (item.description || "").toLowerCase().includes(query) ||
+            (item.author_name || "").toLowerCase().includes(query)
+          );
+        }
+      });
+    }
+
+    // 3. Apply sort
+    switch (this.currentSort) {
+      case "newest":
+        items.sort((a, b) => new Date(b.uploadDate) - new Date(a.uploadDate));
+        break;
+      case "oldest":
+        items.sort((a, b) => new Date(a.uploadDate) - new Date(b.uploadDate));
+        break;
+      case "title":
+        items.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case "views":
+        items.sort((a, b) => (b.views || 0) - (a.views || 0));
+        break;
+    }
+
     this.filteredItems = items;
     this.render();
   }
@@ -368,6 +379,7 @@ class PaginationUser {
   renderPagination() {
     const container = document.querySelector(this.paginationSelector);
     if (!container) return;
+
     const totalPages = Math.ceil(this.filteredItems.length / this.itemsPerPage);
     if (totalPages <= 1) {
       container.innerHTML = "";
@@ -375,6 +387,8 @@ class PaginationUser {
     }
 
     container.innerHTML = "";
+
+    // Previous
     const prev = document.createElement("button");
     prev.textContent = "Previous";
     prev.className = "pagination-btn";
@@ -382,6 +396,7 @@ class PaginationUser {
     prev.onclick = () => this.goToPage(this.currentPage - 1);
     container.appendChild(prev);
 
+    // Page numbers with ellipsis
     const max = 5;
     let start = Math.max(1, this.currentPage - Math.floor(max / 2));
     let end = Math.min(totalPages, start + max - 1);
@@ -407,6 +422,7 @@ class PaginationUser {
       container.appendChild(this.pageBtn(totalPages));
     }
 
+    // Next
     const next = document.createElement("button");
     next.textContent = "Next";
     next.className = "pagination-btn";

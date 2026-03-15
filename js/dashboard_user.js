@@ -246,31 +246,44 @@ async function renderArticles() {
           }', '${article.type}')" style="cursor: pointer;">
             <img src="${coverImage}" alt="${title}" class="article-image"
                  onerror="this.src='https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=400&fit=crop'">
+            <div class="article-views-badge">
+              <i data-feather="eye" style="width: 14px; height: 14px;"></i> ${views}
+            </div>
             <span class="article-type-badge ${typeClass}">${typeLabel}</span>
           </div>
           
           <div class="article-content">
-            <div style="flex: 1; display: flex; flex-direction: column;">
-              <div class="article-meta">
-                <span><i data-feather="user" style="width: 14px; height: 14px;"></i> ${author}</span>
-                <span><i data-feather="calendar" style="width: 14px; height: 14px;"></i> ${formattedDate}</span>
-                <span><i data-feather="eye" style="width: 14px; height: 14px;"></i> ${views}</span>
-              </div>
-              
-              <div class="article-title" onclick="openArticleDetail('${
-                article.id
-              }', '${article.type}')" style="cursor: pointer;">
-                ${title}
-              </div>
-              
-              ${
-                truncatedAbstract
-                  ? `<div class="article-excerpt">${truncatedAbstract}</div>`
-                  : ""
-              }
-            </div>
+            <h3 class="article-title" onclick="openArticleDetail('${
+              article.id
+            }', '${article.type}')" style="cursor: pointer;">
+              ${title}
+            </h3>
             
-            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0;">
+            <p class="article-excerpt">${truncatedAbstract || "Tidak ada deskripsi"}</p>
+            
+            <div class="article-meta">
+              <span><i data-feather="user" style="width: 14px; height: 14px;"></i> ${author}</span>
+              <span><i data-feather="calendar" style="width: 14px; height: 14px;"></i> ${formattedDate}</span>
+            </div>
+
+            ${(() => {
+              const tags = Array.isArray(article.tags) ? article.tags : [];
+              if (tags.length === 0) return "";
+              return `
+                <div class="article-tags">
+                  ${tags
+                    .slice(0, 3)
+                    .map(
+                      (tag) =>
+                        `<span class="article-tag">${tag}</span>`,
+                    )
+                    .join("")}
+                  ${tags.length > 3 ? `<span class="article-tag-more">+${tags.length - 3}</span>` : ""}
+                </div>
+              `;
+            })()}
+
+            <div class="article-share-wrapper">
               <button 
                 class="btn-share-article" 
                 data-article-id="${article.id}"

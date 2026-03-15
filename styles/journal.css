@@ -362,12 +362,11 @@
 }
 
 .btn-back {
-  background: #e0e0e0;
-  color: #333;
-  padding: 12px 30px;
-  border-radius: 6px;
+  background: #34495e;
+  color: #d0d0d0;
+  padding: 8px 8px;
+  border-radius: 999px;
   text-decoration: none;
-  font-size: 14px;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -376,13 +375,13 @@
 }
 
 .btn-back:hover {
-  background: #d0d0d0;
+  background: #a4a4a4;
   transform: translateX(-3px);
 }
 
 .btn-back i {
-  width: 16px;
-  height: 16px;
+  width: 8px;
+  height: 8px;
 }
 
 /* ===== COVER PREVIEW FIXED ===== */

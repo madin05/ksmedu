@@ -17,6 +17,24 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
+  // Clone logo into nav for mobile side menu (at the top)
+  const logoEl = document.querySelector(".logo");
+  if (logoEl) {
+    const navLogo = document.createElement("div");
+    navLogo.className = "nav-logo";
+    navLogo.innerHTML = logoEl.innerHTML;
+    nav.insertBefore(navLogo, nav.firstChild);
+  }
+
+  // Clone auth buttons into nav for mobile side menu
+  const authSection = document.querySelector(".auth-section");
+  if (authSection) {
+    const mobileAuth = document.createElement("div");
+    mobileAuth.className = "nav-auth-section";
+    mobileAuth.innerHTML = authSection.innerHTML;
+    nav.appendChild(mobileAuth);
+  }
+
   // Create overlay for mobile menu
   const overlay = document.createElement("div");
   overlay.className = "nav-overlay";
@@ -46,6 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Close any open dropdowns
     closeDropdown();
   }
+
+  // EXPOSE TO GLOBALS SO EXTERNAL SCRIPTS CAN CLOSE MENU (e.g. login.js)
+  window.closeMobileMenu = closeMenu;
 
   /**
    * Close dropdown

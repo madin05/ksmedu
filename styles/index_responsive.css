@@ -61,6 +61,11 @@ body.menu-open {
   overflow: hidden;
 }
 
+/* Logo inside nav - hidden on desktop, shown on mobile */
+.nav-logo {
+  display: none;
+}
+
 /* ========================================
    TABLET & MOBILE (768px and below)
    ======================================== */
@@ -73,7 +78,7 @@ body.menu-open {
   }
 
   .logo {
-    order: 1;
+    order: 0;
     flex: 0 0 auto;
   }
 
@@ -99,13 +104,25 @@ body.menu-open {
     height: 100vh !important;
     background: white !important;
     flex-direction: column !important;
-    padding: 80px 0 2rem 0 !important;
+    padding: 20px 0 2rem 0 !important;
     gap: 0 !important;
     transition: left 0.3s ease !important;
     box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2) !important;
     z-index: 1000 !important;
     overflow-y: auto !important;
     display: flex !important;
+  }
+
+  .nav-logo {
+    display: block;
+    padding: 10px 1.5rem 20px;
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 8px;
+  }
+
+  .nav-logo img {
+    width: 70px;
+    height: auto;
   }
 
   nav.active {

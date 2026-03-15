@@ -5,9 +5,6 @@ class LoginManager {
     this.loginModal = document.getElementById("loginModal");
     this.loginForm = document.getElementById("loginForm");
 
-    // Support multiple button locations (dashboard_admin.html & journals.html)
-    this.loginBtn = document.querySelector(".btn-register");
-
     this.closeModalBtn = document.getElementById("closeLoginModal");
     this.togglePasswordBtn = document.getElementById("togglePassword");
     this.uploadSection = document.querySelector(".upload-section");
@@ -19,15 +16,8 @@ class LoginManager {
 
     this.isLoggedIn = false;
 
-    // Check jika element penting ada
-    if (!this.loginBtn) {
-      console.warn("loginBtn tidak ditemukan");
-      return;
-    }
-
     if (!this.loginModal || !this.loginForm) {
       console.warn("loginModal atau loginForm tidak ditemukan");
-      return;
     }
 
     this.init();
@@ -36,13 +26,17 @@ class LoginManager {
   init() {
     this.checkLoginStatus();
 
-    // Attach event listener ke button login
-    this.loginBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (this.isLoggedIn) {
-        this.logout();
-      } else {
-        this.openLoginModal();
+    // Gunakan event delegation agar tombol yang di-clone oleh mobile_menu.js tetap berfungsi
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn-register");
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.isLoggedIn) {
+          this.logout();
+        } else {
+          this.openLoginModal();
+        }
       }
     });
 
@@ -168,6 +162,11 @@ class LoginManager {
       this.updateLoginButton();
       this.updateUploadSection();
       this.closeLoginModal();
+      
+      // Close mobile menu if it's open
+      if (typeof window.closeMobileMenu === 'function') {
+        window.closeMobileMenu();
+      }
 
       alert("LOGIN BERHASIL\n\nSELAMAT DATANG, ADMIN");
 
@@ -196,6 +195,11 @@ class LoginManager {
 
       this.updateLoginButton();
       this.updateUploadSection();
+      
+      // Close mobile menu if it's open
+      if (typeof window.closeMobileMenu === 'function') {
+        window.closeMobileMenu();
+      }
 
       alert("LOGOUT BERHASIL");
 
@@ -249,20 +253,27 @@ class LoginManager {
   }
 
   updateLoginButton() {
-    if (!this.loginBtn) {
+    const loginBtns = document.querySelectorAll(".btn-register");
+    if (loginBtns.length === 0) {
       return;
     }
 
+    loginBtns.forEach(btn => {
+      if (this.isLoggedIn) {
+        btn.innerHTML = `
+        <i data-feather="log-out"></i>
+        LOGOUT
+      `;
+        btn.classList.add("admin-logged-in");
+      } else {
+        btn.textContent = "LOGIN";
+        btn.classList.remove("admin-logged-in");
+      }
+    });
+    
+    // Call feather replace once after updating all buttons
     if (this.isLoggedIn) {
-      this.loginBtn.innerHTML = `
-      <i data-feather="log-out"></i>
-      LOGOUT
-    `;
-      this.loginBtn.classList.add("admin-logged-in");
       feather.replace();
-    } else {
-      this.loginBtn.textContent = "LOGIN";
-      this.loginBtn.classList.remove("admin-logged-in");
     }
   }
 

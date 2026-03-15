@@ -596,10 +596,6 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    gap: 20px;
-  }
 
   nav {
     gap: 20px;

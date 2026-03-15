@@ -225,3 +225,8 @@ nav a.active {
     width: 100%;
   }
 }
+
+/* Nav auth section - only visible on mobile (inside side nav) */
+.nav-auth-section {
+  display: none;
+}

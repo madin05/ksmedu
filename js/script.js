@@ -383,7 +383,7 @@ class EditJournalManager {
                class="pengurus-input" 
                placeholder="Nama Pengurus ${index + 1}" 
                value="${name || ""}">
-        <button type="button" class="btn-remove-pengurus">
+        <button type="button" class="btn-remove-pengurus" style="display: ${index === 0 ? "none" : "flex"}">
           <i data-feather="x"></i>
         </button>
       `;

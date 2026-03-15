@@ -341,22 +341,42 @@ body.menu-open {
     padding: 12px;
   }
 
-  /* Author/Pengurus Groups */
+  /* Author/Pengurus Groups - X button inside input */
   .author-input-group,
   .pengurus-input-group {
-    flex-direction: column;
-    gap: 0.5rem;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
   }
 
   .author-input,
   .pengurus-input {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
+    padding-right: 40px !important;
   }
 
   .btn-remove-author,
   .btn-remove-pengurus {
-    width: 100%;
+    position: absolute;
+    right: 8px;
+    top: 30%;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #a5a4a4;
+    flex-shrink: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
     justify-content: center;
+  }
+
+  .btn-remove-author svg,
+  .btn-remove-pengurus svg {
+    width: 14px;
+    height: 14px;
   }
 
   .btn-add-author,

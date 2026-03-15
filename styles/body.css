@@ -549,7 +549,6 @@
   border-radius: 50%;
   width: 26px;
   height: 26px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -558,7 +557,7 @@
 }
 
 .btn-remove-author:hover, .btn-remove-pengurus:hover {
-  background: #d32f2f;
+  background: #2c3e50;
   transform: scale(1.1);
 }
 
@@ -568,7 +567,7 @@
 }
 
 .btn-add-author, .btn-secondary {
-  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  background: linear-gradient(135deg, #233444, #2c3e50);
   color: white;
   padding: 10px 20px;
   border: none;
@@ -583,11 +582,6 @@
   width: fit-content;
 }
 
-.btn-add-author:hover {
-  background: linear-gradient(135deg, #45a049, #7cb342);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-}
 
 .btn-add-author i {
   width: 18px;

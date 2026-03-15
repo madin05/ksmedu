@@ -80,8 +80,7 @@ if (window._dualUploadHandlerLoaded) {
         ".btn-remove-pengurus"
       );
       removeButtons.forEach((btn, index) => {
-        btn.style.display =
-          index === 0 && pengurusInputs.length === 1 ? "none" : "flex";
+        btn.style.display = index === 0 ? "none" : "flex";
       });
     }
 

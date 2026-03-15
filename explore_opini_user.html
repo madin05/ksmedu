@@ -595,17 +595,202 @@
         }
       }
 
+      /* ===== HAMBURGER MENU ===== */
+      .hamburger-menu {
+        display: none;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 30px;
+        height: 24px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 1001;
+      }
+
+      .hamburger-menu span {
+        width: 100%;
+        height: 3px;
+        background: #1e293b;
+        border-radius: 10px;
+        transition: all 0.3s linear;
+      }
+
+      .hamburger-menu.active span:nth-child(1) {
+        transform: rotate(45deg) translate(7px, 7px);
+      }
+
+      .hamburger-menu.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .hamburger-menu.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+
+      /* ===== NAV OVERLAY ===== */
+      .nav-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .nav-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      .nav-logo {
+        display: none;
+      }
+
       /* ===== RESPONSIVE ===== */
       @media (max-width: 768px) {
         .header-container {
           padding: 16px 24px;
-          flex-direction: column;
-          gap: 16px;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
         }
 
+        /* Show hamburger */
+        .hamburger-menu {
+          display: flex;
+          order: 2;
+          margin-left: auto;
+        }
+
+        /* Mobile Navigation - Sidebar */
         nav {
-          gap: 20px;
-          font-size: 14px;
+          position: fixed !important;
+          top: 0 !important;
+          left: -100% !important;
+          width: 80% !important;
+          max-width: 320px !important;
+          height: 100vh !important;
+          background: white !important;
+          flex-direction: column !important;
+          padding: 20px 0 2rem 0 !important;
+          gap: 0 !important;
+          transition: left 0.3s ease !important;
+          box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2) !important;
+          z-index: 1000 !important;
+          overflow-y: auto !important;
+          display: flex !important;
+        }
+
+        .nav-logo {
+          display: block;
+          padding: 10px 1.5rem 20px;
+          border-bottom: 1px solid #e9ecef;
+          margin-bottom: 8px;
+        }
+
+        .nav-logo img {
+          width: 70px;
+          height: auto;
+        }
+
+        nav.active {
+          left: 0 !important;
+        }
+
+        nav a {
+          font-size: 15px !important;
+          padding: 1rem 1.5rem !important;
+          border-bottom: 1px solid #f0f0f0 !important;
+          width: 100% !important;
+          display: block !important;
+          text-align: left !important;
+          border-radius: 0 !important;
+        }
+
+        nav a:hover {
+          background: #f5f5f5 !important;
+        }
+
+        /* Dropdown Mobile */
+        .nav-dropdown {
+          width: 100% !important;
+          position: static !important;
+        }
+
+        .nav-link.has-caret {
+          width: 100% !important;
+          padding: 1rem 1.5rem !important;
+          justify-content: space-between !important;
+          text-align: left !important;
+          border-bottom: 1px solid #f0f0f0 !important;
+          font-size: 15px !important;
+          border-radius: 0 !important;
+          color: #666 !important;
+          font-weight: 500 !important;
+          background: none !important;
+          border-top: none !important;
+          border-left: none !important;
+          border-right: none !important;
+          cursor: pointer;
+          display: flex !important;
+          align-items: center !important;
+        }
+
+        .nav-link.has-caret:hover {
+          background: #f5f5f5 !important;
+          color: #2c3e50 !important;
+        }
+
+        .nav-link.has-caret .caret {
+          transition: transform 0.3s ease;
+        }
+
+        .nav-link.has-caret::after {
+          display: none !important;
+        }
+
+        .nav-dropdown.active .nav-link.has-caret .caret {
+          transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+          position: static !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          transform: none !important;
+          box-shadow: none !important;
+          border: none !important;
+          background: #f8f9fa !important;
+          min-width: 100% !important;
+          border-radius: 0 !important;
+          display: none !important;
+          margin-top: 0 !important;
+        }
+
+        .nav-dropdown.active .dropdown-menu {
+          display: block !important;
+        }
+
+        .dropdown-menu a {
+          padding: 0.75rem 2.5rem !important;
+          font-size: 14px !important;
+          background: #f8f9fa !important;
+          border-bottom: 1px solid #e9ecef !important;
+        }
+
+        .dropdown-menu a:hover {
+          background: #e9ecef !important;
+          color: #2c3e50 !important;
         }
 
         .article-header {
@@ -636,18 +821,33 @@
     </style>
   </head>
   <body>
+    <!-- Nav Overlay for mobile -->
+    <div class="nav-overlay"></div>
+
     <!-- Header -->
     <header>
       <div class="header-container">
+        <!-- Logo Header -->
         <div class="logo">
           <a href="dashboard_user.html">
             <img src="./assets/main_logo.png" alt="Logo" />
           </a>
         </div>
+
+        <!-- Hamburger Icon -->
+        <button class="hamburger-menu" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
         <nav>
           <a href="dashboard_user.html">HOME</a>
           <div class="nav-dropdown">
-            <a href="#" class="nav-link has-caret">JURNAL</a>
+            <a href="#" class="nav-link has-caret">
+               ARTIKEL
+               <i data-feather="chevron-down" class="caret"></i>
+            </a>
             <div class="dropdown-menu">
               <a href="./journals_user.html">Jurnal</a>
               <a href="./opinions_user.html">Opini & Berita</a>
@@ -835,5 +1035,11 @@
     <script src="./js/explore_jurnal_user.js"></script>
     <script src="/ksmaja/js/api.js"></script>
     <script src="/ksmaja/js/storage.js"></script>
+    <script src="./js/mobile_menu.js?v=20251130"></script>
+    <script>
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+    </script>
   </body>
 </html>

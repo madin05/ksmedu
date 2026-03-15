@@ -317,6 +317,16 @@ class EditJournalManager {
       this.populatePengurus(journal.pengurus);
       this.populateAuthors(journal.authors);
 
+      // Tampilkan kembali field Pengurus dan Volume untuk Jurnal
+      const pengurusGroup = document.getElementById("editPengurusGroup");
+      if (pengurusGroup) {
+        pengurusGroup.style.display = "block";
+      }
+      const volumeGroup = document.getElementById("editVolumeGroup");
+      if (volumeGroup) {
+        volumeGroup.style.display = "block";
+      }
+
       this.modal.classList.add("active");
       document.body.style.overflow = "hidden";
 
@@ -330,6 +340,7 @@ class EditJournalManager {
   }
 
   populateTags(tags) {
+    if (!this.tagsContainer) return;
     this.tagsContainer.innerHTML = "";
 
     let tagsArray = [];
@@ -355,6 +366,7 @@ class EditJournalManager {
   }
 
   populatePengurus(pengurus) {
+    if (!this.pengurusContainer) return;
     this.pengurusContainer.innerHTML = "";
 
     let pengurusArray = [];
@@ -403,6 +415,7 @@ class EditJournalManager {
   }
 
   populateAuthors(authors) {
+    if (!this.authorsContainer) return;
     this.authorsContainer.innerHTML = "";
 
     let authorsArray = [];
@@ -742,6 +755,25 @@ window.openEditOpinionModal = async function (id) {
     document.getElementById("editKontak").value = o.contact || "";
     document.getElementById("editAbstrak").value = o.description || "";
 
+    // Panggil method EditJournalManager untuk render Tags dan Penulis (Pengurus di skip)
+    if (window.editJournalManager) {
+      window.editJournalManager.populateTags(o.tags || []);
+      const authors = o.author || o.authors || ["Anonymous"];
+      window.editJournalManager.populateAuthors(authors);
+      // Kosongkan pengurus karena Opini tidak ada pengurus
+      window.editJournalManager.populatePengurus([]);
+    }
+
+    // Sembunyikan field Pengurus dan Volume untuk Opini
+    const pengurusGroup = document.getElementById("editPengurusGroup");
+    if (pengurusGroup) {
+      pengurusGroup.style.display = "none";
+    }
+    const volumeGroup = document.getElementById("editVolumeGroup");
+    if (volumeGroup) {
+      volumeGroup.style.display = "none";
+    }
+
     // Flag sebagai opini
     document.getElementById("editModal").dataset.type = "opini";
     document.getElementById("editModal").classList.add("active");
@@ -885,11 +917,18 @@ document.addEventListener("DOMContentLoaded", () => {
         );
         formData.append("email", document.getElementById("editEmail").value);
         formData.append("contact", document.getElementById("editKontak").value);
-
         const fileInput = document.getElementById("editFileInput");
         if (fileInput?.files[0]) formData.append("file", fileInput.files[0]);
         const coverInput = document.getElementById("editCoverInput");
         if (coverInput?.files[0]) formData.append("cover", coverInput.files[0]);
+
+        // Tambahkan support untuk Penulis dan Tags
+        if (window.editJournalManager) {
+          const authors = window.editJournalManager.getAuthors();
+          if (authors.length > 0) formData.append("authors", JSON.stringify(authors));
+          const tags = window.editJournalManager.getTags();
+          if (tags.length > 0) formData.append("tags", JSON.stringify(tags));
+        }
 
         try {
           const response = await fetch("/ksmaja/api/update_opinion.php", {

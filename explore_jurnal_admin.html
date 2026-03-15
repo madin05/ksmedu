@@ -768,6 +768,10 @@
           transition: transform 0.3s ease;
         }
 
+        .nav-link.has-caret::after {
+          display: none !important;
+        }
+
         .nav-dropdown.active .nav-link.has-caret .caret {
           transform: rotate(180deg);
         }

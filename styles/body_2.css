@@ -579,13 +579,39 @@
 
   #editModal .author-input-group,
   #editModal .pengurus-input-group {
-    flex-direction: column;
-    gap: 8px;
+    position: relative;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+  }
+
+  #editModal .author-input,
+  #editModal .pengurus-input {
+    flex: 1;
+    min-width: 0;
+    padding-right: 40px !important;
   }
 
   #editModal .btn-remove-author,
   #editModal .btn-remove-pengurus {
-    width: 100%;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #a5a4a4;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #editModal .btn-remove-author:hover,
+  #editModal .btn-remove-pengurus:hover {
+    background: #e74c3c;
+    transform: translateY(-50%) scale(1.1);
   }
 
   #editModal .tags-container + div {

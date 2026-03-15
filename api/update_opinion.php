@@ -54,10 +54,30 @@ try {
     } else {
         $title = $_POST['title'] ?? $opinion['title'];
         $description = $_POST['description'] ?? $opinion['description'];
-        $author_name = $_POST['author_name'] ?? $opinion['author_name'];
         $email = $_POST['email'] ?? $opinion['email'];
         $contact = $_POST['contact'] ?? $_POST['contact'] ?? $opinion['contact'];
         $category = $_POST['category'] ?? $opinion['category'];
+
+        // Handle authors array appropriately
+        if (isset($_POST['authors'])) {
+            $authorsInput = $_POST['authors'];
+            if (is_string($authorsInput)) {
+                $decoded = json_decode($authorsInput, true);
+                if (is_array($decoded)) {
+                    $authorsInput = $decoded;
+                }
+            }
+            if (is_array($authorsInput) && count($authorsInput) > 0) {
+                $author_name = json_encode($authorsInput);
+            } else {
+                $author_name = $_POST['author_name'] ?? $opinion['author_name'];
+            }
+        } else {
+            $author_name = $_POST['author_name'] ?? $opinion['author_name'];
+        }
+
+        // Handle tags exactly the same way if the column exists in db. Right now let's just parse it if it does
+        $tags = $_POST['tags'] ?? $opinion['tags'] ?? null;
     }
 
     $fileUploadId = $opinion['file_upload_id'];
@@ -143,7 +163,7 @@ try {
     $stmt = $pdo->prepare("
         UPDATE opinions 
         SET title = ?, description = ?, author_name = ?, email = ?, contact = ?, 
-            category = ?, file_upload_id = ?, cover_upload_id = ?
+            category = ?, tags = ?, file_upload_id = ?, cover_upload_id = ?
         WHERE id = ?
     ");
 
@@ -154,6 +174,7 @@ try {
         $email,
         $contact,
         $category,
+        $tags,
         $fileUploadId,
         $coverUploadId,
         $id

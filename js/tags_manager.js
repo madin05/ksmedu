@@ -60,7 +60,7 @@ class TagsManager {
     this.tagsList.innerHTML = this.tags
       .map(
         (tag, index) => `
-        <span class="tag" data-tag="${tag}">
+        <span class="tag-item" data-tag="${tag}">
           ${tag}
           <button type="button" class="btn-remove-tag" data-index="${index}">
             <i data-feather="x"></i>

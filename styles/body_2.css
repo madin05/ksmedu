@@ -116,7 +116,7 @@
 }
 
 /* Tags Container */
-#editModal .tags-container {
+.tags-container {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -128,40 +128,56 @@
   background: #f9f9f9;
 }
 
-#editModal .tags-container:empty::after {
+.tags-container:empty::after {
   content: "Belum ada tag";
   color: #999;
   font-size: 13px;
 }
 
-#editModal .tag-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, #2c3e50, #34495e);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
+.tag-item, .tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  background: #e3f2fd !important;
+  color: #1976d2 !important;
+  padding: 6px 12px !important;
+  border-radius: 20px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border: none !important;
 }
 
-#editModal .tag-remove {
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: 600;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+.tag-item .btn-remove-tag,
+.tag-item .tag-remove,
+.tag .btn-remove-tag,
+.tag .tag-remove {
+  cursor: pointer !important;
+  background: none !important;
+  color: #2c3e50;
+  border: none !important;
+  opacity: 0.8 !important;
+  padding: 0 !important;
+  margin: 0 0 0 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s !important;
+  width: auto !important;
+  height: auto !important;
 }
 
-#editModal .tag-remove:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: scale(1.2);
+.tag-item .btn-remove-tag:hover,
+.tag-item .tag-remove:hover,
+.tag .btn-remove-tag:hover,
+.tag .tag-remove:hover {
+  opacity: 1 !important;
+  transform: scale(1.2) !important;
+}
+
+.tag-item .btn-remove-tag svg,
+.tag .btn-remove-tag svg {
+  width: 14px !important;
+  height: 14px !important;
 }
 
 /* Tags Input (below container) */

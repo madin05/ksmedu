@@ -78,19 +78,8 @@
         cursor: pointer;
       }
 
-      .nav-link.has-caret::after {
-        content: "";
-        width: 5px;
-        height: 5px;
-        border-right: 2px solid currentColor;
-        border-bottom: 2px solid currentColor;
-        transform: rotate(45deg);
-        margin-left: 4px;
-        transition: transform 0.2s;
-      }
-
-      .nav-dropdown.open .nav-link.has-caret::after {
-        transform: rotate(-135deg);
+      .nav-dropdown.open .nav-link.has-caret .caret {
+        transform: rotate(180deg);
       }
 
       .dropdown-menu {
@@ -844,16 +833,27 @@
         <nav>
           <a href="dashboard_user.html">HOME</a>
           <div class="nav-dropdown">
-            <a href="#" class="nav-link has-caret">
-               ARTIKEL
-               <i data-feather="chevron-down" class="caret"></i>
-            </a>
+            <button class="nav-link has-caret" type="button">
+              ARTIKEL
+              <i data-feather="chevron-down" class="caret"></i>
+            </button>
             <div class="dropdown-menu">
               <a href="./journals_user.html">Jurnal</a>
               <a href="./opinions_user.html">Opini & Berita</a>
             </div>
           </div>
         </nav>
+
+        <div class="auth-section">
+          <a href="./login_user.html" class="btn-user-login">
+            <i data-feather="user"></i>
+            USER
+          </a>
+          <a href="#" class="btn-register">
+            <i data-feather="layers"></i>
+            ADMIN
+          </a>
+        </div>
       </div>
     </header>
 

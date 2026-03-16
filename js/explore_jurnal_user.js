@@ -409,32 +409,6 @@ function showError(message) {
   }
 }
 
-// ===== SETUP NAV DROPDOWN =====
-function setupNavDropdown() {
-  document.querySelectorAll(".nav-dropdown").forEach((dd) => {
-    const btn = dd.querySelector(".nav-link.has-caret");
-    const menu = dd.querySelector(".dropdown-menu");
-
-    if (!btn || !menu) return;
-
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      document.querySelectorAll(".nav-dropdown.open").forEach((x) => {
-        if (x !== dd) x.classList.remove("open");
-      });
-
-      dd.classList.toggle("open");
-    });
-  });
-
-  document.addEventListener("click", () => {
-    document
-      .querySelectorAll(".nav-dropdown.open")
-      .forEach((x) => x.classList.remove("open"));
-  });
-}
 
 // ===== SEARCH FUNCTIONALITY =====
 const searchInput = document.getElementById("searchInput");
@@ -551,7 +525,6 @@ function displaySearchResults(results, query) {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🚀 Explore Jurnal User initialized (Database Mode)");
 
-  setupNavDropdown();
   loadArticleDetail();
 
   if (typeof feather !== "undefined") feather.replace();

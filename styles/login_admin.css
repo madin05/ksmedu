@@ -296,7 +296,7 @@
 
 /* ADMIN INDICATOR & UPLOAD SECTION */
 
-.admin-logged-in {
+/* .admin-logged-in {
   background: linear-gradient(135deg, #4caf50, #8bc34a);
   color: white;
   padding: 8px 20px;
@@ -311,7 +311,7 @@
 .admin-logged-in i {
   width: 18px;
   height: 18px;
-}
+} */
 
 .upload-section.locked {
   position: relative;
@@ -347,119 +347,3 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* AUTH BUTTONS */
-
-.auth-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.btn-user-login,
-.btn-register {
-  padding: 10px 20px;
-  background: #2c3e50;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-user-login:hover,
-.btn-register:hover {
-  background: #34495e;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn-user-login:active,
-.btn-register:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.btn-user-login svg,
-.btn-register svg {
-  width: 16px;
-  height: 16px;
-}
-
-/* RESPONSIVE DESIGN */
-
-@media (max-width: 768px) {
-  .login-container {
-    padding: 40px 25px;
-  }
-
-  .login-header h2 {
-    font-size: 20px;
-  }
-
-  .login-logo {
-    width: 100px;
-  }
-
-  .form-options {
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  .upload-section.locked::after {
-    font-size: 14px;
-    padding: 12px 20px;
-    width: 80%;
-    text-align: center;
-  }
-
-  .auth-section {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .btn-user-login,
-  .btn-register {
-    width: 100%;
-    justify-content: center;
-    padding: 12px 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-container {
-    padding: 30px 20px;
-  }
-
-  .login-header h2 {
-    font-size: 18px;
-  }
-
-  .login-logo {
-    width: 80px;
-  }
-
-  .login-form input[type="email"],
-  .login-form input[type="password"] {
-    padding: 12px 15px;
-    font-size: 14px;
-  }
-
-  .btn-login {
-    padding: 12px;
-    font-size: 14px;
-  }
-
-  .login-footer {
-    font-size: 12px;
-  }
-}

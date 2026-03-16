@@ -1,14 +1,117 @@
 // ===== Toast Helper (Global) =====
-function showToast(msg, type = "ok") {
-  const t = document.getElementById("toast");
-  if (!t) return;
-  t.textContent = msg;
-  t.className = "toast" + (type === "error" ? " error" : "");
-  t.style.display = "block";
-  clearTimeout(window.__toastTimer__);
-  window.__toastTimer__ = setTimeout(() => {
-    t.style.display = "none";
-  }, 2000);
+function showToast(msg, type = "success", title = "") {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  
+  const iconMap = {
+    success: "check-circle",
+    error: "alert-circle",
+    warning: "alert-triangle",
+    info: "info"
+  };
+  
+  const icon = iconMap[type] || "info";
+  const toastTitle = title || (type === "error" ? "Pesan Kesalahan" : "Informasi");
+
+  toast.innerHTML = `
+    <button class="toast-close" title="Tutup">
+      <i data-feather="x"></i>
+    </button>
+    <div class="toast-icon">
+      <i data-feather="${icon}"></i>
+    </div>
+    <div class="toast-content">
+      <div class="toast-title">${toastTitle}</div>
+      <div class="toast-message">${msg}</div>
+    </div>
+    <div class="toast-progress">
+      <div class="toast-progress-bar"></div>
+    </div>
+  `;
+
+  container.appendChild(toast);
+  
+  // Replace icons
+  if (typeof feather !== "undefined") {
+    feather.replace();
+  }
+
+  // Animate in
+  setTimeout(() => toast.classList.add("show"), 100);
+
+  // Close functionality
+  const closeToast = () => {
+    toast.classList.add("hide");
+    toast.addEventListener("transitionend", () => {
+      toast.remove();
+    }, { once: true });
+  };
+
+  toast.querySelector(".toast-close").addEventListener("click", closeToast);
+
+  // Auto remove after time
+  const timer = setTimeout(closeToast, 4000);
+}
+
+// ===== Global Confirmation Modal (Global) =====
+function showConfirm(msg, onConfirm, title = "Konfirmasi Tindakan") {
+  let modal = document.getElementById("confirm-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "confirm-modal";
+    modal.innerHTML = `
+      <div class="confirm-overlay"></div>
+      <div class="confirm-content">
+        <div class="confirm-icon"><i data-feather="help-circle"></i></div>
+        <h3 id="confirm-title">Konfirmasi</h3>
+        <p id="confirm-message"></p>
+        <div class="confirm-actions">
+          <button class="btn-confirm-cancel">Batal</button>
+          <button class="btn-confirm-yes">Ya, Lanjutkan</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Replace icons
+    if (typeof feather !== "undefined") {
+      feather.replace();
+    }
+  }
+
+  const titleEl = modal.querySelector("#confirm-title");
+  const messageEl = modal.querySelector("#confirm-message");
+  const btnYes = modal.querySelector(".btn-confirm-yes");
+  const btnCancel = modal.querySelector(".btn-confirm-cancel");
+  const overlay = modal.querySelector(".confirm-overlay");
+
+  titleEl.textContent = title;
+  messageEl.textContent = msg;
+
+  const closeModal = () => {
+    modal.classList.remove("active");
+    document.body.style.overflow = "auto";
+  };
+
+  const handleConfirm = () => {
+    closeModal();
+    if (typeof onConfirm === "function") onConfirm();
+  };
+
+  // Assign events (clean previous listeners)
+  btnYes.onclick = handleConfirm;
+  btnCancel.onclick = closeModal;
+  overlay.onclick = closeModal;
+
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
 }
 
 // ===== Hash Search Handler =====
@@ -45,7 +148,7 @@ class PreviewViewer {
     this.currentId = id;
     const journal = this.resolveJournal(id);
     if (!journal) {
-      alert("Jurnal tidak ditemukan!");
+      showToast("Jurnal tidak ditemukan di sistem.", "error", "DATA TIDAK ADA");
       return;
     }
     this.openWithJournal(journal);
@@ -224,7 +327,7 @@ class EditJournalManager {
     const tag = this.tagInput.value.trim();
 
     if (!tag) {
-      alert("Masukkan tag terlebih dahulu");
+      showToast("Silakan masukkan tag terlebih dahulu.", "warning", "INPUT KOSONG");
       return;
     }
 
@@ -335,7 +438,7 @@ class EditJournalManager {
       }
     } catch (error) {
       console.error("Error loading journal:", error);
-      alert("Gagal memuat data jurnal: " + error.message);
+      showToast("Gagal memuat data jurnal: " + error.message, "error", "ERROR DATABASE");
     }
   }
 
@@ -502,7 +605,7 @@ class EditJournalManager {
       ".author-input-group",
     );
     if (authorGroups.length <= 1) {
-      alert("Minimal harus ada 1 penulis!");
+      showToast("Minimal harus ada satu penulis untuk artikel.", "warning", "VALIDASI GAGAL");
       return;
     }
     authorGroup.remove();
@@ -531,7 +634,7 @@ class EditJournalManager {
   async handleEditSubmit() {
     const authors = this.getAuthors();
     if (authors.length === 0) {
-      alert("Minimal harus ada 1 penulis!");
+      showToast("Minimal harus ada satu penulis untuk artikel.", "warning", "VALIDASI GAGAL");
       return;
     }
 
@@ -542,7 +645,7 @@ class EditJournalManager {
     const volume = document.getElementById("editVolume").value.trim();
 
     if (!judul || !abstrak) {
-      alert("Judul dan abstrak harus diisi!");
+      showToast("Judul dan abstrak wajib diisi.", "warning", "VALIDASI GAGAL");
       return;
     }
 
@@ -593,7 +696,7 @@ class EditJournalManager {
         throw new Error(result.message || "Failed to update journal");
       }
 
-      alert(" Jurnal berhasil diupdate!");
+      showToast("Perubahan jurnal telah disimpan ke sistem.", "success", "UPDATE BERHASIL");
       this.closeEditModal();
 
       if ("caches" in window) {
@@ -607,7 +710,7 @@ class EditJournalManager {
     } catch (error) {
       console.error("Edit journal error:", error);
       this.hideLoading();
-      alert("❌ Gagal update jurnal: " + error.message);
+      showToast("Gagal memperbarui data: " + error.message, "error", "UPDATE GAGAL");
     }
   }
 
@@ -726,13 +829,13 @@ window.deleteOpinion = async function (id, title) {
     });
     const result = await response.json();
     if (result.ok) {
-      alert("Opini berhasil dihapus!");
+      showToast("Artikel opini telah dihapus selamanya.", "success", "HAPUS BERHASIL");
       setTimeout(() => window.location.reload(), 500);
     } else {
       throw new Error(result.message || "Gagal menghapus");
     }
   } catch (error) {
-    alert("Gagal menghapus: " + error.message);
+      showToast("Gagal menghapus artikel: " + error.message, "error", "HAPUS GAGAL");
     if (card) {
       card.style.opacity = "1";
       card.style.pointerEvents = "auto";
@@ -781,7 +884,7 @@ window.openEditOpinionModal = async function (id) {
 
     if (typeof feather !== "undefined") feather.replace();
   } catch (error) {
-    alert("Gagal memuat data: " + error.message);
+      showToast("Gagal memuat data artikel: " + error.message, "error", "ERROR LOAD");
   }
 };
 
@@ -937,7 +1040,7 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           const result = await response.json();
           if (result.ok) {
-            alert("Opini berhasil diupdate!");
+            showToast("Artikel opini berhasil diperbarui.", "success", "UPDATE BERHASIL");
             document.getElementById("editModal").classList.remove("active");
             document.body.style.overflow = "auto";
             setTimeout(() => window.location.reload(), 500);
@@ -945,7 +1048,7 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error(result.message);
           }
         } catch (err) {
-          alert("Gagal update: " + err.message);
+          showToast("Gagal update opini: " + err.message, "error", "UPDATE GAGAL");
         }
       });
     }

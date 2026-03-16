@@ -168,7 +168,7 @@ class LoginManager {
         window.closeMobileMenu();
       }
 
-      alert("LOGIN BERHASIL\n\nSELAMAT DATANG, ADMIN");
+      showToast("Selamat datang kembali, Admin!", "success", "LOGIN BERHASIL");
 
       this.loginForm.reset();
 
@@ -178,37 +178,45 @@ class LoginManager {
         })
       );
     } else {
-      alert("LOGIN GAGAL\n\nEMAIL ATAU PASSWORD SALAH");
+      showToast("Email atau password yang Anda masukkan salah.", "error", "LOGIN GAGAL");
     }
   }
 
   logout() {
-    if (confirm("YAKIN MAU LOGOUT?")) {
-      this.isLoggedIn = false;
-      localStorage.removeItem("adminLoggedIn");
-      localStorage.removeItem("adminLoginTime");
+    showConfirm(
+      "Apakah Anda yakin ingin keluar dari sistem admin?",
+      () => {
+        this.isLoggedIn = false;
+        localStorage.removeItem("adminLoggedIn");
+        localStorage.removeItem("adminLoginTime");
 
-      // HAPUS JUGA DARI sessionStorage
-      sessionStorage.removeItem("userLoggedIn");
-      sessionStorage.removeItem("userType");
-      sessionStorage.removeItem("userEmail");
+        // HAPUS JUGA DARI sessionStorage
+        sessionStorage.removeItem("userLoggedIn");
+        sessionStorage.removeItem("userType");
+        sessionStorage.removeItem("userEmail");
 
-      this.updateLoginButton();
-      this.updateUploadSection();
-      
-      // Close mobile menu if it's open
-      if (typeof window.closeMobileMenu === 'function') {
-        window.closeMobileMenu();
-      }
+        this.updateLoginButton();
+        this.updateUploadSection();
 
-      alert("LOGOUT BERHASIL");
+        // Close mobile menu if it's open
+        if (typeof window.closeMobileMenu === "function") {
+          window.closeMobileMenu();
+        }
 
-      window.dispatchEvent(
-        new CustomEvent("adminLoginStatusChanged", {
-          detail: { isLoggedIn: false },
-        })
-      );
-    }
+        showToast(
+          "Anda telah keluar dari sistem admin.",
+          "success",
+          "LOGOUT BERHASIL"
+        );
+
+        window.dispatchEvent(
+          new CustomEvent("adminLoginStatusChanged", {
+            detail: { isLoggedIn: false },
+          })
+        );
+      },
+      "Konfirmasi Logout"
+    );
   }
 
   checkLoginStatus() {

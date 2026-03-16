@@ -11,139 +11,9 @@
     <link rel="shortcut icon" type="image/x-icon" href="./assets/favicon.ico" />
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="./styles/admin.css" />
 
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-        background: #f8f9fa;
-        color: #333;
-        line-height: 1.6;
-      }
-
-      /* ===== HEADER ===== */
-      header {
-        background: white;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-      }
-
-      .header-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px 40px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .logo img {
-        width: 80px;
-        height: auto;
-      }
-
-      nav {
-        display: flex;
-        gap: 32px;
-        align-items: center;
-      }
-
-      nav a {
-        text-decoration: none;
-        color: #64748b;
-        font-weight: 500;
-        font-size: 15px;
-        transition: color 0.3s;
-      }
-
-      nav a:hover {
-        color: #1e293b;
-      }
-
-      .nav-dropdown {
-        position: relative;
-      }
-
-      .nav-link.has-caret {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        cursor: pointer;
-      }
-
-      .nav-link.has-caret::after {
-        content: "";
-        width: 5px;
-        height: 5px;
-        border-right: 2px solid currentColor;
-        border-bottom: 2px solid currentColor;
-        transform: rotate(45deg);
-        margin-left: 4px;
-        transition: transform 0.2s;
-      }
-
-      .nav-dropdown.open .nav-link.has-caret::after {
-        transform: rotate(-135deg);
-      }
-
-      .dropdown-menu {
-        position: absolute;
-        top: calc(100% + 12px);
-        left: 0;
-        min-width: 180px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.2s;
-        overflow: hidden;
-      }
-
-      .nav-dropdown.open .dropdown-menu {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-
-      .dropdown-menu a {
-        display: block;
-        padding: 12px 16px;
-        color: #334155;
-        transition: background 0.2s;
-      }
-
-      .dropdown-menu a:hover {
-        background: #f1f5f9;
-        color: #1e293b;
-      }
-
-      .search-box {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 16px;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        background: #f8fafc;
-      }
-
-      .search-box input {
-        border: none;
-        outline: none;
-        font-size: 14px;
-        width: 200px;
-        background: transparent;
-      }
-
       /* ===== BREADCRUMB ===== */
       .breadcrumb {
         max-width: 900px;
@@ -561,6 +431,7 @@
         margin-bottom: 12px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
@@ -878,6 +749,44 @@
             </div>
           </div>
         </nav>
+
+        <div class="auth-section">
+          <a href="./login_user.html" class="btn-user-login">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            USER
+          </a>
+          <a href="#" class="btn-register">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+            ADMIN
+          </a>
+        </div>
       </div>
     </header>
 
@@ -1055,9 +964,44 @@
       </div>
     </div>
 
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+      <div class="modal-overlay"></div>
+      <div class="modal-content login-container">
+        <button type="button" class="close-modal" id="closeLoginModal">
+          <i data-feather="x"></i>
+        </button>
+        <div class="login-header">
+          <img src="./assets/main_logo.png" alt="KSM Education Logo" class="login-logo" />
+          <h2>ADMIN LOGIN</h2>
+          <p style="color: #666; font-size: 14px; margin-top: 8px">Login sebagai Administrator</p>
+        </div>
+        <form id="loginForm" class="login-form">
+          <div class="form-group">
+            <input type="email" id="loginEmail" placeholder="Masukan Email Admin" required />
+          </div>
+          <div class="form-group password-group">
+            <input type="password" id="loginPassword" placeholder="Masukan Password" required />
+            <button type="button" class="toggle-password" id="togglePassword">
+              <i data-feather="eye"></i>
+            </button>
+          </div>
+          <div class="form-options">
+            <label class="remember-me">
+              <input type="checkbox" id="rememberMe" />
+              <span>Remember Me</span>
+            </label>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+          </div>
+          <button type="submit" class="btn-login">MASUK</button>
+        </form>
+      </div>
+    </div>
+
     <script src="./js/pdf_text_extractor.js"></script>
     <script src="./js/explore_jurnal_user.js"></script>
     <script src="./js/mobile_menu.js"></script>
+    <script src="./js/login.js"></script>
     <script src="/ksmaja/js/api.js"></script>
     <script src="/ksmaja/js/storage.js"></script>
   </body>

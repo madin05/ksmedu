@@ -7,6 +7,7 @@
 @import url("opinions.css");
 @import url("index_responsive.css");
 @import url("social.css");
+@import url("toast.css");
 
 * {
   margin: 0;

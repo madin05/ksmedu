@@ -107,7 +107,7 @@
       <!-- Journal List Section -->
       <section id="journal" class="journal-list">
         <h2>ARTIKEL TERBARU</h2>
-        <div id="journalContainer"></div>
+        <div id="journalContainer" class="articles-grid"></div>
         <div id="latestArticlesNavAdmin"></div>
         <div
           id="viewAllContainer"
@@ -245,7 +245,7 @@
             </div>
 
             <div class="form-group">
-              <label>Tag/Keyword (Opsional)</label>
+              <label>Tag/Keyword<span>*</span></label>
               <div id="tagsContainerJurnal" class="tags-input-group">
                 <div class="tags-list tags-container"></div>
                 <div style="display: flex; gap: 8px">
@@ -477,7 +477,7 @@
             </div>
 
             <div class="form-group">
-              <label>Tag/Keyword (Opsional)</label>
+              <label>Tag/Keyword<span>*</span></label>
               <div id="tagsContainerOpini" class="tags-input-group">
                 <div class="tags-list tags-container"></div>
                 <div style="display: flex; gap: 8px">
@@ -624,7 +624,7 @@
             <input type="text" id="editJudulJurnal" required />
           </div>
           <div class="form-group">
-            <label>Tag/Keyword (Opsional)</label>
+            <label>Tag/Keyword<span class="required">*</span></label>
             <div id="editTagsContainer" class="tags-container"></div>
             <div style="display: flex; gap: 10px; margin-top: 10px">
               <input
@@ -851,7 +851,7 @@
     <script src="./js/tags_manager.js?v=20240316"></script>
     <!-- FIRST -->
     <script src="./js/file_upload.js"></script>
-    <script src="./js/pagination.js"></script>
+    <script src="./js/pagination_admin.js"></script>
 
     <!-- SECOND -->
     <script src="./js/dual_upload_handler.js"></script>

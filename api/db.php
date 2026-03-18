@@ -8,14 +8,15 @@ header('Content-Type: application/json; charset=utf-8');
 // header('Access-Control-Allow-Origin: http://localhost:3000');
 // header('Access-Control-Allow-Credentials: true');
 
-// Definisi konstanta dan variabel untuk koneksi database
-define('DB_PORT', '3306');
-define('DB_NAME', 'journal_system2');
+// Load environment variables
+require_once __DIR__ . '/env_loader.php';
 
-$DB_HOST = 'localhost';
-$DB_NAME = 'journal_system2';
-$DB_USER = 'root';
-$DB_PASS = '';
+// Definisi konstanta dan variabel untuk koneksi database
+$DB_HOST = getenv('DB_HOST') ?: 'localhost';
+$DB_NAME = getenv('DB_NAME') ?: 'journal_system2';
+$DB_USER = getenv('DB_USER') ?: 'root';
+$DB_PASS = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
+$DB_PORT = getenv('DB_PORT') ?: '3306';
 
 try {
     // Buat instance PDO baru untuk menghubungkan PHP ke MySQL

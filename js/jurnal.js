@@ -12,19 +12,18 @@ class JournalManager {
 
     // ===== 1) JANGAN JALAN DI HALAMAN USER DASHBOARD =====
     // Biarkan dashboard_user.js yang handle render untuk user
-    if (window.location.pathname.includes("dashboard_user.html")) {
-      console.warn(
-        "User dashboard page - JournalManager DISABLED (handled by dashboard_user.js)",
-      );
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes("dashboard_user.html")) {
+      console.warn("User dashboard page - JournalManager DISABLED (handled by dashboard_user.js)");
       return;
     }
 
-    if (window.location.pathname.includes("journals.html")) {
-      console.warn("journals.html - JournalManager DISABLED...");
+    if (path.includes("journals.html")) {
+      console.warn("journals.html - JournalManager DISABLED (handled by PaginationManager)");
       return;
     }
 
-    if (window.location.pathname.includes("opinions.html")) {
+    if (path.includes("opinions.html")) {
       console.warn("opinions.html - JournalManager DISABLED");
       return;
     }
@@ -464,9 +463,6 @@ class JournalManager {
             await window.statisticManager.fetchStatistics();
           }, 500);
         }
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
       } else {
         throw new Error(
           result.message || "Gagal menghapus jurnal dari database",

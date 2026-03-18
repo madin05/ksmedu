@@ -16,6 +16,17 @@ class OpinionsPageManager {
   }
 
   async init() {
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes("dashboard_admin.html")) {
+      console.warn("Dashboard admin page - OpinionsPageManager DISABLED (handled by JournalManager)");
+      return;
+    }
+
+    if (path.includes("opinions.html")) {
+        console.warn("opinions.html - OpinionsPageManager DISABLED (handled by PaginationManager)");
+        return;
+    }
+
     if (!this.container) {
       console.warn("Opinions container not found!");
       return;

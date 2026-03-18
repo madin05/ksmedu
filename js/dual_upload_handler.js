@@ -403,11 +403,15 @@ if (window._dualUploadHandlerLoaded) {
         const email = document.getElementById("emailJurnal").value.trim();
         const kontak = document.getElementById("kontakJurnal").value.trim();
         const abstrak = document.getElementById("abstrakJurnal").value.trim();
-        const volume = document.getElementById("volumeJurnal").value.trim(); // TAMBAH INI
+        const volume = document.getElementById("volumeJurnal").value.trim();
+        const tags = this.jurnalTagsManager.getTags();
 
-        if (!judul || !email || !kontak || !abstrak || !volume) {
-          // TAMBAH volume
-          alert("Semua field harus diisi!");
+        if (!judul || !email || !kontak || !abstrak || !volume || tags.length === 0) {
+          if (tags.length === 0) {
+            alert("Minimal harus ada 1 tag!");
+          } else {
+            alert("Semua field harus diisi!");
+          }
           this.isSubmittingJurnal = false;
           return;
         }
@@ -517,12 +521,7 @@ if (window._dualUploadHandlerLoaded) {
             detail: { id: createResult.id, action: "created" },
           })
         );
-
         this.resetJurnalForm();
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
       } catch (error) {
         console.error("Upload error:", error);
         this.hideLoading();
@@ -600,9 +599,14 @@ if (window._dualUploadHandlerLoaded) {
         const email = document.getElementById("emailOpini").value.trim();
         const kontak = document.getElementById("kontakOpini").value.trim();
         const abstrak = document.getElementById("abstrakOpini").value.trim();
+        const tags = this.opiniTagsManager.getTags();
 
-        if (!judul || !email || !kontak || !abstrak) {
-          alert("Semua field harus diisi!");
+        if (!judul || !email || !kontak || !abstrak || tags.length === 0) {
+          if (tags.length === 0) {
+            alert("Minimal harus ada 1 tag!");
+          } else {
+            alert("Semua field harus diisi!");
+          }
           return;
         }
 
@@ -704,12 +708,7 @@ if (window._dualUploadHandlerLoaded) {
             detail: { id: createResult.id, action: "created" },
           })
         );
-
         this.resetOpiniForm();
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
       } catch (error) {
         console.error("Upload error:", error);
         this.hideLoading();

@@ -25,7 +25,9 @@ class PaginationUser {
     this.setupIconSort();
     this.applyFiltersAndSort();
 
-    window.addEventListener(`${this.dataType}s:changed`, async () => {
+    const eventName = this.dataType === "jurnal" ? "journals:changed" : "opinions:changed";
+    window.addEventListener(eventName, async () => {
+      console.log(`PaginationUser catch event: ${eventName}`);
       await this.loadData();
       this.applyFiltersAndSort();
     });

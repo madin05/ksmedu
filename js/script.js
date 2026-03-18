@@ -408,6 +408,7 @@ class EditJournalManager {
       console.log("Journal data loaded:", journal);
 
       this.currentJournalId = journalId;
+      this.currentType = "jurnal";
 
       document.getElementById("editJournalId").value = journalId;
       document.getElementById("editJudulJurnal").value = journal.title || "";
@@ -650,6 +651,10 @@ class EditJournalManager {
     }
 
     const tags = this.getTags();
+    if (tags.length === 0) {
+      showToast("Minimal harus ada satu tag.", "warning", "VALIDASI GAGAL");
+      return;
+    }
     const pengurus = this.getPengurus();
 
     try {
@@ -692,21 +697,18 @@ class EditJournalManager {
 
       this.hideLoading();
 
-      if (!result.ok) {
-        throw new Error(result.message || "Failed to update journal");
-      }
-
       showToast("Perubahan jurnal telah disimpan ke sistem.", "success", "UPDATE BERHASIL");
       this.closeEditModal();
 
-      if ("caches" in window) {
-        caches.keys().then((names) => {
-          names.forEach((name) => caches.delete(name));
-        });
-      }
+      // Dispatch event to refresh lists without reload
+      const eventName = this.currentType === "jurnal" ? "journals:changed" : "opinions:changed";
+      window.dispatchEvent(new CustomEvent(eventName, { 
+        detail: { id: this.currentJournalId, action: "updated" } 
+      }));
 
-      window.location.href =
-        window.location.href.split("?")[0] + "?nocache=" + Date.now();
+      if (window.statisticManager) {
+        window.statisticManager.fetchStatistics();
+      }
     } catch (error) {
       console.error("Edit journal error:", error);
       this.hideLoading();
@@ -830,7 +832,9 @@ window.deleteOpinion = async function (id, title) {
     const result = await response.json();
     if (result.ok) {
       showToast("Artikel opini telah dihapus selamanya.", "success", "HAPUS BERHASIL");
-      setTimeout(() => window.location.reload(), 500);
+      window.dispatchEvent(new CustomEvent("opinions:changed", { 
+        detail: { id: id, action: "deleted" } 
+      }));
     } else {
       throw new Error(result.message || "Gagal menghapus");
     }
@@ -1029,8 +1033,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (window.editJournalManager) {
           const authors = window.editJournalManager.getAuthors();
           if (authors.length > 0) formData.append("authors", JSON.stringify(authors));
+          
           const tags = window.editJournalManager.getTags();
-          if (tags.length > 0) formData.append("tags", JSON.stringify(tags));
+          if (tags.length === 0) {
+            showToast("Minimal harus ada satu tag.", "warning", "VALIDASI GAGAL");
+            return;
+          }
+          formData.append("tags", JSON.stringify(tags));
         }
 
         try {
@@ -1043,7 +1052,15 @@ document.addEventListener("DOMContentLoaded", () => {
             showToast("Artikel opini berhasil diperbarui.", "success", "UPDATE BERHASIL");
             document.getElementById("editModal").classList.remove("active");
             document.body.style.overflow = "auto";
-            setTimeout(() => window.location.reload(), 500);
+            
+            // Dispatch event to refresh lists without reload
+            window.dispatchEvent(new CustomEvent("opinions:changed", { 
+              detail: { id: id, action: "updated" } 
+            }));
+
+            if (window.statisticManager) {
+              window.statisticManager.fetchStatistics();
+            }
           } else {
             throw new Error(result.message);
           }

@@ -101,22 +101,22 @@
     gap: 15px;
 }
 
-.contact-item {
+.footer-contact-item {
     display: flex;
     gap: 15px;
     font-size: 14px;
     color: #9ca3af;
 }
 
-.contact-item i, 
-.contact-item svg {
-    color: white;
+.footer-contact-item i, 
+.footer-contact-item svg {
+    color: #9ca3af;
     width: 18px;
     height: 18px;
     flex-shrink: 0;
 }
 
-.contact-item span {
+.footer-contact-item span {
     line-height: 1.4;
 }
 

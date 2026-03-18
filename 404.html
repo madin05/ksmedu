@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Halaman Tidak Ditemukan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/error.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="error-page">
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    
+    <div class="error-container">
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">Halaman Tidak Ditemukan</h2>
+        <p class="error-message">
+            Maaf, halaman yang Anda cari tidak dapat ditemukan. Mungkin link sudah kadaluwarsa atau terjadi kesalahan pengetikan URL.
+        </p>
+        <div class="error-actions">
+            <a href="index.html" class="btn-error btn-primary">
+                <i data-feather="home"></i> Kembali ke Beranda
+            </a>
+            <a href="javascript:history.back()" class="btn-error btn-secondary">
+                <i data-feather="arrow-left"></i> Kembali
+            </a>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>

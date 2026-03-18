@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Error - KSM Education</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/error.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body class="error-page">
+    <div class="bg-glow glow-1" style="background: var(--accent-red)"></div>
+    <div class="bg-glow glow-2" style="background: var(--accent-red)"></div>
+    
+    <div class="error-container">
+        <h1 class="error-code db">DB</h1>
+        <h2 class="error-title">Koneksi Database Terputus</h2>
+        <p class="error-message">
+            Kami tidak dapat terhubung ke database saat ini. Mohon pastikan layanan database (MySQL) sedang berjalan atau hubungi administrator.
+        </p>
+        <div class="error-actions">
+            <button onclick="window.location.reload()" class="btn-error btn-primary">
+                <i data-feather="database"></i> Coba Hubungkan Kembali
+            </button>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>

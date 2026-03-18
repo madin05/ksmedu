@@ -39,6 +39,7 @@ class PaginationManager {
 
   // ===== LOAD DATA FROM DATABASE =====
   async loadData() {
+    this.showSkeleton();
     try {
       const timestamp = Date.now();
       const endpoint =
@@ -119,6 +120,35 @@ class PaginationManager {
         views: parseInt(item.views) || 0,
         tags: parseJsonField(item.tags),
       };
+    }
+  }
+
+  showSkeleton() {
+    const container = document.querySelector(this.containerSelector);
+    if (!container) return;
+
+    container.innerHTML = "";
+    for (let i = 0; i < 6; i++) {
+      const skeleton = document.createElement("div");
+      skeleton.className = "skeleton-card";
+      skeleton.innerHTML = `
+        <div class="skeleton-image skeleton"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-title skeleton"></div>
+          <div class="skeleton-text skeleton"></div>
+          <div class="skeleton-text skeleton"></div>
+          <div class="skeleton-text short skeleton"></div>
+          <div class="skeleton-tag-container">
+            <div class="skeleton-tag skeleton"></div>
+            <div class="skeleton-tag skeleton"></div>
+          </div>
+          <div class="skeleton-meta">
+            <div class="skeleton-avatar skeleton"></div>
+            <div class="skeleton-text short skeleton"></div>
+          </div>
+        </div>
+      `;
+      container.appendChild(skeleton);
     }
   }
 

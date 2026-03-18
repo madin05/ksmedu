@@ -186,12 +186,8 @@ async function renderArticles() {
   const grid = document.getElementById("articlesGrid");
   const navUser = document.getElementById("latestArticlesNavUser");
 
-  grid.innerHTML = `
-    <div class="loading-state" style="text-align: center; padding: 60px 20px; color: #666;">
-      <div style="width: 50px; height: 50px; border: 4px solid rgba(0,0,0,0.1); border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-      <p>MEMUAT ARTIKEL...</p>
-    </div>
-  `;
+  showSkeletonUI();
+  
   if (navUser) navUser.innerHTML = "";
 
   articles = await loadArticles();
@@ -319,6 +315,35 @@ async function renderArticles() {
 
   feather.replace();
   console.log("Articles rendered, Share buttons ready");
+}
+
+function showSkeletonUI() {
+  const grid = document.getElementById("articlesGrid");
+  if (!grid) return;
+
+  grid.innerHTML = "";
+  for (let i = 0; i < 6; i++) {
+    const skeleton = document.createElement("div");
+    skeleton.className = "skeleton-card";
+    skeleton.innerHTML = `
+      <div class="skeleton-image skeleton"></div>
+      <div class="skeleton-content">
+        <div class="skeleton-title skeleton"></div>
+        <div class="skeleton-text skeleton"></div>
+        <div class="skeleton-text skeleton"></div>
+        <div class="skeleton-text short skeleton"></div>
+        <div class="skeleton-tag-container">
+          <div class="skeleton-tag skeleton"></div>
+          <div class="skeleton-tag skeleton"></div>
+        </div>
+        <div class="skeleton-meta">
+          <div class="skeleton-avatar skeleton"></div>
+          <div class="skeleton-text short skeleton"></div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(skeleton);
+  }
 }
 
 // ===== LOGOUT HANDLER =====

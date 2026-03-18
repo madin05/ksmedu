@@ -58,6 +58,7 @@ class JournalManager {
 
   // ===== LOAD JOURNALS FROM DATABASE =====
   async loadJournals() {
+    this.showSkeleton();
     try {
       const timestamp = Date.now();
       const journalRes = await fetch(
@@ -151,6 +152,56 @@ class JournalManager {
       contact: j.contact || "",
       views: parseInt(j.views) || 0,
     };
+  }
+
+  showSkeleton() {
+    if (!this.journalContainer) return;
+    this.journalContainer.innerHTML = "";
+    
+    // Check if we are on index or dashboard
+    const isDashboard = window.location.pathname.includes("dashboard_admin.html") || 
+                        window.location.pathname.includes("index.html");
+    
+    const count = isDashboard ? 6 : 9;
+
+    for (let i = 0; i < count; i++) {
+      if (window.location.pathname.includes("index.html")) {
+        // Compact list (Index Page)
+        const skeleton = document.createElement("div");
+        skeleton.className = "skeleton-compact-item";
+        skeleton.innerHTML = `
+          <div class="skeleton-thumb skeleton"></div>
+          <div class="skeleton-body">
+            <div class="skeleton-title skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text short skeleton"></div>
+          </div>
+        `;
+        this.journalContainer.appendChild(skeleton);
+      } else {
+        // Grid cards
+        const skeleton = document.createElement("div");
+        skeleton.className = "skeleton-card";
+        skeleton.innerHTML = `
+          <div class="skeleton-image skeleton"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text short skeleton"></div>
+            <div class="skeleton-tag-container">
+              <div class="skeleton-tag skeleton"></div>
+              <div class="skeleton-tag skeleton"></div>
+            </div>
+            <div class="skeleton-meta">
+              <div class="skeleton-avatar skeleton"></div>
+              <div class="skeleton-text short skeleton"></div>
+            </div>
+          </div>
+        `;
+        this.journalContainer.appendChild(skeleton);
+      }
+    }
   }
 
   // ===== RENDER JOURNALS =====

@@ -33,6 +33,7 @@ class PaginationUser {
 
   // ===== LOAD DATA =====
   async loadData() {
+    this.showSkeleton();
     try {
       const t = Date.now();
       const endpoint =
@@ -93,6 +94,37 @@ class PaginationUser {
           "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=400&fit=crop",
         views: parseInt(item.views) || 0,
       };
+    }
+  }
+
+  showSkeleton() {
+    const container = document.querySelector(this.containerSelector);
+    if (!container) return;
+
+    container.innerHTML = "";
+    const count = this.dataType === "jurnal" ? 6 : 6; // default skeletons
+
+    for (let i = 0; i < count; i++) {
+      const skeleton = document.createElement("div");
+      skeleton.className = "skeleton-card";
+      skeleton.innerHTML = `
+        <div class="skeleton-image skeleton"></div>
+        <div class="skeleton-content">
+          <div class="skeleton-title skeleton"></div>
+          <div class="skeleton-text skeleton"></div>
+          <div class="skeleton-text skeleton"></div>
+          <div class="skeleton-text short skeleton"></div>
+          <div class="skeleton-tag-container">
+            <div class="skeleton-tag skeleton"></div>
+            <div class="skeleton-tag skeleton"></div>
+          </div>
+          <div class="skeleton-meta">
+            <div class="skeleton-avatar skeleton"></div>
+            <div class="skeleton-text short skeleton"></div>
+          </div>
+        </div>
+      `;
+      container.appendChild(skeleton);
     }
   }
 

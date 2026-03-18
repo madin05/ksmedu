@@ -1,10 +1,4 @@
-<IfModule mod_mime.c>
-    AddType application/pdf .pdf
-</IfModule>
 
-<IfModule mod_headers.c>
-    <FilesMatch "\.pdf$">
-        Header set Content-Type "application/pdf"
-        Header set Content-Disposition "inline"
-    </FilesMatch>
-</IfModule>
+ErrorDocument 404 /ksmaja/404.html
+ErrorDocument 500 /ksmaja/500.html
+ErrorDocument 505 /ksmaja/505.html

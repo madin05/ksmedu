@@ -27,10 +27,19 @@ try {
     ]);
 } catch (Exception $e) {
     // 4. Penanganan Error Koneksi
-    // Jika koneksi gagal, set kode respon HTTP 500 (Server Error)
     http_response_code(500);
 
-    // Kirim pesan error dalam format JSON dan hentikan eksekusi
+    // Cek apakah request berasal dari browser (bukan AJAX/Fetch)
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    $isApiCall = strpos($_SERVER['REQUEST_URI'], '/api/') !== false;
+
+    if (!$isAjax && !$isApiCall) {
+        // Jika diakses langsung via browser, redirect ke halaman error premium
+        header('Location: /ksmaja/db_error.html');
+        exit;
+    }
+
+    // Kirim pesan error dalam format JSON untuk API/AJAX
     echo json_encode(['ok' => false, 'message' => 'DB connection failed']);
     exit;
 }

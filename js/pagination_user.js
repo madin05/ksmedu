@@ -107,7 +107,7 @@ class PaginationUser {
     if (this.filteredItems.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">${this.dataType === "jurnal" ? "📚" : "📝"}</div>
+          <div class="empty-state-icon"></div>
           <h3>Tidak Ada ${this.dataType === "jurnal" ? "Jurnal" : "Opini"}</h3>
           <p>Belum ada artikel yang tersedia</p>
         </div>`;
@@ -222,7 +222,7 @@ class PaginationUser {
         </div>`;
     }
 
-    // Cover click → explore
+    // Cover click - explore
     const cover = card.querySelector(".journal-cover, .opinion-cover");
     if (cover) {
       cover.addEventListener("click", () => (window.location.href = exploreUrl));
@@ -243,20 +243,22 @@ class PaginationUser {
   // ===== SHARE =====
   handleShare(item, url) {
     const fullUrl = window.location.origin + "/" + url;
-    if (navigator.share) {
-      navigator.share({ title: item.title, url: fullUrl }).catch((err) => {
-        if (err.name !== "AbortError") this.copyToClipboard(fullUrl);
-      });
-    } else {
-      this.copyToClipboard(fullUrl);
-    }
+    this.copyToClipboard(fullUrl, item.title);
   }
 
-  copyToClipboard(url) {
+  copyToClipboard(url, title = "") {
+    const notify = (msg, subMsg = "") => {
+      if (typeof showToast === "function") {
+        showToast(subMsg ? `"${subMsg}"` : "", "success", msg);
+      } else {
+        alert(msg + (subMsg ? "\n" + subMsg : ""));
+      }
+    };
+
     if (navigator.clipboard?.writeText) {
       navigator.clipboard
         .writeText(url)
-        .then(() => alert("Link berhasil disalin! 📋"));
+        .then(() => notify("Link berhasil disalin!", title));
     } else {
       const ta = document.createElement("textarea");
       ta.value = url;
@@ -265,7 +267,7 @@ class PaginationUser {
       ta.select();
       try {
         document.execCommand("copy");
-        alert("Link berhasil disalin! 📋");
+        notify("Link berhasil disalin!", title);
       } catch {
         prompt("Copy link ini:", url);
       }

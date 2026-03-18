@@ -19,14 +19,14 @@ if (typeof PDFTextExtractor !== "undefined") {
 
 // ===== GET ARTICLE BY ID FROM DATABASE =====
 async function getArticleById(id, type) {
-  console.log("📥 Getting article from database:", id, type);
+  console.log("Getting article from database:", id, type);
 
   try {
     if (type === "jurnal") {
       const response = await fetch(`/ksmaja/api/get_journal.php?id=${id}`);
       const data = await response.json();
 
-      console.log("📦 API Response:", data);
+      console.log("API Response:", data);
 
       if (data.ok && data.journal) {
         const j = data.journal;
@@ -93,7 +93,7 @@ async function getArticleById(id, type) {
       const response = await fetch(`/ksmaja/api/get_opinion.php?id=${id}`);
       const data = await response.json();
 
-      console.log("📦 Opinion Response:", data);
+      console.log("Opinion Response:", data);
 
       const o = data.opinion || data.result;
 
@@ -206,7 +206,7 @@ async function loadArticleDetail() {
 
 // ===== DISPLAY ARTICLE =====
 async function displayArticle(article, type) {
-  console.log("📄 Displaying article:", article.title);
+  console.log("Displaying article:", article.title);
 
   // Title
   const titleElement = document.getElementById("articleTitle");
@@ -523,7 +523,7 @@ function displaySearchResults(results, query) {
 
 // ===== INITIALIZE =====
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 Explore Jurnal User initialized (Database Mode)");
+  console.log("Explore Jurnal User initialized (Database Mode)");
 
   loadArticleDetail();
 

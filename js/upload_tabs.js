@@ -8,12 +8,12 @@
     const opiniTab = document.getElementById("opiniTab");
 
     if (tabs.length === 0 || !jurnalTab || !opiniTab) {
-      console.warn("⚠️ Tabs not ready, retrying...");
+      console.warn("Tabs not ready, retrying...");
       setTimeout(initTabs, 100);
       return;
     }
 
-    console.log("🔧 Tabs found:", tabs.length);
+    console.log("Tabs found:", tabs.length);
 
     // Set initial state
     jurnalTab.style.display = "block";
@@ -35,7 +35,7 @@
         e.stopPropagation();
 
         const targetTab = this.getAttribute("data-tab");
-        console.log("🔄 Switching to:", targetTab);
+        console.log("Switching to:", targetTab);
 
         // Remove all active from tabs
         newTabs.forEach((t) => t.classList.remove("active"));

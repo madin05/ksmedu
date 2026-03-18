@@ -165,12 +165,12 @@ class JournalManager {
     if (this.journals.length === 0) {
       this.journalContainer.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">📚</div>
+          <div class="empty-state-icon"></div>
           <h3>Belum Ada Jurnal</h3>
           <p>Upload jurnal pertama kamu di form di bawah!</p>
         </div>
       `;
-      updateLatestNav(this.journals); // ← panggil nav
+      updateLatestNav(this.journals); // panggil nav
       return;
     }
 
@@ -190,7 +190,7 @@ class JournalManager {
       feather.replace();
     }
 
-    // ← panggil nav setiap kali render
+    // panggil nav setiap kali render
     updateLatestNav(this.journals);
   }
 
@@ -345,7 +345,7 @@ class JournalManager {
       </div>
     `;
 
-    // Cover click → explore page (admin & user)
+    // Cover click - explore page (admin & user)
     const coverDiv = card.querySelector('div[style*="height: 200px"]');
     if (coverDiv) {
       coverDiv.style.cursor = "pointer";
@@ -475,7 +475,7 @@ class JournalManager {
     if (!this.journalContainer) return;
     this.journalContainer.innerHTML = "";
     if (filtered.length === 0) {
-      this.journalContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><h3>Tidak Ada Hasil</h3><p>Tidak ditemukan jurnal dengan kata kunci "${query}"</p></div>`;
+      this.journalContainer.innerHTML = `<div class="empty-state"><div class="empty-state-icon"></div><h3>Tidak Ada Hasil</h3><p>Tidak ditemukan jurnal dengan kata kunci "${query}"</p></div>`;
       return;
     }
     filtered.forEach((journal) => {

@@ -168,7 +168,7 @@ async function updateArticleViews(id, type) {
         type: type === "opini" ? "opinion" : "journal",
       }),
     });
-    console.log("✓ View updated for:", id);
+    console.log("View updated for:", id);
   } catch (error) {
     console.warn("Failed to update views:", error);
   }
@@ -199,7 +199,7 @@ async function renderArticles() {
   if (articles.length === 0) {
     grid.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon">📄</div>
+        <div class="empty-state-icon"></div>
         <h3>BELUM ADA ARTIKEL</h3>
         <p>ARTIKEL AKAN MUNCUL DI SINI SETELAH ADMIN MENGUPLOAD JURNAL</p>
       </div>
@@ -318,7 +318,7 @@ async function renderArticles() {
   }
 
   feather.replace();
-  console.log("✓ Articles rendered, Share buttons ready");
+  console.log("Articles rendered, Share buttons ready");
 }
 
 // ===== LOGOUT HANDLER =====
@@ -438,44 +438,10 @@ function setupSearch() {
   }
 }
 
-// ===== TOAST NOTIFICATION =====
-function showToast(message, type = "info") {
-  const toast = document.createElement("div");
-  toast.className = `toast-notification ${type}`;
-  toast.innerHTML = message;
-
-  Object.assign(toast.style, {
-    position: "fixed",
-    bottom: "30px",
-    right: "30px",
-    background:
-      type === "success" ? "#10b981" : type === "error" ? "#ef4444" : "#3b82f6",
-    color: "white",
-    padding: "16px 24px",
-    borderRadius: "12px",
-    boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
-    zIndex: "10000",
-    animation: "slideInUp 0.3s ease",
-    maxWidth: "400px",
-    fontSize: "15px",
-    fontWeight: "500",
-    lineHeight: "1.5",
-  });
-
-  document.body.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.animation = "fadeOut 0.3s ease forwards";
-    setTimeout(() => {
-      if (toast.parentElement) {
-        toast.remove();
-      }
-    }, 300);
-  }, 3000);
-}
+// Local showToast removed in favor of global showToast from script.js
 
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("🚀 Initializing User Dashboard (Database Mode)...");
+  console.log("Initializing User Dashboard (Database Mode)...");
 
   if (typeof StatisticsManager !== "undefined" && !window.statsManager) {
     window.statsManager = new StatisticsManager();
@@ -489,7 +455,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await renderArticles();
 
   feather.replace();
-  console.log("✓ User Dashboard ready");
+  console.log("User Dashboard ready");
 });
 
 // ===== SHARE MANAGER =====
@@ -536,7 +502,7 @@ class ShareManager {
       true,
     );
 
-    console.log("✓ Share event listeners attached");
+    console.log("Share event listeners attached");
   }
 
   handleShare(articleId, articleType, articleTitle) {
@@ -598,10 +564,14 @@ class ShareManager {
   }
 
   showShareSuccess(title) {
-    const truncatedTitle =
-      title.length > 40 ? title.substring(0, 40) + "..." : title;
-    const message = `✓ Link berhasil disalin!<br><small style="opacity: 0.8">"${truncatedTitle}"</small>`;
-    showToast(message, "success");
+    if (typeof showToast === "function") {
+      showToast('"' + title + '"', "success", "Link berhasil disalin!");
+    } else {
+      const truncatedTitle =
+        title.length > 40 ? title.substring(0, 40) + "..." : title;
+      const message = `Link berhasil disalin!\n"${truncatedTitle}"`;
+      alert(message);
+    }
   }
 }
 
@@ -646,7 +616,7 @@ class DynamicCategoriesManager {
       this.processArticleTags(allArticles);
       this.renderCategories();
 
-      console.log(`✓ Loaded ${this.categories.size} dynamic categories`);
+      console.log(`Loaded ${this.categories.size} dynamic categories`);
     } catch (error) {
       console.error("Error loading categories:", error);
       this.renderFallbackCategories();
@@ -723,7 +693,7 @@ class DynamicCategoriesManager {
       )
       .join("");
 
-    console.log(`✓ Rendered ${topCategories.length} categories to UI`);
+    console.log(`Rendered ${topCategories.length} categories to UI`);
   }
 
   renderFallbackCategories() {
@@ -732,7 +702,7 @@ class DynamicCategoriesManager {
 
     grid.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px 0;">
-        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">📂</div>
+        <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></div>
         <p>Belum ada kategori.</p>
         <small style="opacity: 0.7;">Kategori akan muncul otomatis dari tags artikel.</small>
       </div>
@@ -747,7 +717,7 @@ class DynamicCategoriesManager {
 }
 
 // ===== INITIALIZE =====
-console.log("🔧 Initializing Share & Dynamic Categories...");
+console.log("Initializing Share & Dynamic Categories...");
 
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
@@ -759,43 +729,14 @@ if (document.readyState === "loading") {
   window.dynamicCategoriesManager = new DynamicCategoriesManager();
 }
 
-// ===== STYLES =====
+// Internal styles removed in favor of global CSS
 const styles = document.createElement("style");
 styles.textContent = `
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-
-  @keyframes slideInUp {
-    from {
-      transform: translateY(100px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .toast-notification {
-      right: 15px !important;
-      left: 15px !important;
-      bottom: 20px !important;
-      max-width: calc(100% - 30px) !important;
-    }
-  }
 `;
 document.head.appendChild(styles);
 
-console.log("✓ Dashboard User initialized - Share button positioning fixed");
+console.log("Dashboard User initialized - Share button positioning fixed");

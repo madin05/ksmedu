@@ -608,11 +608,6 @@ body.menu-open {
 
 /* Focus styles for keyboard navigation */
 @media (max-width: 768px) {
-  /* .hamburger-menu:focus {
-    outline: 2px solid #2c5f7d;
-    outline-offset: 2px;
-  } */
-
   nav a:focus,
   .nav-link.has-caret:focus {
     outline: 2px solid #2c5f7d;

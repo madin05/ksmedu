@@ -1,5 +1,5 @@
 // ===== PAGINATION ADMIN - journals.html & opinions.html =====
-// Admin-only: dropdown ⋮ menu (Detail, Edit, Hapus, Share)
+// Admin-only: dropdown menu (Detail, Edit, Hapus, Share)
 // Diinit oleh script.js, BUKAN auto-init
 
 class PaginationManager {
@@ -133,7 +133,7 @@ class PaginationManager {
     if (this.filteredItems.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">${this.dataType === "jurnal" ? "📚" : "📝"}</div>
+          <div class="empty-state-icon"></div>
           <h3>Tidak Ada ${this.dataType === "jurnal" ? "Jurnal" : "Opini"}</h3>
           <p>Belum ada ${this.dataType} yang tersedia</p>
         </div>
@@ -157,7 +157,7 @@ class PaginationManager {
     }
   }
 
-  // ===== CREATE CARD (ADMIN - dropdown ⋮ menu) =====
+  // ===== CREATE CARD (ADMIN - dropdown menu) =====
   createCard(item) {
     const card = document.createElement("div");
     card.className =

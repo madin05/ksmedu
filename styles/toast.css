@@ -4,11 +4,11 @@
 
 #toast-container {
     position: fixed;
-    top: 24px;
+    bottom: 24px;
     right: 24px;
     z-index: 10000;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 12px;
     pointer-events: none;
 }
@@ -64,11 +64,20 @@
 
 /* Success State */
 .toast-success {
-    border-left: 5px solid #10b981;
+    background: #ffffff;
+    border: none;
+}
+.toast-success .toast-title,
+.toast-success .toast-message,
+.toast-success .toast-close {
+    color: #2c2c2c;
 }
 .toast-success .toast-icon {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
+    background: rgba(255, 255, 255, 0.2);
+    color: #2c2c2c;
+}
+.toast-success .toast-close:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* Error State */
@@ -109,7 +118,7 @@
 .toast-progress-bar {
     height: 100%;
     width: 100%;
-    background: currentColor;
+    background: #1976d2;
     border-bottom-left-radius: 12px;
     transform-origin: left;
     transform: scaleX(1);

@@ -1,12 +1,12 @@
 // ===== STATISTICS MANAGER - DATABASE VERSION (NO CACHE) =====
 class StatisticsManager {
   constructor() {
-    console.log("🔧 StatisticsManager constructor called");
+    console.log("StatisticsManager constructor called");
 
     this.articleCountElement = document.getElementById("articleCount");
     this.visitorCountElement = document.getElementById("visitorCount");
 
-    console.log("📍 Elements found:", {
+    console.log("Elements found:", {
       articleCount: this.articleCountElement ? "" : "",
       visitorCount: this.visitorCountElement ? "" : "",
     });
@@ -22,7 +22,7 @@ class StatisticsManager {
       return;
     }
 
-    console.log("🚀 StatisticsManager initializing...");
+    console.log("StatisticsManager initializing...");
 
     if (this.articleCountElement) this.articleCountElement.textContent = "0";
     if (this.visitorCountElement) this.visitorCountElement.textContent = "0";
@@ -30,7 +30,7 @@ class StatisticsManager {
     await this.loadStatisticsFromDatabase();
     await this.trackVisitorToDatabase();
 
-    console.log("📊 Starting animation with values:", {
+    console.log("Starting animation with values:", {
       articles: this.currentArticles,
       visitors: this.currentVisitors,
     });
@@ -48,7 +48,7 @@ class StatisticsManager {
   async loadStatisticsFromDatabase() {
     try {
       const timestamp = Date.now();
-      console.log(`📥 Fetching stats from API... (t=${timestamp})`);
+      console.log(`Fetching stats from API... (t=${timestamp})`);
 
       const response = await fetch(`/ksmaja/api/get_stats.php?t=${timestamp}`, {
         cache: "no-store",
@@ -59,7 +59,7 @@ class StatisticsManager {
       });
 
       const data = await response.json();
-      console.log("📦 Stats API response:", data);
+      console.log("Stats API response:", data);
 
       if (data.ok && data.stats) {
         this.currentArticles = data.stats.total_articles || 0;
@@ -69,7 +69,7 @@ class StatisticsManager {
           visitors: this.currentVisitors,
         });
       } else {
-        console.warn("⚠️ Stats API returned not OK");
+        console.warn("Stats API returned not OK");
       }
     } catch (error) {
       console.error(" Error loading stats:", error);
@@ -117,15 +117,15 @@ class StatisticsManager {
   }
 
   startCounterAnimation() {
-    console.log("🎬 Starting counter animation");
+    console.log("Starting counter animation");
 
     if (this.articleCountElement) {
-      console.log(`   → Animating articles: 0 → ${this.currentArticles}`);
+      console.log(`   Animating articles: 0 to ${this.currentArticles}`);
       this.animateCounter(this.articleCountElement, 0, this.currentArticles, 700);
     }
 
     if (this.visitorCountElement) {
-      console.log(`   → Animating visitors: 0 → ${this.currentVisitors}`);
+      console.log(`   Animating visitors: 0 to ${this.currentVisitors}`);
       this.animateCounter(this.visitorCountElement, 0, this.currentVisitors, 900);
     }
   }
@@ -133,7 +133,7 @@ class StatisticsManager {
   animateCounter(element, start, end, duration) {
     if (!element) return;
 
-    console.log(`🔄 Animating ${element.id}: ${start} → ${end}`);
+    console.log(`Animating ${element.id}: ${start} to ${end}`);
 
     element.classList.add("counting");
     const startTime = performance.now();
@@ -171,7 +171,7 @@ class StatisticsManager {
 
 // Auto init with MORE aggressive DOM checking
 if (document.readyState === "loading") {
-  console.log("⏳ DOM still loading, waiting for DOMContentLoaded...");
+  console.log("DOM still loading, waiting for DOMContentLoaded...");
   document.addEventListener("DOMContentLoaded", () => {
     console.log(" DOM ready, initializing StatisticsManager");
     localStorage.removeItem("siteStatisticsCache");

@@ -104,13 +104,45 @@
 }
 
 .btn-download {
-  background: linear-gradient(135deg, #4caf50, #8bc34a);
-  color: white;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 15px;
+  color: #212121;
+  z-index: 1;
+  background: #e8e8e8;
+  position: relative;
+  font-weight: 1000;
+  font-size: 17px;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  transition: all 250ms;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-download::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius: 15px;
+  background-color: #3b82f6;
+  z-index: -1;
+  transition: all 250ms;
 }
 
 .btn-download:hover {
-  background: linear-gradient(135deg, #45a049, #7cb342);
-  transform: translateY(-1px);
+  color: #e8e8e8;
+}
+
+.btn-download:hover::before {
+  width: 100%;
 }
 
 .btn-edit {
@@ -643,7 +675,7 @@
 @media (max-width: 768px) {
   /* Show hamburger */
   .hamburger-menu {
-    display: flex;
+    display: flex !important;
     order: 2;
     margin-left: auto;
   }

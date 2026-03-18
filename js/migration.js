@@ -2,7 +2,7 @@
 // Run this once to migrate all localStorage data to database
 
 (async function() {
-    console.log('🚀 Starting automatic migration...');
+    console.log('Starting automatic migration...');
     
     const results = {
         journals: { success: 0, failed: 0, skipped: 0 },
@@ -104,18 +104,18 @@
 
     // 3. Print Summary
     results.total = results.journals.success + results.opinions.success;
-    console.log('\n📊 Migration Summary:');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('\nMigration Summary:');
+    console.log('-----------------------------');
     console.log(`Journals: ${results.journals.success} success, ${results.journals.failed} failed, ${results.journals.skipped} skipped`);
     console.log(`Opinions: ${results.opinions.success} success, ${results.opinions.failed} failed, ${results.opinions.skipped} skipped`);
     console.log(`\nTotal migrated: ${results.total} items`);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('-----------------------------');
 
     if (results.total > 0) {
         console.log(' Migration completed successfully!');
-        console.log('💡 You can now safely clear localStorage data.');
+        console.log('You can now safely clear localStorage data.');
     } else {
-        console.log('ℹ️ No new data to migrate.');
+        console.log('No new data to migrate.');
     }
 
     return results;

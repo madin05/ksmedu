@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
@@ -259,7 +259,7 @@
 
       /* ===== PDF SECTION ===== */
       .pdf-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1e293b 0%, #2c3e50 100%);
         padding: 32px;
         border-radius: 16px;
         text-align: center;
@@ -298,13 +298,45 @@
       }
 
       .btn-download {
-        background: white;
-        color: #667eea;
+        padding: 15px 25px;
+        border: none;
+        border-radius: 15px;
+        color: #212121;
+        z-index: 1;
+        background: #e8e8e8;
+        position: relative;
+        font-weight: 1000;
+        font-size: 17px;
+        -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+        box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+        transition: all 250ms;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-download::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0;
+        border-radius: 15px;
+        background-color: #3b82f6;
+        z-index: -1;
+        transition: all 250ms;
       }
 
       .btn-download:hover {
+        color: #e8e8e8;
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-download:hover::before {
+        width: 100%;
       }
 
       .btn-view {
@@ -480,20 +512,22 @@
       .hamburger-menu {
         display: none;
         flex-direction: column;
-        gap: 5px;
+        justify-content: space-around;
+        width: 30px;
+        height: 24px;
         background: none;
         border: none;
         cursor: pointer;
-        padding: 8px;
-        z-index: 1001;
+        padding: 0;
+        z-index: 1010;
         transition: all 0.3s ease;
       }
 
       .hamburger-menu span {
         display: block;
-        width: 25px;
+        width: 100%;
         height: 3px;
-        background: #2c3e50;
+        background: #2c3e50 !important;
         transition: all 0.3s ease;
         border-radius: 3px;
       }
@@ -545,13 +579,16 @@
       @media (max-width: 768px) {
         .header-container {
           padding: 16px 24px;
-          flex-wrap: wrap;
-          gap: 1rem;
+          display: flex !important;
+          flex-direction: row !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          flex-wrap: nowrap !important;
         }
 
         .logo {
-          order: 1;
-          flex: 0 0 auto;
+          order: 1 !important;
+          flex: 0 0 auto !important;
         }
 
         .logo img {
@@ -559,11 +596,17 @@
           height: auto;
         }
 
+        .auth-section {
+          display: none !important;
+        }
+
         /* Show hamburger */
         .hamburger-menu {
-          display: flex;
-          order: 2;
-          margin-left: auto;
+          display: flex !important;
+          order: 2 !important;
+          margin-left: auto !important;
+          position: relative;
+          z-index: 1010;
         }
 
         /* Mobile Navigation - Sidebar */
@@ -758,6 +801,7 @@
               <a href="./opinions.html">Opini &amp; Berita</a>
             </div>
           </div>
+          <a href="./dashboard_admin.html#upload">UPLOAD</a>
         </nav>
 
         <div class="auth-section">
@@ -765,10 +809,7 @@
             <i data-feather="user"></i>
             USER
           </a>
-          <a href="#" class="btn-register">
-            <i data-feather="layers"></i>
-            ADMIN
-          </a>
+          <a href="#" class="btn-register"> ADMIN </a>
         </div>
       </div>
     </header>
@@ -955,16 +996,32 @@
           <i data-feather="x"></i>
         </button>
         <div class="login-header">
-          <img src="./assets/main_logo.png" alt="KSM Education Logo" class="login-logo" />
+          <img
+            src="./assets/main_logo.png"
+            alt="KSM Education Logo"
+            class="login-logo"
+          />
           <h2>ADMIN LOGIN</h2>
-          <p style="color: #666; font-size: 14px; margin-top: 8px">Login sebagai Administrator</p>
+          <p style="color: #666; font-size: 14px; margin-top: 8px">
+            Login sebagai Administrator
+          </p>
         </div>
         <form id="loginForm" class="login-form">
           <div class="form-group">
-            <input type="email" id="loginEmail" placeholder="Masukan Email Admin" required />
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="Masukan Email Admin"
+              required
+            />
           </div>
           <div class="form-group password-group">
-            <input type="password" id="loginPassword" placeholder="Masukan Password" required />
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Masukan Password"
+              required
+            />
             <button type="button" class="toggle-password" id="togglePassword">
               <i data-feather="eye" id="eyeIcon"></i>
             </button>
@@ -985,6 +1042,7 @@
     <script src="./js/explore_jurnal_user.js"></script>
     <script src="./js/mobile_menu.js"></script>
     <script src="./js/login.js"></script>
+    <script src="./js/script.js"></script>
     <script src="/ksmaja/js/api.js"></script>
     <script src="/ksmaja/js/storage.js"></script>
   </body>

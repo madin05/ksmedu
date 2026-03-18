@@ -177,7 +177,7 @@ class PreviewViewer {
     const authorsText = Array.isArray(j.author)
       ? j.author.join(", ")
       : j.author || "Unknown";
-    this.info.textContent = `${j.date || ""} • ${authorsText}`;
+    this.info.textContent = `${j.date || ""}  ${authorsText}`;
     this.body.innerHTML = "";
 
     const ext = (j.fileName || "").split(".").pop().toLowerCase();
@@ -950,7 +950,7 @@ function setupOpinionsPageControls() {
 
 // ===== INITIALIZE ALL SYSTEMS =====
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🚀 DOM ready, initializing...");
+  console.log("DOM ready, initializing...");
 
   // Clear localStorage cache
   localStorage.removeItem("journals");

@@ -569,7 +569,7 @@ if (window._dualUploadHandlerLoaded) {
 
     async handleOpiniSubmit() {
       if (this.isSubmittingOpini) {
-        console.warn("⏳ Submit sedang diproses, mohon tunggu...");
+        console.warn("Submit sedang diproses, mohon tunggu...");
         return;
       }
 
@@ -711,7 +711,7 @@ if (window._dualUploadHandlerLoaded) {
           window.location.reload();
         }, 1500);
       } catch (error) {
-        console.error("❌ Upload error:", error);
+        console.error("Upload error:", error);
         this.hideLoading();
         alert("Gagal upload: " + error.message);
       } finally {

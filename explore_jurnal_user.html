@@ -11,6 +11,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="./assets/favicon.ico" />
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="./styles/footer.css" />
 
     <style>
       * {
@@ -76,9 +77,27 @@
         align-items: center;
         gap: 4px;
         cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 500;
+        color: #64748b;
+        transition: color 0.3s;
       }
 
-      .nav-dropdown.open .nav-link.has-caret .caret {
+      .nav-link.has-caret:hover {
+        color: #1e293b;
+      }
+
+      .caret {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.3s ease;
+      }
+
+      .nav-dropdown.open .caret {
         transform: rotate(180deg);
       }
 
@@ -368,7 +387,7 @@
 
       /* ===== PDF SECTION ===== */
       .pdf-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #1e293b 0%, #2c3e50 100%);
         padding: 32px;
         border-radius: 16px;
         text-align: center;
@@ -407,13 +426,45 @@
       }
 
       .btn-download {
-        background: white;
-        color: #667eea;
+        padding: 15px 25px;
+        border: none;
+        border-radius: 15px;
+        color: #212121;
+        z-index: 1;
+        background: #e8e8e8;
+        position: relative;
+        font-weight: 1000;
+        font-size: 17px;
+        -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+        box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+        transition: all 250ms;
+        overflow: hidden;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-download::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0;
+        border-radius: 15px;
+        background-color: #3b82f6;
+        z-index: -1;
+        transition: all 250ms;
       }
 
       .btn-download:hover {
+        color: #e8e8e8;
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-download:hover::before {
+        width: 100%;
       }
 
       .btn-view {
@@ -656,9 +707,11 @@
 
         /* Show hamburger */
         .hamburger-menu {
-          display: flex;
+          display: flex !important;
           order: 2;
           margin-left: auto;
+          position: relative;
+          z-index: 1010;
         }
 
         /* Mobile Navigation - Sidebar */
@@ -844,16 +897,7 @@
           </div>
         </nav>
 
-        <div class="auth-section">
-          <a href="./login_user.html" class="btn-user-login">
-            <i data-feather="user"></i>
-            USER
-          </a>
-          <a href="#" class="btn-register">
-            <i data-feather="layers"></i>
-            ADMIN
-          </a>
-        </div>
+        
       </div>
     </header>
 
@@ -1030,6 +1074,60 @@
         </div>
       </div>
     </div>
+
+    <!-- Main Footer -->
+    <footer class="main-footer">
+      <div class="footer-container">
+        <!-- Brand Section -->
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="./assets/main_logo.png" alt="Logo" />
+          </div>
+          <p>
+            Platform edukasi dan informasi terpercaya untuk mendukung perkembangan akademik dan wawasan Anda.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-icon"><i data-feather="instagram"></i></a>
+            <a href="#" class="social-icon"><i data-feather="twitter"></i></a>
+            <a href="#" class="social-icon"><i data-feather="facebook"></i></a>
+            <a href="#" class="social-icon"><i data-feather="youtube"></i></a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-links">
+          <h4>Quick Menu</h4>
+          <ul>
+            <li><a href="./dashboard_user.html">Home</a></li>
+            <li><a href="./journals_user.html">Daftar Jurnal</a></li>
+            <li><a href="./opinions_user.html">Opini & Berita</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="footer-contact">
+          <h4>Hubungi Kami</h4>
+          <div class="footer-contact-info">
+            <div class="contact-item">
+              <i data-feather="mail"></i>
+              <span>ksmedu2025@google.com</span>
+            </div>
+            <div class="contact-item">
+              <i data-feather="phone"></i>
+              <span>+6281806361516</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 KSM Education. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </footer>
 
     <script src="./js/pdf_text_extractor.js"></script>
     <script src="./js/explore_jurnal_user.js"></script>

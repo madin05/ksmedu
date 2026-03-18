@@ -56,7 +56,7 @@ class OpinionsPageManager {
   // ===== LOAD OPINIONS FROM DATABASE =====
   async loadOpinions() {
     try {
-      console.log("📥 Loading opinions from database...");
+      console.log("Loading opinions from database...");
 
       const response = await fetch(
         "/ksmaja/api/list_opinions.php?limit=100&offset=0"
@@ -86,7 +86,7 @@ class OpinionsPageManager {
         this.filteredOpinions = [...this.opinions];
         console.log(` Loaded ${this.opinions.length} opinions from database`);
       } else {
-        console.warn("⚠️ No opinions found in database response");
+        console.warn("No opinions found in database response");
         this.opinions = [];
         this.filteredOpinions = [];
       }
@@ -94,7 +94,7 @@ class OpinionsPageManager {
       console.error(" Error loading opinions from database:", error);
 
       //  FEATURE: Fallback to localStorage if database fails
-      console.warn("⚠️ Falling back to localStorage...");
+      console.warn("Falling back to localStorage...");
       const stored = localStorage.getItem("opinions");
       if (stored) {
         try {
@@ -102,7 +102,7 @@ class OpinionsPageManager {
           this.opinions = data;
           this.filteredOpinions = [...this.opinions];
           console.log(
-            `📦 Loaded ${this.opinions.length} opinions from localStorage (fallback)`
+            `Loaded ${this.opinions.length} opinions from localStorage (fallback)`
           );
         } catch (e) {
           console.error("Error parsing opinions:", e);
@@ -125,7 +125,7 @@ class OpinionsPageManager {
     if (this.filteredOpinions.length === 0) {
       this.container.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">📝</div>
+          <div class="empty-state-icon"></div>
           <h3>Belum Ada Opini</h3>
           <p>Artikel opini akan muncul di sini setelah admin mengupload</p>
         </div>
@@ -264,7 +264,7 @@ class OpinionsPageManager {
     }
 
     try {
-      console.log(`🗑️ Deleting opinion ID: ${id}`);
+      console.log(`Deleting opinion ID: ${id}`);
 
       //  Show loading indicator
       const card = document.querySelector(`[data-opinion-id="${id}"]`);
@@ -363,7 +363,7 @@ class OpinionsPageManager {
         }
       }
     } catch (error) {
-      console.warn("⚠️ Failed to update views:", error);
+      console.warn("Failed to update views:", error);
       //  FEATURE: Silent fail - don't break user experience
     }
   }
@@ -578,4 +578,4 @@ document.addEventListener("DOMContentLoaded", () => {
   window.opinionsManager = opinionsManager;
 });
 
-console.log("📝 opinions.js loaded (Database Mode)");
+console.log("opinions.js loaded (Database Mode)");

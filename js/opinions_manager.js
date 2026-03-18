@@ -74,7 +74,7 @@ class OpinionManager {
         throw new Error(result.message || "Upload failed");
       }
     } catch (error) {
-      console.error("❌ Upload error:", error);
+      console.error("Upload error:", error);
       throw error;
     }
   }

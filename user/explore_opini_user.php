@@ -1,21 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail Artikel - KSM Education</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="shortcut icon" type="image/x-icon" href="./assets/favicon.ico" />
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <link rel="stylesheet" href="./styles/footer.css" />
-    <link rel="stylesheet" href="./styles/toast.css" />
-    <link rel="stylesheet" href="./styles/custom_alerts.css" />
-
-    <style>
+<?php
+$page_title = 'Detail Artikel - KSM Education';
+$base_css = '<link rel="stylesheet" href="../styles/admin.css" />';
+$extra_head = <<<'EOT'
+<style>
       * {
         margin: 0;
         padding: 0;
@@ -68,6 +55,7 @@
 
       nav a:hover {
         color: #1e293b;
+        background-color: transparent;
       }
 
       .nav-dropdown {
@@ -863,51 +851,18 @@
         }
       }
     </style>
-  </head>
-  <body>
-    <!-- Nav Overlay for mobile -->
-    <div class="nav-overlay"></div>
 
-    <!-- Header -->
-    <header>
-      <div class="header-container">
-        <!-- Logo Header -->
-        <div class="logo">
-          <a href="dashboard_user.html">
-            <img src="./assets/main_logo.png" alt="Logo" />
-          </a>
-        </div>
+EOT;
+include 'components/header.php';
+include 'components/navbar.php';
+?>
 
-        <!-- Hamburger Icon -->
-        <button class="hamburger-menu" aria-label="Toggle menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <nav>
-          <a href="dashboard_user.html">HOME</a>
-          <div class="nav-dropdown">
-            <button class="nav-link has-caret" type="button">
-              ARTIKEL
-              <i data-feather="chevron-down" class="caret"></i>
-            </button>
-            <div class="dropdown-menu">
-              <a href="./journals_user.html">Jurnal</a>
-              <a href="./opinions_user.html">Opini & Berita</a>
-            </div>
-          </div>
-        </nav>
-
-        
-      </div>
-    </header>
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-      <a href="dashboard_user.html">Home</a>
+      <a href="dashboard_user.php">Home</a>
       <span>/</span>
-      <a href="journals_user.html" id="breadcrumbType">Jurnal</a>
+      <a href="opinions_user.php" id="breadcrumbType">Opini</a>
       <span>/</span>
       <span id="breadcrumbTitle">Blog</span>
     </div>
@@ -945,7 +900,7 @@
         <div class="article-header">
           <span id="articleBadge" class="article-badge badge-jurnal">
             <i data-feather="book-open"></i>
-            <span id="badgeText">Artikel Jurnal</span>
+            <span id="badgeText">Artikel Opini</span>
           </span>
 
           <h1 class="article-title" id="articleTitle">-</h1>
@@ -1078,70 +1033,24 @@
     </div>
 
     <!-- Main Footer -->
-    <footer class="main-footer">
-      <div class="footer-container">
-        <!-- Brand Section -->
-        <div class="footer-brand">
-          <div class="footer-logo">
-            <img src="./assets/main_logo.png" alt="Logo" />
-          </div>
-          <p>
-            Platform edukasi dan informasi terpercaya untuk mendukung perkembangan akademik dan wawasan Anda.
-          </p>
-          <div class="social-links">
-            <a href="#" class="social-icon"><i data-feather="instagram"></i></a>
-            <a href="#" class="social-icon"><i data-feather="twitter"></i></a>
-            <a href="#" class="social-icon"><i data-feather="facebook"></i></a>
-            <a href="#" class="social-icon"><i data-feather="youtube"></i></a>
-          </div>
-        </div>
+    
 
-        <!-- Quick Links -->
-        <div class="footer-links">
-          <h4>Quick Menu</h4>
-          <ul>
-            <li><a href="./dashboard_user.html">Home</a></li>
-            <li><a href="./journals_user.html">Daftar Jurnal</a></li>
-            <li><a href="./opinions_user.html">Opini & Berita</a></li>
-          </ul>
-        </div>
-
-        <!-- Contact Info -->
-        <div class="footer-contact">
-          <h4>Hubungi Kami</h4>
-          <div class="footer-contact-info">
-            <div class="footer-contact-item">
-              <i data-feather="mail"></i>
-              <span>ksmedu2025@google.com</span>
-            </div>
-            <div class="footer-contact-item">
-              <i data-feather="phone"></i>
-              <span>+6281806361516</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="footer-bottom">
-        <p>&copy; 2025 KSM Education. All rights reserved.</p>
-        <div class="footer-bottom-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-        </div>
-      </div>
-    </footer>
-
-    <script src="./js/script.js"></script>
-    <script src="./js/custom_alerts.js"></script>
-    <script src="./js/pdf_text_extractor.js"></script>
-    <script src="./js/explore_jurnal_user.js"></script>
-    <script src="/ksmaja/js/api.js"></script>
-    <script src="/ksmaja/js/storage.js"></script>
-    <script src="./js/mobile_menu.js?v=20251130"></script>
+    
+<?php
+$extra_scripts = <<<'EOT'
+<script src="../js/script.js"></script>
+    <script src="../js/custom_alerts.js"></script>
+    <script src="../js/pdf_text_extractor.js"></script>
+    <script src="../js/explore_jurnal_user.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/mobile_menu.js?v=20251130"></script>
     <script>
       if (typeof feather !== 'undefined') {
         feather.replace();
       }
     </script>
-  </body>
-</html>
+  
+EOT;
+include 'components/footer.php';
+?>

@@ -1,4 +1,4 @@
-// ===== PAGINATION USER - journals_user.html & opinions_user.html =====
+// ===== PAGINATION USER - journals_user.php & opinions_user.php =====
 // User-only: Share button saja, tidak ada Edit/Hapus/Detail admin
 // Self-init via DOMContentLoaded
 
@@ -183,8 +183,8 @@ class PaginationUser {
 
     const exploreUrl =
       this.dataType === "jurnal"
-        ? `explore_jurnal_user.html?id=${item.id}&type=jurnal`
-        : `explore_opini_user.html?id=${item.id}&type=opini`;
+        ? `explore_jurnal_user.php?id=${item.id}&type=jurnal`
+        : `explore_opini_user.php?id=${item.id}&type=opini`;
 
     const tags = Array.isArray(item.tags) ? item.tags : [];
     const dropdownId = `user-dropdown-${this.dataType}-${item.id}`;

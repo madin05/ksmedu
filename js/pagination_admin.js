@@ -1,4 +1,4 @@
-// ===== PAGINATION ADMIN - journals.html & opinions.html =====
+// ===== PAGINATION ADMIN - journals.php & opinions.php =====
 // Admin-only: dropdown menu (Detail, Edit, Hapus, Share)
 // Diinit oleh script.js, BUKAN auto-init
 
@@ -220,7 +220,7 @@ class PaginationManager {
         Array.isArray(item.authors) && item.authors.length > 0
           ? item.authors[0]
           : "Unknown";
-      const exploreUrl = `explore_jurnal_admin.html?id=${item.id}&type=jurnal`;
+      const exploreUrl = `explore_jurnal_admin.php?id=${item.id}&type=jurnal`;
 
       card.innerHTML = `
         <div class="journal-cover" data-explore-url="${exploreUrl}">
@@ -284,7 +284,7 @@ class PaginationManager {
       });
     } else {
       // ===== OPINI CARD =====
-      const exploreUrl = `explore_opini_admin.html?id=${item.id}&type=opini`;
+      const exploreUrl = `explore_opini_admin.php?id=${item.id}&type=opini`;
 
       card.innerHTML = `
         <div class="opinion-cover" data-explore-url="${exploreUrl}">

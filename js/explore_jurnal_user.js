@@ -501,7 +501,7 @@ function displaySearchResults(results, query) {
   searchResults.innerHTML = results
     .map(
       (article) => `
-    <div class="search-result-item" onclick="window.location.href='explore_jurnal_user.html?id=${
+    <div class="search-result-item" onclick="window.location.href='explore_jurnal_user.php?id=${
       article.id
     }&type=${article.type}'">
       <div class="search-result-title">${article.title}</div>

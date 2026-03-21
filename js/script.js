@@ -1030,8 +1030,8 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(" UploadTabsManager initialized");
   }
 
-  // Page: journals.html
-  if (window.location.pathname.includes("journals.html")) {
+  // Page: journals.php
+  if (window.location.pathname.includes("journals.php")) {
     if (typeof EditJournalManager !== "undefined")
       window.editJournalManager = new EditJournalManager();
     if (typeof PaginationManager !== "undefined") {
@@ -1050,8 +1050,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Page: opinions.html (ADMIN MODE)
-  if (window.location.pathname.includes("opinions.html")) {
+  // Page: opinions.php (ADMIN MODE)
+  if (window.location.pathname.includes("opinions.php")) {
     if (typeof EditJournalManager !== "undefined") {
       window.editJournalManager = new EditJournalManager();
     }
@@ -1149,16 +1149,16 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Page: opinions_user.html (USER MODE)
+  // Page: opinions_user.php (USER MODE)
   if (
-    window.location.pathname.includes("opinions_user.html") ||
+    window.location.pathname.includes("opinions_user.php") ||
     document.getElementById("opinionsContainer")
   ) {
     console.log("Opinions page (USER MODE) detected");
     return;
   }
 
-  // Page: dashboard_admin.html & index.html
+  // Page: dashboard_admin.php & index.html
   if (typeof StatisticsManager !== "undefined")
     window.statsManager = new StatisticsManager();
 

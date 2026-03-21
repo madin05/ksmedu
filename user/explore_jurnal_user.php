@@ -1,19 +1,147 @@
-<!doctype html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail Artikel - KSM Education</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="shortcut icon" type="image/x-icon" href="./assets/favicon.ico" />
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <link rel="stylesheet" href="./styles/admin.css" />
+<?php
+$page_title = 'Detail Artikel - KSM Education';
+$base_css = '<link rel="stylesheet" href="../styles/admin.css" />';
+$extra_head = <<<'EOT'
+<style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f8f9fa;
+        color: #333;
+        line-height: 1.6;
+      }
+
+      /* ===== HEADER ===== */
+      header {
+        background: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .header-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo img {
+        width: 80px;
+        height: auto;
+      }
+
+      nav {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: #64748b;
+        font-weight: 500;
+        font-size: 15px;
+        transition: color 0.3s;
+      }
+
+      nav a:hover {
+        color: #1e293b;
+        background-color: transparent;
+      }
+
+      .nav-dropdown {
+        position: relative;
+      }
+
+      .nav-link.has-caret {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 500;
+        color: #64748b;
+        transition: color 0.3s;
+      }
+
+      .nav-link.has-caret:hover {
+        color: #1e293b;
+      }
+
+      .caret {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.3s ease;
+      }
+
+      .nav-dropdown.open .caret {
+        transform: rotate(180deg);
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 12px);
+        left: 0;
+        min-width: 180px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.2s;
+        overflow: hidden;
+      }
+
+      .nav-dropdown.open .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .dropdown-menu a {
+        display: block;
+        padding: 12px 16px;
+        color: #334155;
+        transition: background 0.2s;
+      }
+
+      .dropdown-menu a:hover {
+        background: #f1f5f9;
+        color: #1e293b;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+      }
+
+      .search-box input {
+        border: none;
+        outline: none;
+        font-size: 14px;
+        width: 200px;
+        background: transparent;
+      }
+
       /* ===== BREADCRUMB ===== */
       .breadcrumb {
         max-width: 900px;
@@ -84,16 +212,6 @@
         line-height: 1.2;
         color: #0f172a;
         margin-bottom: 20px;
-      }
-
-      .nav-dropdown.open .nav-link.has-caret .caret {
-        transform: rotate(180deg);
-      }
-
-      .nav-dropdown.open .dropdown-menu {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
       }
 
       .article-meta {
@@ -473,7 +591,6 @@
         margin-bottom: 12px;
         display: -webkit-box;
         -webkit-line-clamp: 2;
-        line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
       }
@@ -515,21 +632,19 @@
         justify-content: space-around;
         width: 30px;
         height: 24px;
-        background: none;
+        background: transparent;
         border: none;
         cursor: pointer;
         padding: 0;
-        z-index: 1010;
-        transition: all 0.3s ease;
+        z-index: 1001;
       }
 
       .hamburger-menu span {
-        display: block;
         width: 100%;
         height: 3px;
-        background: #2c3e50 !important;
-        transition: all 0.3s ease;
-        border-radius: 3px;
+        background: #1e293b;
+        border-radius: 10px;
+        transition: all 0.3s linear;
       }
 
       .hamburger-menu.active span:nth-child(1) {
@@ -567,10 +682,6 @@
         overflow: hidden;
       }
 
-      .nav-auth-section {
-        display: none;
-      }
-
       .nav-logo {
         display: none;
       }
@@ -579,32 +690,16 @@
       @media (max-width: 768px) {
         .header-container {
           padding: 16px 24px;
-          display: flex !important;
-          flex-direction: row !important;
-          justify-content: space-between !important;
-          align-items: center !important;
-          flex-wrap: nowrap !important;
-        }
-
-        .logo {
-          order: 1 !important;
-          flex: 0 0 auto !important;
-        }
-
-        .logo img {
-          width: 60px;
-          height: auto;
-        }
-
-        .auth-section {
-          display: none !important;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
         }
 
         /* Show hamburger */
         .hamburger-menu {
           display: flex !important;
-          order: 2 !important;
-          margin-left: auto !important;
+          order: 2;
+          margin-left: auto;
           position: relative;
           z-index: 1010;
         }
@@ -706,13 +801,12 @@
           visibility: visible !important;
           transform: none !important;
           box-shadow: none !important;
-          display: none !important;
-          background: #f8f9fa !important;
-          padding: 0 !important;
-          min-width: 100% !important;
           border: none !important;
-          margin: 0 !important;
+          background: #f8f9fa !important;
+          min-width: 100% !important;
           border-radius: 0 !important;
+          display: none !important;
+          margin-top: 0 !important;
         }
 
         .nav-dropdown.active .dropdown-menu {
@@ -757,68 +851,18 @@
         }
       }
     </style>
-  </head>
-  <body>
-    <!-- Header -->
-    <header>
-      <div class="header-container">
-        <div class="logo">
-          <a href="dashboard_admin.html">
-            <img src="./assets/main_logo.png" alt="Logo" />
-          </a>
-        </div>
 
-        <button
-          class="hamburger-menu"
-          aria-label="Toggle menu"
-          aria-expanded="false"
-          type="button"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+EOT;
+include 'components/header.php';
+include 'components/navbar.php';
+?>
 
-        <nav>
-          <a href="dashboard_admin.html">HOME</a>
-          <div class="nav-dropdown">
-            <button class="nav-link has-caret" type="button">
-              ARTIKEL
-              <svg
-                class="caret"
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="dropdown-menu">
-              <a href="./journals.html">Jurnal</a>
-              <a href="./opinions.html">Opini &amp; Berita</a>
-            </div>
-          </div>
-          <a href="./dashboard_admin.html#upload">UPLOAD</a>
-        </nav>
-
-        <div class="auth-section">
-          <a href="./login_user.html" class="btn-user-login">
-            <i data-feather="user"></i>
-            USER
-          </a>
-          <a href="#" class="btn-register"> ADMIN </a>
-        </div>
-      </div>
-    </header>
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-      <a href="dashboard_admin.html">Home</a>
+      <a href="dashboard_user.php">Home</a>
       <span>/</span>
-      <a href="opinions.html" id="breadcrumbType">Opini</a>
+      <a href="journals_user.php" id="breadcrumbType">Jurnal</a>
       <span>/</span>
       <span id="breadcrumbTitle">Blog</span>
     </div>
@@ -854,9 +898,9 @@
       <!-- Article Detail -->
       <div id="articleDetail" class="article-card" style="display: none">
         <div class="article-header">
-          <span id="articleBadge" class="article-badge badge-opini">
+          <span id="articleBadge" class="article-badge badge-jurnal">
             <i data-feather="book-open"></i>
-            <span id="badgeText">Artikel Opini</span>
+            <span id="badgeText">Artikel Jurnal</span>
           </span>
 
           <h1 class="article-title" id="articleTitle">-</h1>
@@ -988,63 +1032,25 @@
       </div>
     </div>
 
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-      <div class="modal-overlay"></div>
-      <div class="modal-content login-container">
-        <button type="button" class="close-modal" id="closeLoginModal">
-          <i data-feather="x"></i>
-        </button>
-        <div class="login-header">
-          <img
-            src="./assets/main_logo.png"
-            alt="KSM Education Logo"
-            class="login-logo"
-          />
-          <h2>ADMIN LOGIN</h2>
-          <p style="color: #666; font-size: 14px; margin-top: 8px">
-            Login sebagai Administrator
-          </p>
-        </div>
-        <form id="loginForm" class="login-form">
-          <div class="form-group">
-            <input
-              type="email"
-              id="loginEmail"
-              placeholder="Masukan Email Admin"
-              required
-            />
-          </div>
-          <div class="form-group password-group">
-            <input
-              type="password"
-              id="loginPassword"
-              placeholder="Masukan Password"
-              required
-            />
-            <button type="button" class="toggle-password" id="togglePassword">
-              <i data-feather="eye" id="eyeIcon"></i>
-            </button>
-          </div>
-          <div class="form-options">
-            <label class="remember-me">
-              <input type="checkbox" id="rememberMe" />
-              <span>Remember Me</span>
-            </label>
-            <a href="#" class="forgot-password">Forgot Password?</a>
-          </div>
-          <button type="submit" class="btn-login">MASUK</button>
-        </form>
-      </div>
-    </div>
+    <!-- Main Footer -->
+    
 
-    <script src="./js/pdf_text_extractor.js"></script>
-    <script src="./js/explore_jurnal_user.js"></script>
-    <script src="./js/mobile_menu.js"></script>
-    <script src="./js/login.js"></script>
-    <script src="./js/custom_alerts.js"></script>
-    <script src="./js/script.js"></script>
-    <script src="/ksmaja/js/api.js"></script>
-    <script src="/ksmaja/js/storage.js"></script>
-  </body>
-</html>
+    
+<?php
+$extra_scripts = <<<'EOT'
+<script src="../js/script.js"></script>
+    <script src="../js/custom_alerts.js"></script>
+    <script src="../js/pdf_text_extractor.js"></script>
+    <script src="../js/explore_jurnal_user.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/mobile_menu.js?v=20251130"></script>
+    <script>
+      if (typeof feather !== 'undefined') {
+        feather.replace();
+      }
+    </script>
+  
+EOT;
+include 'components/footer.php';
+?>

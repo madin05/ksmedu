@@ -1,3 +1,6 @@
+<?php
+$page_title = 'User Login - KSM Education';
+?>
 <!DOCTYPE html>
 <html lang="id">
   <head>
@@ -8,8 +11,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="shortcut icon" type="image/x-icon" href="./assets/favicon.ico" />
-    <link rel="stylesheet" href="./styles/login_user.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/favicon.ico" />
+    <link rel="stylesheet" href="../styles/login_user.css" />
     <script src="https://unpkg.com/feather-icons"></script>
   </head>
 
@@ -17,7 +20,7 @@
     <div class="login-wrapper">
       <!-- Header -->
       <div class="login-header">
-        <img src="./assets/main_logo.png" alt="KSM Education Logo" class="login-logo" />
+        <img src="../assets/main_logo.png" alt="KSM Education Logo" class="login-logo" />
         <br>
         <span class="user-badge">User Login</span>
         <h2>Selamat Datang!</h2>
@@ -95,13 +98,16 @@
       </div>
 
       <div class="back-to-home">
-        <a href="./dashboard_admin.html">
+        <a href="../admin/dashboard_admin.php">
           <i data-feather="arrow-left"></i>
           Kembali ke Beranda
         </a>
       </div>
     </div>
 
-    <script src="./js/login_user.js"></script>
+    <script src="../js/login_user.js"></script>
+    <script>
+      feather.replace();
+    </script>
   </body>
-</html> 
+</html>

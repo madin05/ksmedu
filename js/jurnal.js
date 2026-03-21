@@ -13,22 +13,22 @@ class JournalManager {
     // ===== 1) JANGAN JALAN DI HALAMAN USER DASHBOARD =====
     // Biarkan dashboard_user.js yang handle render untuk user
     const path = window.location.pathname.toLowerCase();
-    if (path.includes("dashboard_user.html")) {
+    if (path.includes("dashboard_user.php")) {
       console.warn(
         "User dashboard page - JournalManager DISABLED (handled by dashboard_user.js)",
       );
       return;
     }
 
-    if (path.includes("journals.html")) {
+    if (path.includes("journals.php")) {
       console.warn(
-        "journals.html - JournalManager DISABLED (handled by PaginationManager)",
+        "journals.php - JournalManager DISABLED (handled by PaginationManager)",
       );
       return;
     }
 
-    if (path.includes("opinions.html")) {
-      console.warn("opinions.html - JournalManager DISABLED");
+    if (path.includes("opinions.php")) {
+      console.warn("opinions.php - JournalManager DISABLED");
       return;
     }
 
@@ -81,7 +81,7 @@ class JournalManager {
       }
 
       // Kalau di dashboard, ambil juga opinions
-      if (window.location.pathname.includes("dashboard_admin.html")) {
+      if (window.location.pathname.includes("dashboard_admin.php")) {
         const opiniRes = await fetch(
           `/ksmaja/api/list_opinions.php?limit=100&offset=0&_=${timestamp}`,
           {
@@ -163,7 +163,7 @@ class JournalManager {
 
     // Check if we are on index or dashboard
     const isDashboard =
-      window.location.pathname.includes("dashboard_admin.html") ||
+      window.location.pathname.includes("dashboard_admin.php") ||
       window.location.pathname.includes("index.html");
 
     const count = isDashboard ? 6 : 9;
@@ -230,7 +230,7 @@ class JournalManager {
     }
 
     const isDashboard = window.location.pathname.includes(
-      "dashboard_admin.html",
+      "dashboard_admin.php",
     );
     const journalsToShow = isDashboard
       ? this.journals.slice(0, 6)
@@ -255,8 +255,8 @@ class JournalManager {
     // Paksa true jika di halaman admin, biar tombol selalu muncul
     const isAdmin =
       sessionStorage.getItem("userType") === "admin" ||
-      window.location.pathname.includes("dashboard_admin.html") ||
-      window.location.pathname.includes("journals.html");
+      window.location.pathname.includes("dashboard_admin.php") ||
+      window.location.pathname.includes("journals.php");
 
     const card = document.createElement("div");
     card.className = isAdmin ? "journal-card" : "article-card";
@@ -407,8 +407,8 @@ class JournalManager {
       const exploreType = journal._type === "opini" ? "opini" : "jurnal";
       const explorePage =
         journal._type === "opini"
-          ? "explore_opini_admin.html"
-          : "explore_jurnal_admin.html";
+          ? "explore_opini_admin.php"
+          : "explore_jurnal_admin.php";
       coverDiv.addEventListener("click", (e) => {
         e.stopPropagation();
         window.location.href = `${explorePage}?id=${journal.id}&type=${exploreType}`;
@@ -421,7 +421,7 @@ class JournalManager {
   viewJournal(id) {
     console.log(" Viewing journal:", id);
     this.updateViews(id);
-    window.location.href = `explore_jurnal_admin.html?id=${id}&type=jurnal`;
+    window.location.href = `explore_jurnal_admin.php?id=${id}&type=jurnal`;
   }
 
   async deleteJournal(id, title = "") {
@@ -579,12 +579,12 @@ class JournalManager {
 function updateLatestNav(journals) {
   if (!Array.isArray(journals)) journals = [];
 
-  // Dashboard user (home / dashboard_user.html)
+  // Dashboard user (home / dashboard_user.php)
   const navUser = document.getElementById("latestArticlesNavUser");
   if (navUser) {
     if (journals.length > 6) {
       navUser.innerHTML = `
-        <button class="btn-see-all" onclick="window.location.href='journals_user.html'">
+        <button class="btn-see-all" onclick="window.location.href='journals_user.php'">
           Lihat semua artikel
         </button>
       `;
@@ -593,12 +593,12 @@ function updateLatestNav(journals) {
     }
   }
 
-  // Dashboard admin (dashboard_admin.html)
+  // Dashboard admin (dashboard_admin.php)
   const navAdmin = document.getElementById("latestArticlesNavAdmin");
   if (navAdmin) {
     if (journals.length > 6) {
       navAdmin.innerHTML = `
-        <button class="btn-see-all" onclick="window.location.href='journals.html'">
+        <button class="btn-see-all" onclick="window.location.href='journals.php'">
           Lihat semua artikel
         </button>
       `;

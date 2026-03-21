@@ -28,7 +28,7 @@ function openShareModal(id) {
   const isOpiniPage = window.location.pathname.includes("opini");
   const articleType =
     article._type || article.type || (isOpiniPage ? "opini" : "jurnal");
-  const explorePage = "explore_jurnal_user.html";
+  const explorePage = "explore_jurnal_user.php";
 
   currentShareUrl = `${baseUrl}${path}/${explorePage}?id=${id}&type=${articleType}`;
   currentShareTitle = article.title || "Artikel";

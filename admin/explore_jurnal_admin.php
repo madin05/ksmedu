@@ -1,19 +1,7 @@
-<!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Detail Artikel - KSM Education</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="shortcut icon" type="image/x-icon" href="./assets/favicon.ico" />
-    <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <link rel="stylesheet" href="./styles/admin.css" />
-
-    <style>
+<?php
+$page_title = 'Detail Artikel - KSM Education';
+$extra_head = <<<'EOT'
+<style>
       /* ===== BREADCRUMB ===== */
       .breadcrumb {
         max-width: 900px;
@@ -757,70 +745,18 @@
         }
       }
     </style>
-  </head>
-  <body>
-    <!-- Header -->
-    <header>
-      <div class="header-container">
-        <div class="logo">
-          <a href="dashboard_admin.html">
-            <img src="./assets/main_logo.png" alt="Logo" />
-          </a>
-        </div>
 
-        <button
-          class="hamburger-menu"
-          aria-label="Toggle menu"
-          aria-expanded="false"
-          type="button"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+EOT;
+include 'components/header.php';
+include 'components/sidebar.php';
+?>
 
-        <nav>
-          <a href="./dashboard_admin.html">HOME</a>
-          <div class="nav-dropdown">
-            <button class="nav-link has-caret" type="button">
-              ARTIKEL
-              <svg
-                class="caret"
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="dropdown-menu">
-              <a href="./journals.html">Jurnal</a>
-              <a href="./opinions.html">Opini &amp; Berita</a>
-            </div>
-          </div>
-          <a href="./dashboard_admin.html#upload">UPLOAD</a>
-        </nav>
-
-        <div class="auth-section">
-          <a href="./login_user.html" class="btn-user-login">
-            <i data-feather="user"></i>
-            USER
-          </a>
-          <a href="#" class="btn-register">
-            ADMIN
-          </a>
-        </div>
-      </div>
-    </header>
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-      <a href="dashboard_admin.html">Home</a>
+      <a href="dashboard_admin.php">Home</a>
       <span>/</span>
-      <a href="journals.html" id="breadcrumbType">Jurnal</a>
+      <a href="journals.php" id="breadcrumbType">Jurnal</a>
       <span>/</span>
       <span id="breadcrumbTitle">Blog</span>
     </div>
@@ -989,7 +925,7 @@
           <i data-feather="x"></i>
         </button>
         <div class="login-header">
-          <img src="./assets/main_logo.png" alt="KSM Education Logo" class="login-logo" />
+          <img src="../assets/main_logo.png" alt="KSM Education Logo" class="login-logo" />
           <h2>ADMIN LOGIN</h2>
           <p style="color: #666; font-size: 14px; margin-top: 8px">Login sebagai Administrator</p>
         </div>
@@ -1015,13 +951,18 @@
       </div>
     </div>
 
-    <script src="./js/pdf_text_extractor.js"></script>
-    <script src="./js/explore_jurnal_user.js"></script>
-    <script src="./js/mobile_menu.js"></script>
-    <script src="./js/opinions_manager.js"></script>
-    <script src="./js/custom_alerts.js"></script>
-    <script src="./js/script.js"></script>
-    <script src="/ksmaja/js/api.js"></script>
-    <script src="/ksmaja/js/storage.js"></script>
-  </body>
-</html>
+    
+<?php
+$extra_scripts = <<<'EOT'
+<script src="../js/pdf_text_extractor.js"></script>
+    <script src="../js/explore_jurnal_user.js"></script>
+    <script src="../js/mobile_menu.js"></script>
+    <script src="../js/opinions_manager.js"></script>
+    <script src="../js/custom_alerts.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/storage.js"></script>
+  
+EOT;
+include 'components/footer.php';
+?>

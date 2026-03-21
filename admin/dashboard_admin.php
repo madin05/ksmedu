@@ -1,87 +1,9 @@
-<!doctype html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KSM Education - Admin</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles/admin.css?v=20240316" />
-    <link rel="stylesheet" href="./styles/skeleton.css" />
-    <link rel="stylesheet" href="./styles/custom_alerts.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="./assets/favicon.ico" />
-    <script src="https://unpkg.com/feather-icons"></script>
-  </head>
-  <body>
-    <header>
-      <div class="header-container">
-        <div class="logo">
-          <a href="#"><img src="./assets/main_logo.png" alt="Logo" /></a>
-        </div>
+<?php
+$page_title = 'KSM Education - Admin';
+include 'components/header.php';
+include 'components/sidebar.php';
+?>
 
-        <button
-          class="hamburger-menu"
-          aria-label="Toggle menu"
-          aria-expanded="false"
-          type="button"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <nav>
-          <a href="#">HOME</a>
-          <div class="nav-dropdown">
-            <button class="nav-link has-caret" type="button">
-              ARTIKEL
-              <svg
-                class="caret"
-                viewBox="0 0 24 24"
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="dropdown-menu">
-              <a href="journals.html">Artikel Jurnal</a>
-              <a href="opinions.html">Artikel Opini</a>
-              <a href="journals.html#search">Cari Artikel</a>
-            </div>
-          </div>
-          <a href="#upload">UPLOAD</a>
-        </nav>
-
-        <div class="auth-section">
-          <a href="./login_user.html" class="btn-user-login">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-              <circle cx="12" cy="7" r="4"></circle>
-            </svg>
-            USER
-          </a>
-          <a href="#" class="btn-register">
-            ADMIN
-          </a>
-        </div>
-      </div>
-    </header>
 
     <div class="container">
       <!-- Statistics Section -->
@@ -115,7 +37,7 @@
           class="view-all-container"
           style="display: none"
         >
-          <a href="./journals.html" class="btn-view-all">
+          <a href="./journals.php" class="btn-view-all">
             <i data-feather="arrow-right"></i>
             Lihat Semua Jurnal
           </a>
@@ -568,7 +490,7 @@
         </button>
         <div class="login-header">
           <img
-            src="./assets/main_logo.png"
+            src="../assets/main_logo.png"
             alt="KSM Education Logo"
             class="login-logo"
           />
@@ -837,40 +759,45 @@
     <!-- ===== CORRECT SCRIPT LOADING ORDER ===== -->
 
     <!-- 0. Custom Alerts -->
-    <script src="./js/custom_alerts.js"></script>
+    
+<?php
+$extra_scripts = <<<'EOT'
+<script src="../js/custom_alerts.js"></script>
 
     <!-- 1. Core API & Storage FIRST -->
-    <script src="./js/api.js"></script>
-    <script src="./js/storage.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/storage.js"></script>
 
     <!-- 2. Authentication & Utilities -->
-    <script src="./js/login.js"></script>
-    <script src="./js/statistic.js"></script>
+    <script src="../js/login.js"></script>
+    <script src="../js/statistic.js"></script>
 
     <!-- 3. Data Managers -->
-    <script src="./js/jurnal.js?v=20260321"></script>
-    <script src="./js/opinions.js?v=20260321"></script>
-    <!-- <script src="./js/pagination.js"></script> -->
+    <script src="../js/jurnal.js?v=20260321"></script>
+    <script src="../js/opinions.js?v=20260321"></script>
+    <!-- <script src="../js/pagination.js"></script> -->
 
-    <script src="./js/tags_manager.js?v=20240316"></script>
+    <script src="../js/tags_manager.js?v=20240316"></script>
     <!-- FIRST -->
-    <script src="./js/file_upload.js"></script>
-    <script src="./js/pagination_admin.js?v=20260321"></script>
+    <script src="../js/file_upload.js"></script>
+    <script src="../js/pagination_admin.js?v=20260321"></script>
 
     <!-- SECOND -->
-    <script src="./js/dual_upload_handler.js"></script>
+    <script src="../js/dual_upload_handler.js"></script>
     <!-- THIRD -->
-    <script src="./js/upload_tabs.js"></script>
+    <script src="../js/upload_tabs.js"></script>
     <!-- FOURTH -->
-    <script src="./js/social.js"></script>
+    <script src="../js/social.js"></script>
 
-    <script src="./js/script.js?v=2025112910"></script>
+    <script src="../js/script.js?v=2025112910"></script>
 
-    <script src="./js/mobile_menu.js"></script>
+    <script src="../js/mobile_menu.js"></script>
 
     <!-- 6. Initialize Feather Icons -->
     <script>
       feather.replace();
     </script>
-  </body>
-</html>
+  
+EOT;
+include 'components/footer.php';
+?>

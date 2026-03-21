@@ -17,16 +17,16 @@ class OpinionsPageManager {
 
   async init() {
     const path = window.location.pathname.toLowerCase();
-    if (path.includes("dashboard_admin.html")) {
+    if (path.includes("dashboard_admin.php")) {
       console.warn(
         "Dashboard admin page - OpinionsPageManager DISABLED (handled by JournalManager)",
       );
       return;
     }
 
-    if (path.includes("opinions.html")) {
+    if (path.includes("opinions.php")) {
       console.warn(
-        "opinions.html - OpinionsPageManager DISABLED (handled by PaginationManager)",
+        "opinions.php - OpinionsPageManager DISABLED (handled by PaginationManager)",
       );
       return;
     }
@@ -264,7 +264,7 @@ class OpinionsPageManager {
     this.updateViews(id);
 
     //  FEATURE: Navigate to detail page
-    window.location.href = `explore_jurnal_user.html?id=${id}&type=opini`;
+    window.location.href = `explore_jurnal_user.php?id=${id}&type=opini`;
   }
 
   // ===== DELETE OPINION FROM DATABASE =====

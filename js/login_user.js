@@ -75,7 +75,7 @@ loginForm.addEventListener('submit', function(e) {
 
       // Redirect to dashboard
       setTimeout(() => {
-        window.location.href = './dashboard_user.html';
+        window.location.href = './dashboard_user.php';
       }, 1500);
     } else {
       showAlert('Email atau password salah!', 'error');
@@ -103,7 +103,7 @@ document.querySelector('.forgot-password').addEventListener('click', function(e)
 window.addEventListener('load', function() {
   // Redirect if already logged in
   if (sessionStorage.getItem('userLoggedIn') === 'true') {
-    window.location.href = './dashboard_user.html';
+    window.location.href = './dashboard_user.php';
   }
 
   // Auto-fill email if remember me was checked
@@ -197,7 +197,7 @@ loginForm.addEventListener('submit', async function(e) {
 
             // Redirect to dashboard
             setTimeout(() => {
-                window.location.href = './dashboard_user.html';
+                window.location.href = './dashboard_user.php';
             }, 1500);
         } else {
             showAlert(result.message || 'Email atau password salah!', 'error');
@@ -231,7 +231,7 @@ document.querySelector('.forgot-password').addEventListener('click', function(e)
 window.addEventListener('load', async function() {
     // Check session first
     if (sessionStorage.getItem('userLoggedIn') === 'true') {
-        window.location.href = './dashboard_user.html';
+        window.location.href = './dashboard_user.php';
         return;
     }
 
@@ -249,7 +249,7 @@ window.addEventListener('load', async function() {
                 sessionStorage.setItem('userLoggedIn', 'true');
                 sessionStorage.setItem('userEmail', result.user.email);
                 sessionStorage.setItem('userType', result.user.role);
-                window.location.href = './dashboard_user.html';
+                window.location.href = './dashboard_user.php';
                 return;
             }
         } catch (err) {

@@ -555,18 +555,7 @@ body.menu-open {
   min-height: 0;
 }
 
-.article-card .journal-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #2c3e50;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+
 
 .article-card .journal-abstract {
   font-size: 14px;
@@ -1069,6 +1058,8 @@ a[class*="quickshare"]:hover {
   cursor: pointer;
   transition: all 0.3s;
 }
+
+
 
 .category-card:hover {
   background: #2c3e50;

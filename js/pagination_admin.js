@@ -251,23 +251,23 @@ class PaginationManager {
           `
               : ""
           }
-          <div class="journal-actions" style="display: flex !important; justify-content: flex-end; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-            <div class="dropdown-menu-container" style="position: relative;">
-              <button class="dropdown-toggle" onclick="event.stopPropagation(); togglePaginationDropdown('jurnal-${item.id}')" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: background 0.2s; color: #666;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
-                <i data-feather="more-vertical" style="width: 20px; height: 20px;"></i>
+          <div class="card-actions">
+            <div class="dropdown-menu-container">
+              <button class="dropdown-toggle" onclick="event.stopPropagation(); togglePaginationDropdown('jurnal-${item.id}')">
+                <i data-feather="more-vertical"></i>
               </button>
-              <div id="pg-dropdown-jurnal-${item.id}" class="dropdown-content" style="display: none; position: absolute; right: 0; bottom: 100%; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 1000; min-width: 140px; padding: 4px 0; margin-bottom: 4px;">
-                <button onclick="event.stopPropagation(); window.journalManager?.viewJournal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #3498db; font-size: 13px;">
-                  <i data-feather="eye" style="width:14px; height:14px;"></i> Detail
+              <div id="pg-dropdown-jurnal-${item.id}" class="dropdown-content">
+                <button class="dropdown-item-btn dd-detail" onclick="event.stopPropagation(); window.journalManager?.viewJournal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')">
+                  <i data-feather="eye"></i> Detail
                 </button>
-                <button onclick="event.stopPropagation(); window.editJournalManager?.openEditModal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #f39c12; font-size: 13px;">
-                  <i data-feather="edit" style="width:14px; height:14px;"></i> Edit
+                <button class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.editJournalManager?.openEditModal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')">
+                  <i data-feather="edit"></i> Edit
                 </button>
-                <button onclick="event.stopPropagation(); window.journalManager?.deleteJournal('${item.id}', '${safeTitle}'); closePaginationDropdown('jurnal-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #e74c3c; font-size: 13px;">
-                  <i data-feather="trash-2" style="width:14px; height:14px;"></i> Hapus
+                <button class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); window.journalManager?.deleteJournal('${item.id}', '${safeTitle}'); closePaginationDropdown('jurnal-${item.id}')">
+                  <i data-feather="trash-2"></i> Hapus
                 </button>
-                <button onclick="event.stopPropagation(); openShareModal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #27ae60; font-size: 13px;">
-                  <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
+                <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')">
+                  <i data-feather="share-2"></i> Share
                 </button>
               </div>
             </div>
@@ -275,14 +275,13 @@ class PaginationManager {
         </div>
       `;
 
-      // Cover click → explore
-      const coverDiv = card.querySelector(".journal-cover");
-      if (coverDiv) {
-        coverDiv.style.cursor = "pointer";
-        coverDiv.addEventListener("click", () => {
+      // Card click → explore (exclude dropdown menu clicks)
+      card.style.cursor = "pointer";
+      card.addEventListener("click", (e) => {
+        if (!e.target.closest(".dropdown-menu-container")) {
           window.location.href = exploreUrl;
-        });
-      }
+        }
+      });
     } else {
       // ===== OPINI CARD =====
       const exploreUrl = `explore_opini_admin.html?id=${item.id}&type=opini`;
@@ -316,23 +315,23 @@ class PaginationManager {
           `
               : ""
           }
-          <div class="opinion-actions" style="display: flex !important; justify-content: flex-end; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-            <div class="dropdown-menu-container" style="position: relative;">
-              <button class="dropdown-toggle" onclick="event.stopPropagation(); togglePaginationDropdown('opini-${item.id}')" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: background 0.2s; color: #666;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
-                <i data-feather="more-vertical" style="width: 20px; height: 20px;"></i>
+          <div class="card-actions">
+            <div class="dropdown-menu-container">
+              <button class="dropdown-toggle" onclick="event.stopPropagation(); togglePaginationDropdown('opini-${item.id}')">
+                <i data-feather="more-vertical"></i>
               </button>
-              <div id="pg-dropdown-opini-${item.id}" class="dropdown-content" style="display: none; position: absolute; right: 0; bottom: 100%; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 1000; min-width: 140px; padding: 4px 0; margin-bottom: 4px;">
-                <button onclick="event.stopPropagation(); window.location.href='${exploreUrl}'; closePaginationDropdown('opini-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #3498db; font-size: 13px;">
-                  <i data-feather="eye" style="width:14px; height:14px;"></i> Detail
+              <div id="pg-dropdown-opini-${item.id}" class="dropdown-content">
+                <button class="dropdown-item-btn dd-detail" onclick="event.stopPropagation(); window.location.href='${exploreUrl}'; closePaginationDropdown('opini-${item.id}')">
+                  <i data-feather="eye"></i> Detail
                 </button>
-                <button onclick="event.stopPropagation(); window.openEditOpinionModal('${item.id}'); closePaginationDropdown('opini-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #f39c12; font-size: 13px;">
-                  <i data-feather="edit" style="width:14px; height:14px;"></i> Edit
+                <button class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.openEditOpinionModal('${item.id}'); closePaginationDropdown('opini-${item.id}')">
+                  <i data-feather="edit"></i> Edit
                 </button>
-                <button onclick="event.stopPropagation(); window.deleteOpinion('${item.id}', '${safeTitle}'); closePaginationDropdown('opini-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #e74c3c; font-size: 13px;">
-                  <i data-feather="trash-2" style="width:14px; height:14px;"></i> Hapus
+                <button class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); window.deleteOpinion('${item.id}', '${safeTitle}'); closePaginationDropdown('opini-${item.id}')">
+                  <i data-feather="trash-2"></i> Hapus
                 </button>
-                <button onclick="event.stopPropagation(); openShareModal('${item.id}'); closePaginationDropdown('opini-${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #27ae60; font-size: 13px;">
-                  <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
+                <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${item.id}'); closePaginationDropdown('opini-${item.id}')">
+                  <i data-feather="share-2"></i> Share
                 </button>
               </div>
             </div>
@@ -340,14 +339,13 @@ class PaginationManager {
         </div>
       `;
 
-      // Cover click → explore
-      const coverDiv = card.querySelector(".opinion-cover");
-      if (coverDiv) {
-        coverDiv.style.cursor = "pointer";
-        coverDiv.addEventListener("click", () => {
+      // Card click → explore (exclude dropdown menu clicks)
+      card.style.cursor = "pointer";
+      card.addEventListener("click", (e) => {
+        if (!e.target.closest(".dropdown-menu-container")) {
           window.location.href = exploreUrl;
-        });
-      }
+        }
+      });
     }
 
     return card;

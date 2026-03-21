@@ -272,17 +272,17 @@ async function renderArticles() {
               `;
             })()}
 
-            <div class="article-actions" style="display: flex !important; justify-content: flex-end; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-              <div class="dropdown-menu-container" style="position: relative;">
-                <button class="dropdown-toggle" onclick="event.stopPropagation(); window.dashboardDropdownToggle('dashboard-dd-${article.id}')" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: background 0.2s; color: #666;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
-                  <i data-feather="more-vertical" style="width: 20px; height: 20px;"></i>
+            <div class="card-actions">
+              <div class="dropdown-menu-container">
+                <button class="dropdown-toggle" onclick="event.stopPropagation(); window.dashboardDropdownToggle('dashboard-dd-${article.id}')">
+                  <i data-feather="more-vertical"></i>
                 </button>
-                <div id="dashboard-dd-${article.id}" class="dropdown-content" style="display: none; position: absolute; right: 0; bottom: 100%; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 1000; min-width: 140px; padding: 4px 0; margin-bottom: 4px;">
-                  <button onclick="event.stopPropagation(); window.downloadDashboardArticle('${article.fileData || ''}', '${escapeForAttribute(title)}', '${article.type}', '${article.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #3498db; font-size: 13px;">
-                    <i data-feather="download" style="width:14px; height:14px;"></i> Download
+                <div id="dashboard-dd-${article.id}" class="dropdown-content">
+                  <button class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); window.downloadDashboardArticle('${article.fileData || ''}', '${escapeForAttribute(title)}', '${article.type}', '${article.id}')">
+                    <i data-feather="download"></i> Download
                   </button>
-                  <button onclick="event.stopPropagation(); if(window.shareManager) window.shareManager.handleShare('${article.id}', '${article.type}', '${escapeForAttribute(title)}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #27ae60; font-size: 13px;">
-                    <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
+                  <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); if(window.shareManager) window.shareManager.handleShare('${article.id}', '${article.type}', '${escapeForAttribute(title)}')">
+                    <i data-feather="share-2"></i> Share
                   </button>
                 </div>
               </div>

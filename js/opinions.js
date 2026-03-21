@@ -242,15 +242,11 @@ class OpinionsPageManager {
                   : ""
               }
             </div>
-        <div class="opinion-actions">
-          <button class="btn-view" onclick="opinionsManager.viewOpinion('${
-            opinion.id
-          }')">
+        <div class="card-actions">
+          <button class="dropdown-item-btn dd-detail" onclick="opinionsManager.viewOpinion('${opinion.id}')" style="width:auto;">
             <i data-feather="eye"></i> Lihat Detail
           </button>
-          <button class="btn-delete" onclick="opinionsManager.deleteOpinion('${
-            opinion.id
-          }', '${opinion.title.replace(/'/g, "\\'")}')">
+          <button class="dropdown-item-btn dd-delete" onclick="opinionsManager.deleteOpinion('${opinion.id}', '${opinion.title.replace(/'/g, "\\'")}')" style="width:auto;">
             <i data-feather="trash-2"></i> Hapus
           </button>
         </div>

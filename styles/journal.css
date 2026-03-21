@@ -45,17 +45,7 @@
   margin-bottom: 5px;
 }
 
-.journal-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 6px;
-  line-height: 1.3;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  max-height: 2.6em;
-}
+
 
 .journal-description {
   font-size: 12px;
@@ -342,7 +332,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
 }
 
 /* Pagination */
@@ -929,7 +918,7 @@
   }
 
   /* Journal actions responsive */
-  .journal-actions {
+  .card-actions {
     flex-wrap: wrap;
   }
 
@@ -980,3 +969,126 @@
     height: 20px;
   }
 }
+
+/* =========================================
+   Universal Action Buttons & Dropdown Styles
+   Overrides the old js inline injected logic
+   ========================================= */
+
+.dropdown-menu-container {
+    position: relative;
+}
+
+.card-actions {
+    display: flex !important;
+    justify-content: flex-end;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.dropdown-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: background 0.2s;
+    color: #666;
+}
+
+.dropdown-toggle:hover {
+    background: #f0f0f0;
+}
+
+.dropdown-toggle feather-icon,
+.dropdown-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    bottom: 100%;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 140px;
+    padding: 4px 0;
+    margin-bottom: 4px;
+}
+
+.dropdown-item-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.dropdown-item-btn:hover {
+    background: #f5f5f5;
+}
+
+.dropdown-item-btn feather-icon,
+.dropdown-item-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.dropdown-item-btn.dd-detail,
+.dropdown-item-btn.dd-download {
+    color: #3498db;
+}
+
+.dropdown-item-btn.dd-edit {
+    color: #f39c12;
+}
+
+.dropdown-item-btn.dd-delete {
+    color: #e74c3c;
+}
+
+.dropdown-item-btn.dd-share {
+    color: #27ae60;
+}
+
+/* Modal share buttons */
+.share-btn-modal {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.2s;
+}
+
+.share-btn-modal:hover {
+    opacity: 0.9;
+}
+
+.share-btn-modal feather-icon,
+.share-btn-modal svg {
+    width: 16px;
+    height: 16px;
+}
+
+.share-btn-modal.copy { background: #3498db; }
+.share-btn-modal.wa { background: #25d366; }
+.share-btn-modal.fb { background: #1877f2; }
+.share-btn-modal.x { background: #000000; }

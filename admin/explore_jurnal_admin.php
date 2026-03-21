@@ -958,6 +958,7 @@ $extra_scripts = <<<'EOT'
     <script src="../js/explore_jurnal_user.js"></script>
     <script src="../js/mobile_menu.js"></script>
     <script src="../js/opinions_manager.js"></script>
+    <script src="../js/login.js"></script>
     <script src="../js/custom_alerts.js"></script>
     <script src="../js/script.js"></script>
     <script src="../js/api.js"></script>

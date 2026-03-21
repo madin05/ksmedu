@@ -25,7 +25,8 @@ class PaginationUser {
     this.setupIconSort();
     this.applyFiltersAndSort();
 
-    const eventName = this.dataType === "jurnal" ? "journals:changed" : "opinions:changed";
+    const eventName =
+      this.dataType === "jurnal" ? "journals:changed" : "opinions:changed";
     window.addEventListener(eventName, async () => {
       console.log(`PaginationUser catch event: ${eventName}`);
       await this.loadData();
@@ -80,6 +81,7 @@ class PaginationUser {
         coverImage:
           item.cover_url ||
           "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=400&fit=crop",
+        file_url: item.file_url,
         views: parseInt(item.views) || 0,
       };
     } else {
@@ -94,6 +96,7 @@ class PaginationUser {
         coverImage:
           item.cover_url ||
           "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=400&fit=crop",
+        file_url: item.file_url,
         views: parseInt(item.views) || 0,
       };
     }
@@ -156,7 +159,7 @@ class PaginationUser {
     if (typeof feather !== "undefined") feather.replace();
   }
 
-  // ===== CREATE CARD (user - share only) =====
+  // ===== CREATE CARD (user - download & share dropdown menu) =====
   createCard(item) {
     const card = document.createElement("div");
     card.className =
@@ -184,6 +187,7 @@ class PaginationUser {
         : `explore_opini_user.html?id=${item.id}&type=opini`;
 
     const tags = Array.isArray(item.tags) ? item.tags : [];
+    const dropdownId = `user-dropdown-${this.dataType}-${item.id}`;
 
     if (this.dataType === "jurnal") {
       const author =
@@ -215,10 +219,20 @@ class PaginationUser {
             </div>`
               : ""
           }
-          <div class="journal-actions" style="margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
-            <button class="btn-share">
-              <i data-feather="share-2" style="width:14px;height:14px;"></i> SHARE
-            </button>
+          <div class="journal-actions" style="display: flex !important; justify-content: flex-end; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+            <div class="dropdown-menu-container" style="position: relative;">
+              <button class="dropdown-toggle" onclick="event.stopPropagation(); window.paginationUser?.toggleUserDropdown('${dropdownId}')" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: background 0.2s; color: #666;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
+                <i data-feather="more-vertical" style="width: 20px; height: 20px;"></i>
+              </button>
+              <div id="${dropdownId}" class="dropdown-content" style="display: none; position: absolute; right: 0; bottom: 100%; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 1000; min-width: 140px; padding: 4px 0; margin-bottom: 4px;">
+                <button onclick="event.stopPropagation(); window.paginationUser?.downloadFile('${item.file_url || ''}', '${item.title.replace(/'/g, "\\'")}', '${this.dataType}', '${item.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #3498db; font-size: 13px;">
+                  <i data-feather="download" style="width:14px; height:14px;"></i> Download
+                </button>
+                <button onclick="event.stopPropagation(); window.paginationUser?.copyToClipboard('${window.location.origin + "/ksmaja/" + exploreUrl}', '${item.title.replace(/'/g, "\\'")}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #27ae60; font-size: 13px;">
+                  <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
+                </button>
+              </div>
+            </div>
           </div>
         </div>`;
     } else {
@@ -229,7 +243,6 @@ class PaginationUser {
           <div class="opinion-views"><i data-feather="eye"></i> ${item.views}</div>
         </div>
         <div class="opinion-content">
-          <span class="opinion-category">${item.category}</span>
           <h3 class="opinion-title">${truncate(item.title, 60)}</h3>
           <p class="opinion-description">${truncate(item.description, 150)}</p>
           <div class="opinion-meta">
@@ -248,33 +261,231 @@ class PaginationUser {
             </div>`
               : ""
           }
-          <div class="opinion-actions" style="margin-top:15px; padding-top:15px; border-top:1px solid #eee;">
-            <button class="btn-share">
-              <i data-feather="share-2" style="width:14px;height:14px;"></i> SHARE
-            </button>
+          <div class="opinion-actions" style="display: flex !important; justify-content: flex-end; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+            <div class="dropdown-menu-container" style="position: relative;">
+              <button class="dropdown-toggle" onclick="event.stopPropagation(); window.paginationUser?.toggleUserDropdown('${dropdownId}')" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: background 0.2s; color: #666;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
+                <i data-feather="more-vertical" style="width: 20px; height: 20px;"></i>
+              </button>
+              <div id="${dropdownId}" class="dropdown-content" style="display: none; position: absolute; right: 0; bottom: 100%; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 1000; min-width: 140px; padding: 4px 0; margin-bottom: 4px;">
+                <button onclick="event.stopPropagation(); window.paginationUser?.downloadFile('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${this.dataType}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #3498db; font-size: 13px;">
+                  <i data-feather="download" style="width:14px; height:14px;"></i> Download
+                </button>
+                <button onclick="event.stopPropagation(); window.paginationUser?.openShareModal('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${exploreUrl}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #27ae60; font-size: 13px;">
+                  <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
+                </button>
+              </div>
+            </div>
           </div>
         </div>`;
     }
 
-    // Cover click - explore
-    const cover = card.querySelector(".journal-cover, .opinion-cover");
-    if (cover) {
-      cover.addEventListener("click", () => (window.location.href = exploreUrl));
-    }
-
-    // Share button
-    const shareBtn = card.querySelector(".btn-share");
-    if (shareBtn) {
-      shareBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        this.handleShare(item, exploreUrl);
-      });
-    }
+    // Card click - explore (except dropdown clicks)
+    card.style.cursor = "pointer";
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".dropdown-menu-container")) {
+        return;
+      }
+      window.location.href = exploreUrl;
+    });
 
     return card;
   }
 
-  // ===== SHARE =====
+  // ===== TOGGLE DROPDOWN =====
+  toggleUserDropdown(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+
+    // Close all other dropdowns
+    document.querySelectorAll(".dropdown-content").forEach((el) => {
+      if (el.id !== dropdownId) el.style.display = "none";
+    });
+
+    // Toggle current
+    dropdown.style.display =
+      dropdown.style.display === "none" ? "block" : "none";
+  }
+
+  // ===== DOWNLOAD FILE =====
+  async downloadFile(fileUrlOrId, itemTitle, dataType, itemId) {
+    try {
+      let fileUrl = fileUrlOrId;
+
+      // Fallback jika hanya ID yang dikirim
+      if (!fileUrl || (!fileUrl.includes("/") && !fileUrl.includes("http"))) {
+        const id = fileUrlOrId || itemId;
+        const endpoint =
+          dataType === "jurnal"
+            ? `/ksmaja/api/get_journal.php?id=${id}`
+            : `/ksmaja/api/get_opinion.php?id=${id}`;
+
+        console.log("Fetching file URL from API:", endpoint);
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        if (!data.ok) {
+          showAlert.error(
+            data.message || "File tidak ditemukan!",
+            "Download Gagal",
+          );
+          return;
+        }
+        fileUrl = data.data?.file_url || data.file_url || data.fileUrl;
+      }
+
+      if (!fileUrl) {
+        showAlert.error("File tidak ditemukan!", "Download Gagal");
+        return;
+      }
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.href = fileUrl;
+      link.download = itemTitle + ".pdf";
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+
+      // Small delay before removing to ensure download starts
+      setTimeout(() => document.body.removeChild(link), 100);
+
+      if (typeof showToast === "function") {
+        showToast(`${itemTitle}.pdf berhasil diunduh!`, "success", "Download Sukses");
+      } else {
+        showAlert.success(
+          `${itemTitle}.pdf berhasil diunduh!`,
+          "Download Sukses",
+        );
+      }
+    } catch (error) {
+      console.error("Download error:", error);
+      showAlert.error(
+        "Gagal download file: " + error.message,
+        "Download Gagal",
+      );
+    }
+
+    // Close dropdown
+    document.querySelectorAll(".dropdown-content").forEach((el) => {
+      el.style.display = "none";
+    });
+  }
+
+  // ===== OPEN SHARE MODAL WITH OPTIONS =====
+  openShareModal(itemId, itemTitle, pageUrl) {
+    const baseUrl = window.location.origin + "/ksmaja/";
+    const fullShareUrl = baseUrl + pageUrl;
+
+    // Create temporary modal if not exists
+    let modal = document.getElementById("userShareModal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "userShareModal";
+      modal.innerHTML = `
+        <div class="modal">
+          <div class="modal-overlay" onclick="document.getElementById('userShareModal').style.display='none'"></div>
+          <div class="modal-content" style="max-width: 400px">
+            <button type="button" class="close-modal" onclick="document.getElementById('userShareModal').style.display='none'">
+              <i data-feather="x"></i>
+            </button>
+            <h2 style="margin-bottom: 20px">Bagikan ${itemTitle}</h2>
+            <div style="display: flex; flex-direction: column; gap: 12px">
+              <input
+                type="text"
+                id="shareUrlInput"
+                value="${fullShareUrl}"
+                readonly
+                style="
+                  padding: 12px;
+                  border: 1px solid #ddd;
+                  border-radius: 6px;
+                  font-size: 14px;
+                "
+              />
+              <button onclick="window.paginationUser?.copyLink()" class="share-btn copy" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#3498db; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <i data-feather="copy" style="width:16px;height:16px;"></i> Copy Link
+              </button>
+              <button onclick="window.paginationUser?.shareToWhatsApp('${fullShareUrl}', '${itemTitle}')" class="share-btn wa" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#25d366; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <i data-feather="message-circle" style="width:16px;height:16px;"></i> Share ke WhatsApp
+              </button>
+              <button onclick="window.paginationUser?.shareToFacebook('${fullShareUrl}')" class="share-btn fb" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#1877f2; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <i data-feather="facebook" style="width:16px;height:16px;"></i> Share ke Facebook
+              </button>
+              <button onclick="window.paginationUser?.shareToTwitter('${fullShareUrl}', '${itemTitle}')" class="share-btn x" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#000000; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <i data-feather="x" style="width:16px;height:16px;"></i> Share ke X
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    } else {
+      // Update URL in existing modal
+      modal.querySelector("#shareUrlInput").value = fullShareUrl;
+    }
+
+    modal.style.display = "block";
+    if (typeof feather !== "undefined") feather.replace();
+
+    // Close dropdown
+    document.querySelectorAll(".dropdown-content").forEach((el) => {
+      el.style.display = "none";
+    });
+  }
+
+  // ===== COPY LINK =====
+  copyLink() {
+    const input = document.getElementById("shareUrlInput");
+    if (!input || !input.value) return;
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(input.value)
+        .then(() => {
+          showAlert.success("Link berhasil disalin ke clipboard!", "Informasi");
+        })
+        .catch(() => {
+          showAlert.error("Gagal menyalin link", "Error");
+        });
+    } else {
+      input.select();
+      try {
+        document.execCommand("copy");
+        showAlert.success("Link berhasil disalin ke clipboard!", "Informasi");
+      } catch (e) {
+        console.error("Copy error:", e);
+        showAlert.error("Gagal menyalin link", "Error");
+      }
+    }
+  }
+
+  // ===== SHARE TO WHATSAPP =====
+  shareToWhatsApp(url, title) {
+    const text = `Cek artikel "${title}" di sini: ${url}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    showAlert.success("Membuka WhatsApp...", "Informasi");
+    setTimeout(() => window.open(whatsappUrl, "_blank"), 300);
+  }
+
+  // ===== SHARE TO FACEBOOK =====
+  shareToFacebook(url) {
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=Cek%20artikel%20ini`;
+    showAlert.success("Membuka Facebook...", "Informasi");
+    setTimeout(
+      () => window.open(facebookUrl, "_blank", "width=600,height=400"),
+      300,
+    );
+  }
+
+  // ===== SHARE TO TWITTER/X =====
+  shareToTwitter(url, title) {
+    const text = `Cek artikel "${title}" di KSM Education`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    showAlert.success("Membuka X (Twitter)...", "Informasi");
+    setTimeout(() => window.open(twitterUrl, "_blank"), 300);
+  }
+
+  // ===== HANDLE SHARE (legacy) =====
   handleShare(item, url) {
     const fullUrl = window.location.origin + "/" + url;
     this.copyToClipboard(fullUrl, item.title);
@@ -285,7 +496,7 @@ class PaginationUser {
       if (typeof showToast === "function") {
         showToast(subMsg ? `"${subMsg}"` : "", "success", msg);
       } else {
-        alert(msg + (subMsg ? "\n" + subMsg : ""));
+        showAlert.success(msg, subMsg ? `"${subMsg}"` : "Sukses");
       }
     };
 
@@ -497,6 +708,15 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInputSelector: "#searchInput",
     itemsPerPage: 9,
     dataType: dataType,
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".dropdown-menu-container")) {
+      document.querySelectorAll(".dropdown-content").forEach((el) => {
+        el.style.display = "none";
+      });
+    }
   });
 });
 

@@ -297,7 +297,6 @@ class PaginationManager {
           <div class="card-type-badge badge-opini">OPINI</div>
         </div>
         <div class="opinion-content">
-          <span class="opinion-category">${item.category}</span>
           <h3 class="opinion-title">${truncate(item.title, 60)}</h3>
           <p class="opinion-description">${truncate(item.description, 150)}</p>
           <div class="opinion-meta">

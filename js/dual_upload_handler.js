@@ -8,7 +8,7 @@ if (window._dualUploadHandlerLoaded) {
     constructor(suffix = "") {
       this.suffix = suffix;
       this.pengurusContainer = document.getElementById(
-        `pengurusContainer${suffix}`
+        `pengurusContainer${suffix}`,
       );
       this.addPengurusBtn = document.getElementById(`addPengurusBtnJurnal`);
       this.pengurusCount = 1;
@@ -17,7 +17,7 @@ if (window._dualUploadHandlerLoaded) {
         this.init();
       } else {
         console.warn(
-          `PengurusManager: Elements not found for suffix "${suffix}"`
+          `PengurusManager: Elements not found for suffix "${suffix}"`,
         );
       }
     }
@@ -56,10 +56,10 @@ if (window._dualUploadHandlerLoaded) {
 
     removePengurusField(pengurusGroup) {
       const pengurusGroups = this.pengurusContainer.querySelectorAll(
-        ".pengurus-input-group"
+        ".pengurus-input-group",
       );
       if (pengurusGroups.length <= 1) {
-        alert("Minimal harus ada 1 pengurus!");
+        showAlert.warning("Minimal harus ada 1 pengurus!", "Pengurus Minimal");
         return;
       }
 
@@ -77,7 +77,7 @@ if (window._dualUploadHandlerLoaded) {
       });
 
       const removeButtons = this.pengurusContainer.querySelectorAll(
-        ".btn-remove-pengurus"
+        ".btn-remove-pengurus",
       );
       removeButtons.forEach((btn, index) => {
         btn.style.display = index === 0 ? "none" : "flex";
@@ -97,7 +97,7 @@ if (window._dualUploadHandlerLoaded) {
 
     clearPengurus() {
       const pengurusGroups = this.pengurusContainer.querySelectorAll(
-        ".pengurus-input-group"
+        ".pengurus-input-group",
       );
       pengurusGroups.forEach((group, index) => {
         if (index > 0) group.remove();
@@ -115,7 +115,7 @@ if (window._dualUploadHandlerLoaded) {
     constructor(suffix = "") {
       this.suffix = suffix;
       this.authorsContainer = document.getElementById(
-        `authorsContainer${suffix}`
+        `authorsContainer${suffix}`,
       );
       this.addAuthorBtn = document.getElementById(`addAuthorBtn${suffix}`);
       this.authorCount = 1;
@@ -146,7 +146,7 @@ if (window._dualUploadHandlerLoaded) {
 
       const removeBtn = authorGroup.querySelector(".btn-remove-author");
       removeBtn.addEventListener("click", () =>
-        this.removeAuthorField(authorGroup)
+        this.removeAuthorField(authorGroup),
       );
 
       if (typeof feather !== "undefined") feather.replace();
@@ -157,7 +157,7 @@ if (window._dualUploadHandlerLoaded) {
         this.authorsContainer.querySelectorAll(".author-input-group").length <=
         1
       ) {
-        alert("Minimal harus ada 1 penulis!");
+        showAlert.warning("Minimal harus ada 1 penulis!", "Penulis Minimal");
         return;
       }
       authorGroup.remove();
@@ -176,7 +176,7 @@ if (window._dualUploadHandlerLoaded) {
 
     clearAuthors() {
       const groups = this.authorsContainer.querySelectorAll(
-        ".author-input-group"
+        ".author-input-group",
       );
       groups.forEach((group, index) => {
         if (index > 0) group.remove();
@@ -223,22 +223,22 @@ if (window._dualUploadHandlerLoaded) {
       const tagValue = this.tagsInput.value.trim().toLowerCase();
 
       if (!tagValue) {
-        alert("Tag tidak boleh kosong!");
+        showAlert.warning("Tag tidak boleh kosong!", "Tag Kosong");
         return;
       }
 
       if (tagValue.length < 2) {
-        alert("Tag minimal 2 karakter!");
+        showAlert.warning("Tag minimal 2 karakter!", "Tag Terlalu Pendek");
         return;
       }
 
       if (this.tags.includes(tagValue)) {
-        alert("Tag sudah ada!");
+        showAlert.warning("Tag sudah ada!", "Tag Duplikat");
         return;
       }
 
       if (this.tags.length >= 10) {
-        alert("Maksimal 10 tag!");
+        showAlert.warning("Maksimal 10 tag!", "Batas Tag");
         return;
       }
 
@@ -249,7 +249,7 @@ if (window._dualUploadHandlerLoaded) {
 
     renderTags() {
       if (!this.tagsList) return;
-      
+
       this.tagsList.innerHTML = this.tags
         .map(
           (tag, index) => `
@@ -259,7 +259,7 @@ if (window._dualUploadHandlerLoaded) {
               <i data-feather="x"></i>
             </button>
           </span>
-        `
+        `,
         )
         .join("");
 
@@ -305,7 +305,7 @@ if (window._dualUploadHandlerLoaded) {
       // SINGLETON PATTERN
       if (DualUploadHandler._instance) {
         console.warn(
-          "DualUploadHandler already exists, returning existing instance"
+          "DualUploadHandler already exists, returning existing instance",
         );
         return DualUploadHandler._instance;
       }
@@ -373,28 +373,28 @@ if (window._dualUploadHandlerLoaded) {
         this.isSubmittingJurnal = true;
 
         if (!window.loginManager || !window.loginManager.isAdmin()) {
-          alert("Login sebagai admin terlebih dahulu!");
+          showAlert.warning("Login sebagai admin terlebih dahulu!", "Login Diperlukan");
           if (window.loginManager) window.loginManager.openLoginModal();
           this.isSubmittingJurnal = false; // Reset flag
           return;
         }
 
         if (!this.jurnalFileManager.getUploadedFile()) {
-          alert("Upload file jurnal terlebih dahulu!");
+          showAlert.warning("Upload file jurnal terlebih dahulu!", "File Belum Diupload");
           this.isSubmittingJurnal = false; // Reset flag
           return;
         }
 
         const authors = this.jurnalAuthorsManager.getAuthors();
         if (authors.length === 0) {
-          alert("Minimal 1 penulis!");
+          showAlert.warning("Minimal 1 penulis!", "Penulis Diperlukan");
           this.isSubmittingJurnal = false; // Reset flag
           return;
         }
 
         const pengurus = this.jurnalPengurusManager.getPengurus();
         if (pengurus.length === 0) {
-          alert("Minimal 1 pengurus!");
+          showAlert.warning("Minimal 1 pengurus!", "Pengurus Diperlukan");
           this.isSubmittingJurnal = false; // Reset flag
           return;
         }
@@ -406,11 +406,18 @@ if (window._dualUploadHandlerLoaded) {
         const volume = document.getElementById("volumeJurnal").value.trim();
         const tags = this.jurnalTagsManager.getTags();
 
-        if (!judul || !email || !kontak || !abstrak || !volume || tags.length === 0) {
+        if (
+          !judul ||
+          !email ||
+          !kontak ||
+          !abstrak ||
+          !volume ||
+          tags.length === 0
+        ) {
           if (tags.length === 0) {
-            alert("Minimal harus ada 1 tag!");
+            showAlert.warning("Minimal harus ada 1 tag!", "Tag Diperlukan");
           } else {
-            alert("Semua field harus diisi!");
+            showAlert.warning("Semua field harus diisi!", "Field Kosong");
           }
           this.isSubmittingJurnal = false;
           return;
@@ -418,21 +425,16 @@ if (window._dualUploadHandlerLoaded) {
 
         const phoneRegex = /^(?:(?:\+|00)62|[0])8[1-9]\d{7,11}$/;
         if (!phoneRegex.test(kontak.replace(/\D/g, ""))) {
-          alert(
-            "Nomor kontak harus berupa nomor HP yang valid!\n\nFormat: 08XXXXXXXXX"
-          );
+          showAlert.warning("Nomor kontak harus berupa nomor HP yang valid!\n\nFormat: 08XXXXXXXXX", "Nomor Invalid");
           this.isSubmittingJurnal = false; // Reset flag
           return;
         }
 
         const file = this.jurnalFileManager.getUploadedFile();
-        const confirmMsg = `Yakin mau upload jurnal ini?\n\nJudul: ${judul}\nPenulis: ${authors.join(
-          ", "
-        )}\nPengurus: ${pengurus.join(
-          ", "
-        )}\nKontak: ${kontak}\n\nUkuran: ${this.formatFileSize(file.size)}`;
+        const confirmMsg = `Judul: ${judul}\nPenulis: ${authors.join(", ")} | Pengurus: ${pengurus.join(", ")}\nKontak: ${kontak} | Ukuran: ${this.formatFileSize(file.size)}`;
 
-        if (!confirm(confirmMsg)) {
+        const confirmed = await showAlert.confirm(confirmMsg, "Konfirmasi Upload Jurnal");
+        if (!confirmed) {
           console.log("Upload dibatalkan oleh user");
           this.isSubmittingJurnal = false; // Reset flag
           return;
@@ -514,18 +516,18 @@ if (window._dualUploadHandlerLoaded) {
         console.log("Journal created with ID:", createResult.id);
 
         this.hideLoading();
-        alert("Jurnal berhasil diupload ke database!");
+        showAlert.success("Jurnal berhasil diupload ke database!", "Upload Berhasil");
 
         window.dispatchEvent(
           new CustomEvent("journals:changed", {
             detail: { id: createResult.id, action: "created" },
-          })
+          }),
         );
         this.resetJurnalForm();
       } catch (error) {
         console.error("Upload error:", error);
         this.hideLoading();
-        alert("Gagal upload: " + error.message);
+        showAlert.error("Gagal upload: " + error.message, "Gagal Upload");
       } finally {
         // Selalu reset flag setelah proses selesai
         this.isSubmittingJurnal = false;
@@ -577,7 +579,7 @@ if (window._dualUploadHandlerLoaded) {
 
       try {
         if (!window.loginManager || !window.loginManager.isAdmin()) {
-          alert("Login sebagai admin terlebih dahulu!");
+          showAlert.warning("Login sebagai admin terlebih dahulu!", "Login Diperlukan");
           if (window.loginManager) window.loginManager.openLoginModal();
           return;
         }
@@ -585,13 +587,13 @@ if (window._dualUploadHandlerLoaded) {
         //  FIX: Pakai opiniFileManager (bukan opiniFileHandler)
         const file = this.opiniFileManager.getUploadedFile();
         if (!file) {
-          alert("Upload file opini terlebih dahulu!");
+          showAlert.warning("Upload file opini terlebih dahulu!", "File Belum Diupload");
           return;
         }
 
         const authors = this.opiniAuthorsManager.getAuthors();
         if (authors.length === 0) {
-          alert("Minimal 1 penulis!");
+          showAlert.warning("Minimal 1 penulis!", "Penulis Diperlukan");
           return;
         }
 
@@ -603,26 +605,23 @@ if (window._dualUploadHandlerLoaded) {
 
         if (!judul || !email || !kontak || !abstrak || tags.length === 0) {
           if (tags.length === 0) {
-            alert("Minimal harus ada 1 tag!");
+            showAlert.warning("Minimal harus ada 1 tag!", "Tag Diperlukan");
           } else {
-            alert("Semua field harus diisi!");
+            showAlert.warning("Semua field harus diisi!", "Field Kosong");
           }
           return;
         }
 
         const phoneRegex = /^(?:(?:\+|00)62|[0])8[1-9]\d{7,11}$/;
         if (!phoneRegex.test(kontak.replace(/\D/g, ""))) {
-          alert(
-            "Nomor kontak harus berupa nomor HP yang valid!\n\nFormat: 08XXXXXXXXX"
-          );
+          showAlert.warning("Nomor kontak harus berupa nomor HP yang valid!\n\nFormat: 08XXXXXXXXX", "Nomor Invalid");
           return;
         }
 
-        const confirmMsg = `Yakin mau upload opini ini?\n\nJudul: ${judul}\nPenulis: ${authors.join(
-          ", "
-        )}\nKontak: ${kontak}\n\nUkuran: ${this.formatFileSize(file.size)}`;
+        const confirmMsg = `Judul: ${judul}\nPenulis: ${authors.join(", ")}\nKontak: ${kontak} | Ukuran: ${this.formatFileSize(file.size)}`;
 
-        if (!confirm(confirmMsg)) {
+        const confirmed = await showAlert.confirm(confirmMsg, "Konfirmasi Upload Opini");
+        if (!confirmed) {
           console.log("Upload dibatalkan");
           return;
         }
@@ -701,18 +700,18 @@ if (window._dualUploadHandlerLoaded) {
         console.log("Opinion created with ID:", createResult.id);
 
         this.hideLoading();
-        alert("Artikel Opini berhasil diupload!");
+        showAlert.success("Artikel Opini berhasil diupload!", "Upload Berhasil");
 
         window.dispatchEvent(
           new CustomEvent("opinions:changed", {
             detail: { id: createResult.id, action: "created" },
-          })
+          }),
         );
         this.resetOpiniForm();
       } catch (error) {
         console.error("Upload error:", error);
         this.hideLoading();
-        alert("Gagal upload: " + error.message);
+        showAlert.error("Gagal upload: " + error.message, "Gagal Upload");
       } finally {
         this.isSubmittingOpini = false;
         this.enableSubmitButton("uploadFormOpini");
@@ -819,7 +818,7 @@ if (window._dualUploadHandlerLoaded) {
 
     disableSubmitButton(formId) {
       const submitBtn = document.querySelector(
-        `#${formId} button[type="submit"]`
+        `#${formId} button[type="submit"]`,
       );
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -830,7 +829,7 @@ if (window._dualUploadHandlerLoaded) {
 
     enableSubmitButton(formId) {
       const submitBtn = document.querySelector(
-        `#${formId} button[type="submit"]`
+        `#${formId} button[type="submit"]`,
       );
       if (submitBtn) {
         submitBtn.disabled = false;

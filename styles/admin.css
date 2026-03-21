@@ -8,6 +8,7 @@
 @import url("index_responsive.css");
 @import url("social.css");
 @import url("toast.css");
+@import url("custom_alerts.css");
 
 * {
   margin: 0;

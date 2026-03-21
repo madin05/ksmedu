@@ -5,24 +5,29 @@ let currentShareTitle = "";
 function openShareModal(id) {
   const article =
     (window.journalManager && window.journalManager.getJournalById(id)) ||
-    (window.paginationManager && typeof window.paginationManager.getItemById === "function"
+    (window.paginationManager &&
+    typeof window.paginationManager.getItemById === "function"
       ? window.paginationManager.getItemById(id)
       : null);
 
   if (!article) {
-    alert("Data artikel tidak ditemukan.");
+    showAlert.warning(
+      "Data artikel tidak ditemukan.",
+      "Artikel Tidak Ditemukan",
+    );
     return;
   }
 
   const baseUrl = window.location.origin;
   const path = window.location.pathname.substring(
     0,
-    window.location.pathname.lastIndexOf("/")
+    window.location.pathname.lastIndexOf("/"),
   );
 
   // Detect type from page URL or article data
   const isOpiniPage = window.location.pathname.includes("opini");
-  const articleType = article._type || article.type || (isOpiniPage ? "opini" : "jurnal");
+  const articleType =
+    article._type || article.type || (isOpiniPage ? "opini" : "jurnal");
   const explorePage = "explore_jurnal_user.html";
 
   currentShareUrl = `${baseUrl}${path}/${explorePage}?id=${id}&type=${articleType}`;
@@ -54,11 +59,11 @@ function copyShareLink() {
       if (typeof showToast === "function") {
         showToast("Link berhasil disalin!", "success");
       } else {
-        alert("Link berhasil disalin!\n\n" + currentShareUrl);
+        showAlert.success("Link berhasil disalin!", "Sukses");
       }
     })
     .catch(() => {
-      alert("Gagal menyalin link, salin manual:\n\n" + currentShareUrl);
+      showAlert.error("Gagal menyalin link, salin manual:\n\n" + currentShareUrl, "Gagal Menyalin");
     });
 }
 
@@ -72,9 +77,9 @@ function shareToFacebook() {
   if (!currentShareUrl) return;
   window.open(
     `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-      currentShareUrl
+      currentShareUrl,
     )}`,
-    "_blank"
+    "_blank",
   );
 }
 
@@ -83,9 +88,9 @@ function shareToTwitter() {
   const text = encodeURIComponent(currentShareTitle);
   window.open(
     `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-      currentShareUrl
+      currentShareUrl,
     )}&text=${text}`,
-    "_blank"
+    "_blank",
   );
 }
 

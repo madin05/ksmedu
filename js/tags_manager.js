@@ -32,22 +32,22 @@ class TagsManager {
     const tagValue = this.tagsInput.value.trim().toLowerCase();
 
     if (!tagValue) {
-      alert("Tag tidak boleh kosong!");
+      showAlert.warning("Tag tidak boleh kosong!", "Tag Kosong");
       return;
     }
 
     if (tagValue.length < 2) {
-      alert("Tag minimal 2 karakter!");
+      showAlert.warning("Tag minimal 2 karakter!", "Tag Terlalu Pendek");
       return;
     }
 
     if (this.tags.includes(tagValue)) {
-      alert("Tag sudah ada!");
+      showAlert.warning("Tag sudah ada!", "Tag Duplikat");
       return;
     }
 
     if (this.tags.length >= 10) {
-      alert("Maksimal 10 tag!");
+      showAlert.warning("Maksimal 10 tag!", "Batas Tag");
       return;
     }
 
@@ -66,7 +66,7 @@ class TagsManager {
             <i data-feather="x"></i>
           </button>
         </span>
-      `
+      `,
       )
       .join("");
 

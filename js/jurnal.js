@@ -14,12 +14,16 @@ class JournalManager {
     // Biarkan dashboard_user.js yang handle render untuk user
     const path = window.location.pathname.toLowerCase();
     if (path.includes("dashboard_user.html")) {
-      console.warn("User dashboard page - JournalManager DISABLED (handled by dashboard_user.js)");
+      console.warn(
+        "User dashboard page - JournalManager DISABLED (handled by dashboard_user.js)",
+      );
       return;
     }
 
     if (path.includes("journals.html")) {
-      console.warn("journals.html - JournalManager DISABLED (handled by PaginationManager)");
+      console.warn(
+        "journals.html - JournalManager DISABLED (handled by PaginationManager)",
+      );
       return;
     }
 
@@ -156,11 +160,12 @@ class JournalManager {
   showSkeleton() {
     if (!this.journalContainer) return;
     this.journalContainer.innerHTML = "";
-    
+
     // Check if we are on index or dashboard
-    const isDashboard = window.location.pathname.includes("dashboard_admin.html") || 
-                        window.location.pathname.includes("index.html");
-    
+    const isDashboard =
+      window.location.pathname.includes("dashboard_admin.html") ||
+      window.location.pathname.includes("index.html");
+
     const count = isDashboard ? 6 : 9;
 
     for (let i = 0; i < count; i++) {
@@ -400,7 +405,10 @@ class JournalManager {
     if (coverDiv) {
       coverDiv.style.cursor = "pointer";
       const exploreType = journal._type === "opini" ? "opini" : "jurnal";
-      const explorePage = journal._type === "opini" ? "explore_opini_admin.html" : "explore_jurnal_admin.html";
+      const explorePage =
+        journal._type === "opini"
+          ? "explore_opini_admin.html"
+          : "explore_jurnal_admin.html";
       coverDiv.addEventListener("click", (e) => {
         e.stopPropagation();
         window.location.href = `${explorePage}?id=${journal.id}&type=${exploreType}`;
@@ -418,14 +426,15 @@ class JournalManager {
 
   async deleteJournal(id, title = "") {
     if (!id) {
-      alert(" ID journal tidak valid");
+      showAlert.warning("ID journal tidak valid", "ID Tidak Valid");
       return;
     }
     const confirmMsg = title
       ? `Yakin ingin menghapus jurnal "${title}"?\n\nData akan dihapus permanent dari database!`
       : `Yakin ingin menghapus jurnal ini?\n\nData akan dihapus permanent dari database!`;
 
-    if (!confirm(confirmMsg)) return;
+    const confirmed = await showAlert.confirm(confirmMsg, "Konfirmasi Hapus");
+    if (!confirmed) return;
 
     try {
       const card = document.querySelector(`[data-journal-id="${id}"]`);
@@ -447,7 +456,7 @@ class JournalManager {
 
       const result = await response.json();
       if (result.ok) {
-        alert(" Jurnal berhasil dihapus!");
+        showAlert.success("Jurnal berhasil dihapus!", "Sukses");
         this.journals = this.journals.filter(
           (j) => String(j.id) !== String(id),
         );
@@ -469,7 +478,7 @@ class JournalManager {
         );
       }
     } catch (error) {
-      alert(" Gagal menghapus jurnal: " + error.message);
+      showAlert.error("Gagal menghapus jurnal: " + error.message, "Gagal");
       const card = document.querySelector(`[data-journal-id="${id}"]`);
       if (card) {
         card.style.opacity = "1";
@@ -614,22 +623,25 @@ document.addEventListener("DOMContentLoaded", () => {
 // ===== DROPDOWN FUNCTIONS FOR ADMIN ACTIONS =====
 function toggleDropdown(journalId) {
   const dropdown = document.getElementById(`dropdown-${journalId}`);
-  const isVisible = dropdown.style.display === 'block';
-  
+  const isVisible = dropdown.style.display === "block";
+
   // Close all other dropdowns first
-  document.querySelectorAll('.dropdown-content').forEach(d => {
-    d.style.display = 'none';
+  document.querySelectorAll(".dropdown-content").forEach((d) => {
+    d.style.display = "none";
   });
-  
+
   // Toggle current dropdown
-  dropdown.style.display = isVisible ? 'none' : 'block';
-  
+  dropdown.style.display = isVisible ? "none" : "block";
+
   // Close dropdown when clicking outside
   if (!isVisible) {
-    document.addEventListener('click', function closeDropdown(e) {
-      if (!dropdown.contains(e.target) && !e.target.closest('.dropdown-toggle')) {
-        dropdown.style.display = 'none';
-        document.removeEventListener('click', closeDropdown);
+    document.addEventListener("click", function closeDropdown(e) {
+      if (
+        !dropdown.contains(e.target) &&
+        !e.target.closest(".dropdown-toggle")
+      ) {
+        dropdown.style.display = "none";
+        document.removeEventListener("click", closeDropdown);
       }
     });
   }
@@ -637,7 +649,7 @@ function toggleDropdown(journalId) {
 
 function closeDropdown(journalId) {
   const dropdown = document.getElementById(`dropdown-${journalId}`);
-  dropdown.style.display = 'none';
+  dropdown.style.display = "none";
 }
 
 console.log("jurnal.js loaded (Database Mode)");

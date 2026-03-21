@@ -122,18 +122,6 @@ select:focus {
   object-fit: cover;
 }
 
-.opinion-category {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(44, 62, 80, 0.9);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
 
 .opinion-content {
   padding: 20px;

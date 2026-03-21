@@ -930,3 +930,110 @@
     }
 }
 
+/* ===== VERTICAL LIST VIEW FOR USER PAGES ===== */
+.list-view {
+    display: flex !important;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 1280px; /* max-w-7xl equivalent */
+    margin: 0 auto;
+}
+
+.list-view .journal-card,
+.list-view .opinion-card {
+    flex-direction: row;
+    position: relative;
+    height: 160px; /* fixed max height */
+    max-height: 160px;
+    width: 100%;
+    align-items: stretch;
+    /* overflow: hidden; removed to prevent dropdown cropping */
+}
+
+.list-view .journal-cover,
+.list-view .opinion-cover {
+    width: 160px; /* strictly 160px */
+    height: 160px; /* strictly 160px */
+    flex-shrink: 0;
+    border-radius: 12px 0 0 12px; /* Add radius directly to the image container to keep it rounded without hiding overflows on parent */
+    overflow: hidden;
+}
+
+.list-view .journal-cover img,
+.list-view .opinion-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.list-view .journal-content,
+.list-view .opinion-content {
+    padding: 16px 48px 16px 20px; /* Extra right padding so text doesn't overlap absolute actions button */
+    justify-content: flex-start;
+    min-width: 0;
+}
+
+.list-view .journal-title,
+.list-view .opinion-title {
+    font-size: 16px;
+    -webkit-line-clamp: 2;
+    margin-bottom: 6px;
+    flex-shrink: 0; /* Prevent title from disappearing */
+}
+
+.list-view .journal-abstract,
+.list-view .opinion-description {
+    -webkit-line-clamp: 2; /* Reduce lines to make it smaller */
+    margin-bottom: 12px;
+    font-size: 13px;
+    flex-shrink: 0; /* Prevent description from disappearing */
+}
+
+.list-view .journal-meta,
+.list-view .opinion-meta {
+    margin-top: auto;
+    padding-top: 12px;
+    font-size: 11px;
+}
+
+/* View Button overrides for list view */
+.list-view .journal-actions,
+.list-view .opinion-actions {
+    position: absolute !important;
+    top: 16px !important;
+    right: 16px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+}
+
+/* Force dropdown to open downwards in list-view so it is not cropped by the top edge */
+.list-view .dropdown-content {
+    bottom: auto !important;
+    top: 100% !important;
+    margin-bottom: 0 !important;
+    margin-top: 4px !important;
+}
+
+@media (max-width: 768px) {
+    .list-view {
+        padding: 20px 10px;
+    }
+    .list-view .journal-card,
+    .list-view .opinion-card {
+        flex-direction: column;
+        height: auto;
+    }
+    .list-view .journal-cover,
+    .list-view .opinion-cover {
+        width: 100%;
+        height: 200px;
+        border-radius: 12px 12px 0 0; /* Reset radius for vertical stack */
+    }
+    .list-view .journal-content,
+    .list-view .opinion-content {
+        padding: 16px;
+    }
+}
+

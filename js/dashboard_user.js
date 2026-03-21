@@ -187,7 +187,7 @@ async function renderArticles() {
   const navUser = document.getElementById("latestArticlesNavUser");
 
   showSkeletonUI();
-  
+
   if (navUser) navUser.innerHTML = "";
 
   articles = await loadArticles();
@@ -236,10 +236,8 @@ async function renderArticles() {
         article.type === "opini" ? "badge-opini" : "badge-jurnal";
 
       return `
-        <div class="article-card">
-          <div class="article-image-container" onclick="openArticleDetail('${
-            article.id
-          }', '${article.type}')" style="cursor: pointer;">
+        <div class="article-card" onclick="if(!event.target.closest('.dropdown-menu-container')) openArticleDetail('${article.id}', '${article.type}')" style="cursor: pointer;">
+          <div class="article-image-container">
             <img src="${coverImage}" alt="${title}" class="article-image"
                  onerror="this.src='https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500&h=400&fit=crop'">
             <div class="article-views-badge">
@@ -249,9 +247,7 @@ async function renderArticles() {
           </div>
           
           <div class="article-content">
-            <h3 class="article-title" onclick="openArticleDetail('${
-              article.id
-            }', '${article.type}')" style="cursor: pointer;">
+            <h3 class="article-title">
               ${title}
             </h3>
             
@@ -269,31 +265,27 @@ async function renderArticles() {
                 <div class="article-tags">
                   ${tags
                     .slice(0, 3)
-                    .map(
-                      (tag) =>
-                        `<span class="article-tag">${tag}</span>`,
-                    )
+                    .map((tag) => `<span class="article-tag">${tag}</span>`)
                     .join("")}
                   ${tags.length > 3 ? `<span class="article-tag-more">+${tags.length - 3}</span>` : ""}
                 </div>
               `;
             })()}
 
-            <div class="article-share-wrapper">
-              <button 
-                class="btn-share-article" 
-                data-article-id="${article.id}"
-                data-article-type="${article.type}"
-                data-article-title="${escapeForAttribute(title)}">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
-                  <circle cx="18" cy="5" r="3"></circle>
-                  <circle cx="6" cy="12" r="3"></circle>
-                  <circle cx="18" cy="19" r="3"></circle>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                </svg>
-                SHARE
-              </button>
+            <div class="article-actions" style="display: flex !important; justify-content: flex-end; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+              <div class="dropdown-menu-container" style="position: relative;">
+                <button class="dropdown-toggle" onclick="event.stopPropagation(); window.dashboardDropdownToggle('dashboard-dd-${article.id}')" style="background: none; border: none; cursor: pointer; padding: 6px; border-radius: 50%; transition: background 0.2s; color: #666;" onmouseover="this.style.background='#f0f0f0'" onmouseout="this.style.background='none'">
+                  <i data-feather="more-vertical" style="width: 20px; height: 20px;"></i>
+                </button>
+                <div id="dashboard-dd-${article.id}" class="dropdown-content" style="display: none; position: absolute; right: 0; bottom: 100%; background: white; border: 1px solid #e0e0e0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.15); z-index: 1000; min-width: 140px; padding: 4px 0; margin-bottom: 4px;">
+                  <button onclick="event.stopPropagation(); window.downloadDashboardArticle('${article.fileData || ''}', '${escapeForAttribute(title)}', '${article.type}', '${article.id}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #3498db; font-size: 13px;">
+                    <i data-feather="download" style="width:14px; height:14px;"></i> Download
+                  </button>
+                  <button onclick="event.stopPropagation(); if(window.shareManager) window.shareManager.handleShare('${article.id}', '${article.type}', '${escapeForAttribute(title)}')" style="width: 100%; padding: 8px 12px; border: none; background: none; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 8px; color: #27ae60; font-size: 13px;">
+                    <i data-feather="share-2" style="width:14px; height:14px;"></i> Share
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -350,8 +342,12 @@ function showSkeletonUI() {
 function setupLogout() {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      if (confirm("YAKIN INGIN LOGOUT?")) {
+    logoutBtn.addEventListener("click", async () => {
+      const confirmed = await showAlert.confirm(
+        "YAKIN INGIN LOGOUT?",
+        "Konfirmasi Logout",
+      );
+      if (confirmed) {
         sessionStorage.clear();
         localStorage.removeItem("userEmail");
         window.location.href = "./login_user.html";
@@ -595,7 +591,7 @@ class ShareManager {
       const truncatedTitle =
         title.length > 40 ? title.substring(0, 40) + "..." : title;
       const message = `Link berhasil disalin!\n"${truncatedTitle}"`;
-      alert(message);
+      showAlert.success(message, "Sukses");
     }
   }
 }
@@ -754,6 +750,208 @@ if (document.readyState === "loading") {
   window.dynamicCategoriesManager = new DynamicCategoriesManager();
 }
 
+// ===== DASHBOARD DROPDOWN & ACTIONS =====
+window.dashboardDropdownToggle = function (dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+
+  // Close all other dropdowns
+  document.querySelectorAll(".dropdown-content").forEach((el) => {
+    if (el.id !== dropdownId) el.style.display = "none";
+  });
+
+  // Toggle current
+  dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
+};
+
+// ===== DOWNLOAD ARTICLE =====
+window.downloadDashboardArticle = async function (fileUrlOrId, itemTitle, dataType, itemId) {
+  try {
+    let fileUrl = fileUrlOrId;
+
+    // Jika argumen pertama bukan URL (hanya ID), tarik dari API (fallback)
+    if (!fileUrl || (!fileUrl.includes("/") && !fileUrl.includes("http"))) {
+      const id = fileUrlOrId || itemId;
+      const endpoint =
+        dataType === "opini"
+          ? `/ksmaja/api/get_opinion.php?id=${id}`
+          : `/ksmaja/api/get_journal.php?id=${id}`;
+
+      console.log("Fetching file URL from API:", endpoint);
+      const response = await fetch(endpoint);
+      const data = await response.json();
+
+      if (!data.ok) {
+        showAlert.error(
+          data.message || "File tidak ditemukan!",
+          "Download Gagal",
+        );
+        return;
+      }
+      fileUrl = data.data?.file_url || data.file_url || data.fileUrl;
+    }
+
+    if (!fileUrl) {
+      console.error("File URL not found");
+      showAlert.error("File tidak ditemukan!", "Download Gagal");
+      return;
+    }
+
+    console.log("Triggering download for:", fileUrl);
+
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = itemTitle + ".pdf";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+
+    // Small delay before removing to ensure download starts
+    setTimeout(() => document.body.removeChild(link), 100);
+
+    // Show better notification
+    if (typeof showToast === "function") {
+      showToast(`${itemTitle}.pdf berhasil diunduh!`, "success", "Download Sukses");
+    } else {
+      showAlert.success(`${itemTitle}.pdf berhasil diunduh!`, "Download Sukses");
+    }
+  } catch (error) {
+    console.error("Download error:", error);
+    showAlert.error("Gagal download file: " + error.message, "Download Gagal");
+  }
+
+  // Close dropdown
+  document.querySelectorAll(".dropdown-content").forEach((el) => {
+    el.style.display = "none";
+  });
+};
+
+// ===== OPEN SHARE MODAL =====
+window.openDashboardShareModal = function (itemId, itemTitle, dataType) {
+  const pageUrl =
+    dataType === "opini"
+      ? `explore_opini_user.html?id=${itemId}&type=opini`
+      : `explore_jurnal_user.html?id=${itemId}&type=jurnal`;
+
+  const baseUrl = window.location.origin + "/ksmaja/";
+  const fullShareUrl = baseUrl + pageUrl;
+
+  let modal = document.getElementById("dashboardShareModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "dashboardShareModal";
+    modal.innerHTML = `
+      <div class="modal">
+        <div class="modal-overlay" onclick="document.getElementById('dashboardShareModal').style.display='none'"></div>
+        <div class="modal-content" style="max-width: 400px">
+          <button type="button" class="close-modal" onclick="document.getElementById('dashboardShareModal').style.display='none'">
+            <i data-feather="x"></i>
+          </button>
+          <h2 style="margin-bottom: 20px">Bagikan ${itemTitle}</h2>
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <input
+              type="text"
+              id="dashboardShareUrlInput"
+              value="${fullShareUrl}"
+              readonly
+              style="
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+              "
+            />
+            <button onclick="window.copyDashboardLink()" class="share-btn copy" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#3498db; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <i data-feather="copy" style="width:16px;height:16px;"></i> Copy Link
+            </button>
+            <button onclick="window.shareToDashboardWhatsApp('${fullShareUrl}', '${itemTitle}')" class="share-btn wa" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#25d366; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <i data-feather="message-circle" style="width:16px;height:16px;"></i> Share ke WhatsApp
+            </button>
+            <button onclick="window.shareToDashboardFacebook('${fullShareUrl}')" class="share-btn fb" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#1877f2; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <i data-feather="facebook" style="width:16px;height:16px;"></i> Share ke Facebook
+            </button>
+            <button onclick="window.shareToDashboardTwitter('${fullShareUrl}', '${itemTitle}')" class="share-btn x" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#000000; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <i data-feather="x" style="width:16px;height:16px;"></i> Share ke X
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  } else {
+    modal.querySelector("#dashboardShareUrlInput").value = fullShareUrl;
+  }
+
+  modal.style.display = "block";
+  if (typeof feather !== "undefined") feather.replace();
+
+  // Close dropdown
+  document.querySelectorAll(".dropdown-content").forEach((el) => {
+    el.style.display = "none";
+  });
+};
+
+// ===== COPY LINK =====
+window.copyDashboardLink = function () {
+  const input = document.getElementById("dashboardShareUrlInput");
+  if (!input || !input.value) return;
+
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard
+      .writeText(input.value)
+      .then(() => {
+        showAlert.success("Link berhasil disalin ke clipboard!", "Informasi");
+      })
+      .catch(() => {
+        showAlert.error("Gagal menyalin link", "Error");
+      });
+  } else {
+    input.select();
+    try {
+      document.execCommand("copy");
+      showAlert.success("Link berhasil disalin ke clipboard!", "Informasi");
+    } catch (e) {
+      console.error("Copy error:", e);
+      showAlert.error("Gagal menyalin link", "Error");
+    }
+  }
+};
+
+// ===== SHARE TO WHATSAPP =====
+window.shareToDashboardWhatsApp = function (url, title) {
+  const text = `Cek artikel "${title}" di sini: ${url}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  showAlert.success("Membuka WhatsApp...", "Informasi");
+  setTimeout(() => window.open(whatsappUrl, "_blank"), 300);
+};
+
+// ===== SHARE TO FACEBOOK =====
+window.shareToDashboardFacebook = function (url) {
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=Cek%20artikel%20ini`;
+  showAlert.success("Membuka Facebook...", "Informasi");
+  setTimeout(
+    () => window.open(facebookUrl, "_blank", "width=600,height=400"),
+    300,
+  );
+};
+
+// ===== SHARE TO TWITTER/X =====
+window.shareToDashboardTwitter = function (url, title) {
+  const text = `Cek artikel "${title}" di KSM Education`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  showAlert.success("Membuka X (Twitter)...", "Informasi");
+  setTimeout(() => window.open(twitterUrl, "_blank"), 300);
+};
+
+// Close dropdowns when clicking outside
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".dropdown-menu-container")) {
+    document.querySelectorAll(".dropdown-content").forEach((el) => {
+      el.style.display = "none";
+    });
+  }
+});
+
 // Internal styles removed in favor of global CSS
 const styles = document.createElement("style");
 styles.textContent = `
@@ -764,4 +962,4 @@ styles.textContent = `
 `;
 document.head.appendChild(styles);
 
-console.log("Dashboard User initialized - Share button positioning fixed");
+console.log("Dashboard User initialized - Download & Share actions added");

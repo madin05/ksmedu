@@ -18,13 +18,17 @@ class OpinionsPageManager {
   async init() {
     const path = window.location.pathname.toLowerCase();
     if (path.includes("dashboard_admin.html")) {
-      console.warn("Dashboard admin page - OpinionsPageManager DISABLED (handled by JournalManager)");
+      console.warn(
+        "Dashboard admin page - OpinionsPageManager DISABLED (handled by JournalManager)",
+      );
       return;
     }
 
     if (path.includes("opinions.html")) {
-        console.warn("opinions.html - OpinionsPageManager DISABLED (handled by PaginationManager)");
-        return;
+      console.warn(
+        "opinions.html - OpinionsPageManager DISABLED (handled by PaginationManager)",
+      );
+      return;
     }
 
     if (!this.container) {
@@ -38,7 +42,7 @@ class OpinionsPageManager {
     console.log(
       "OpinionsPageManager initialized with",
       this.opinions.length,
-      "opinions"
+      "opinions",
     );
 
     //  FEATURE: Render UI
@@ -70,7 +74,7 @@ class OpinionsPageManager {
       console.log("Loading opinions from database...");
 
       const response = await fetch(
-        "/ksmaja/api/list_opinions.php?limit=100&offset=0"
+        "/ksmaja/api/list_opinions.php?limit=100&offset=0",
       );
       const data = await response.json();
 
@@ -113,7 +117,7 @@ class OpinionsPageManager {
           this.opinions = data;
           this.filteredOpinions = [...this.opinions];
           console.log(
-            `Loaded ${this.opinions.length} opinions from localStorage (fallback)`
+            `Loaded ${this.opinions.length} opinions from localStorage (fallback)`,
           );
         } catch (e) {
           console.error("Error parsing opinions:", e);
@@ -212,12 +216,12 @@ class OpinionsPageManager {
       </div>
       <div class="opinion-content">
         <span class="opinion-category ${getCategoryClass(opinion.category)}">${
-      opinion.category
-    }</span>
+          opinion.category
+        }</span>
         <h3 class="opinion-title">${truncateText(opinion.title, 60)}</h3>
         <p class="opinion-description">${truncateText(
           opinion.description,
-          150
+          150,
         )}</p>
         <div class="opinion-meta">
           <span class="opinion-author">
@@ -270,7 +274,11 @@ class OpinionsPageManager {
   // ===== DELETE OPINION FROM DATABASE =====
   async deleteOpinion(id, title) {
     //  FEATURE: Confirmation dialog
-    if (!confirm(`Yakin ingin menghapus opini "${title}"?`)) {
+    const confirmed = await showAlert.confirm(
+      `Yakin ingin menghapus opini "${title}"?`,
+      "Konfirmasi Hapus"
+    );
+    if (!confirmed) {
       return;
     }
 
@@ -298,14 +306,14 @@ class OpinionsPageManager {
         console.log(" Opinion deleted from database successfully");
 
         //  FEATURE: Success notification
-        alert(" Opini berhasil dihapus!");
+        showAlert.success("Opini berhasil dihapus!", "Sukses");
 
         //  FEATURE: Remove from local arrays
         this.opinions = this.opinions.filter(
-          (o) => o.id !== id && o.id !== String(id)
+          (o) => o.id !== id && o.id !== String(id),
         );
         this.filteredOpinions = this.filteredOpinions.filter(
-          (o) => o.id !== id && o.id !== String(id)
+          (o) => o.id !== id && o.id !== String(id),
         );
 
         //  FEATURE: Re-render UI
@@ -319,20 +327,20 @@ class OpinionsPageManager {
               action: "deleted",
               id: id,
             },
-          })
+          }),
         );
 
         console.log(" Opinion deleted and UI updated");
       } else {
         throw new Error(
-          result.message || "Gagal menghapus opini dari database"
+          result.message || "Gagal menghapus opini dari database",
         );
       }
     } catch (error) {
       console.error(" Delete error:", error);
 
       //  FEATURE: Error notification
-      alert(" Gagal menghapus opini: " + error.message);
+      showAlert.error("Gagal menghapus opini: " + error.message, "Gagal");
 
       //  Restore card UI on error
       const card = document.querySelector(`[data-opinion-id="${id}"]`);
@@ -367,7 +375,7 @@ class OpinionsPageManager {
 
         //  FEATURE: Update local data
         const opinion = this.opinions.find(
-          (o) => o.id === id || o.id === String(id)
+          (o) => o.id === id || o.id === String(id),
         );
         if (opinion) {
           opinion.views = (opinion.views || 0) + 1;
@@ -405,7 +413,7 @@ class OpinionsPageManager {
               o.title.toLowerCase().includes(query) ||
               o.description.toLowerCase().includes(query) ||
               o.author_name.toLowerCase().includes(query) ||
-              o.category.toLowerCase().includes(query)
+              o.category.toLowerCase().includes(query),
           );
         }
 
@@ -423,11 +431,11 @@ class OpinionsPageManager {
     //  FEATURE: Apply sorting
     if (this.currentSort === "newest") {
       this.filteredOpinions.sort(
-        (a, b) => new Date(b.uploadDate) - new Date(a.uploadDate)
+        (a, b) => new Date(b.uploadDate) - new Date(a.uploadDate),
       );
     } else if (this.currentSort === "oldest") {
       this.filteredOpinions.sort(
-        (a, b) => new Date(a.uploadDate) - new Date(b.uploadDate)
+        (a, b) => new Date(a.uploadDate) - new Date(b.uploadDate),
       );
     } else if (this.currentSort === "title") {
       this.filteredOpinions.sort((a, b) => a.title.localeCompare(b.title));
@@ -446,7 +454,7 @@ class OpinionsPageManager {
       this.filteredOpinions = [...this.opinions];
     } else {
       this.filteredOpinions = this.opinions.filter(
-        (o) => o.category === category
+        (o) => o.category === category,
       );
     }
 
@@ -458,7 +466,7 @@ class OpinionsPageManager {
   // ===== RENDER PAGINATION =====
   renderPagination() {
     const totalPages = Math.ceil(
-      this.filteredOpinions.length / this.opinionsPerPage
+      this.filteredOpinions.length / this.opinionsPerPage,
     );
 
     const paginationContainer = document.getElementById("pagination");
@@ -489,7 +497,7 @@ class OpinionsPageManager {
     const maxVisiblePages = 5;
     let startPage = Math.max(
       1,
-      this.currentPage - Math.floor(maxVisiblePages / 2)
+      this.currentPage - Math.floor(maxVisiblePages / 2),
     );
     let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
@@ -574,7 +582,7 @@ class OpinionsPageManager {
   getTotalViews() {
     return this.opinions.reduce(
       (total, opinion) => total + (opinion.views || 0),
-      0
+      0,
     );
   }
 }

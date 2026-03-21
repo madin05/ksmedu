@@ -98,11 +98,11 @@ class FileUploadManager {
       !this.allowedTypes.includes(file.type) &&
       !this.allowedExtensions.includes(fileExtension)
     ) {
-      alert("File harus berformat PDF!");
+      showAlert.warning("File harus berformat PDF!", "Format File Tidak Valid");
       return false;
     }
     if (file.size > this.maxFileSize) {
-      alert("Ukuran file maksimal 10MB!");
+      showAlert.warning("Ukuran file maksimal 10MB!", "File Terlalu Besar");
       return false;
     }
     return true;
@@ -236,11 +236,14 @@ class CoverUploadManager {
 
   validateFile(file) {
     if (!this.allowedTypes.includes(file.type)) {
-      alert("File harus berformat JPG, PNG, atau GIF!");
+      showAlert.warning(
+        "File harus berformat JPG, PNG, atau GIF!",
+        "Format File Tidak Valid",
+      );
       return false;
     }
     if (file.size > this.maxFileSize) {
-      alert("Ukuran file maksimal 2MB!");
+      showAlert.warning("Ukuran file maksimal 2MB!", "File Terlalu Besar");
       return false;
     }
     return true;

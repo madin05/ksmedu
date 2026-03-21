@@ -9,16 +9,17 @@ function showToast(msg, type = "success", title = "") {
 
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
-  
+
   const iconMap = {
     success: "check-circle",
     error: "alert-circle",
     warning: "alert-triangle",
-    info: "info"
+    info: "info",
   };
-  
+
   const icon = iconMap[type] || "info";
-  const toastTitle = title || (type === "error" ? "Pesan Kesalahan" : "Informasi");
+  const toastTitle =
+    title || (type === "error" ? "Pesan Kesalahan" : "Informasi");
 
   toast.innerHTML = `
     <button class="toast-close" title="Tutup">
@@ -37,7 +38,7 @@ function showToast(msg, type = "success", title = "") {
   `;
 
   container.appendChild(toast);
-  
+
   // Replace icons
   if (typeof feather !== "undefined") {
     feather.replace();
@@ -49,9 +50,13 @@ function showToast(msg, type = "success", title = "") {
   // Close functionality
   const closeToast = () => {
     toast.classList.add("hide");
-    toast.addEventListener("transitionend", () => {
-      toast.remove();
-    }, { once: true });
+    toast.addEventListener(
+      "transitionend",
+      () => {
+        toast.remove();
+      },
+      { once: true },
+    );
   };
 
   toast.querySelector(".toast-close").addEventListener("click", closeToast);
@@ -79,7 +84,7 @@ function showConfirm(msg, onConfirm, title = "Konfirmasi Tindakan") {
       </div>
     `;
     document.body.appendChild(modal);
-    
+
     // Replace icons
     if (typeof feather !== "undefined") {
       feather.replace();
@@ -327,7 +332,11 @@ class EditJournalManager {
     const tag = this.tagInput.value.trim();
 
     if (!tag) {
-      showToast("Silakan masukkan tag terlebih dahulu.", "warning", "INPUT KOSONG");
+      showToast(
+        "Silakan masukkan tag terlebih dahulu.",
+        "warning",
+        "INPUT KOSONG",
+      );
       return;
     }
 
@@ -439,7 +448,11 @@ class EditJournalManager {
       }
     } catch (error) {
       console.error("Error loading journal:", error);
-      showToast("Gagal memuat data jurnal: " + error.message, "error", "ERROR DATABASE");
+      showToast(
+        "Gagal memuat data jurnal: " + error.message,
+        "error",
+        "ERROR DATABASE",
+      );
     }
   }
 
@@ -606,7 +619,11 @@ class EditJournalManager {
       ".author-input-group",
     );
     if (authorGroups.length <= 1) {
-      showToast("Minimal harus ada satu penulis untuk artikel.", "warning", "VALIDASI GAGAL");
+      showToast(
+        "Minimal harus ada satu penulis untuk artikel.",
+        "warning",
+        "VALIDASI GAGAL",
+      );
       return;
     }
     authorGroup.remove();
@@ -635,7 +652,11 @@ class EditJournalManager {
   async handleEditSubmit() {
     const authors = this.getAuthors();
     if (authors.length === 0) {
-      showToast("Minimal harus ada satu penulis untuk artikel.", "warning", "VALIDASI GAGAL");
+      showToast(
+        "Minimal harus ada satu penulis untuk artikel.",
+        "warning",
+        "VALIDASI GAGAL",
+      );
       return;
     }
 
@@ -697,14 +718,21 @@ class EditJournalManager {
 
       this.hideLoading();
 
-      showToast("Perubahan jurnal telah disimpan ke sistem.", "success", "UPDATE BERHASIL");
+      showToast(
+        "Perubahan jurnal telah disimpan ke sistem.",
+        "success",
+        "UPDATE BERHASIL",
+      );
       this.closeEditModal();
 
       // Dispatch event to refresh lists without reload
-      const eventName = this.currentType === "jurnal" ? "journals:changed" : "opinions:changed";
-      window.dispatchEvent(new CustomEvent(eventName, { 
-        detail: { id: this.currentJournalId, action: "updated" } 
-      }));
+      const eventName =
+        this.currentType === "jurnal" ? "journals:changed" : "opinions:changed";
+      window.dispatchEvent(
+        new CustomEvent(eventName, {
+          detail: { id: this.currentJournalId, action: "updated" },
+        }),
+      );
 
       if (window.statisticManager) {
         window.statisticManager.fetchStatistics();
@@ -712,7 +740,11 @@ class EditJournalManager {
     } catch (error) {
       console.error("Edit journal error:", error);
       this.hideLoading();
-      showToast("Gagal memperbarui data: " + error.message, "error", "UPDATE GAGAL");
+      showToast(
+        "Gagal memperbarui data: " + error.message,
+        "error",
+        "UPDATE GAGAL",
+      );
     }
   }
 
@@ -816,7 +848,11 @@ function syncLoginStatusUI() {
 
 // ===== GLOBAL DELETE OPINION =====
 window.deleteOpinion = async function (id, title) {
-  if (!confirm(`Yakin ingin menghapus opini "${title}"?`)) return;
+  const confirmed = await showAlert.confirm(
+    `Yakin ingin menghapus opini "${title}"?`,
+    "Konfirmasi Hapus",
+  );
+  if (!confirmed) return;
 
   const card = document.querySelector(`[data-opinion-id="${id}"]`);
   if (card) {
@@ -831,15 +867,25 @@ window.deleteOpinion = async function (id, title) {
     });
     const result = await response.json();
     if (result.ok) {
-      showToast("Artikel opini telah dihapus selamanya.", "success", "HAPUS BERHASIL");
-      window.dispatchEvent(new CustomEvent("opinions:changed", { 
-        detail: { id: id, action: "deleted" } 
-      }));
+      showToast(
+        "Artikel opini telah dihapus selamanya.",
+        "success",
+        "HAPUS BERHASIL",
+      );
+      window.dispatchEvent(
+        new CustomEvent("opinions:changed", {
+          detail: { id: id, action: "deleted" },
+        }),
+      );
     } else {
       throw new Error(result.message || "Gagal menghapus");
     }
   } catch (error) {
-      showToast("Gagal menghapus artikel: " + error.message, "error", "HAPUS GAGAL");
+    showToast(
+      "Gagal menghapus artikel: " + error.message,
+      "error",
+      "HAPUS GAGAL",
+    );
     if (card) {
       card.style.opacity = "1";
       card.style.pointerEvents = "auto";
@@ -888,7 +934,11 @@ window.openEditOpinionModal = async function (id) {
 
     if (typeof feather !== "undefined") feather.replace();
   } catch (error) {
-      showToast("Gagal memuat data artikel: " + error.message, "error", "ERROR LOAD");
+    showToast(
+      "Gagal memuat data artikel: " + error.message,
+      "error",
+      "ERROR LOAD",
+    );
   }
 };
 
@@ -1032,11 +1082,16 @@ document.addEventListener("DOMContentLoaded", () => {
         // Tambahkan support untuk Penulis dan Tags
         if (window.editJournalManager) {
           const authors = window.editJournalManager.getAuthors();
-          if (authors.length > 0) formData.append("authors", JSON.stringify(authors));
-          
+          if (authors.length > 0)
+            formData.append("authors", JSON.stringify(authors));
+
           const tags = window.editJournalManager.getTags();
           if (tags.length === 0) {
-            showToast("Minimal harus ada satu tag.", "warning", "VALIDASI GAGAL");
+            showToast(
+              "Minimal harus ada satu tag.",
+              "warning",
+              "VALIDASI GAGAL",
+            );
             return;
           }
           formData.append("tags", JSON.stringify(tags));
@@ -1049,14 +1104,20 @@ document.addEventListener("DOMContentLoaded", () => {
           });
           const result = await response.json();
           if (result.ok) {
-            showToast("Artikel opini berhasil diperbarui.", "success", "UPDATE BERHASIL");
+            showToast(
+              "Artikel opini berhasil diperbarui.",
+              "success",
+              "UPDATE BERHASIL",
+            );
             document.getElementById("editModal").classList.remove("active");
             document.body.style.overflow = "auto";
-            
+
             // Dispatch event to refresh lists without reload
-            window.dispatchEvent(new CustomEvent("opinions:changed", { 
-              detail: { id: id, action: "updated" } 
-            }));
+            window.dispatchEvent(
+              new CustomEvent("opinions:changed", {
+                detail: { id: id, action: "updated" },
+              }),
+            );
 
             if (window.statisticManager) {
               window.statisticManager.fetchStatistics();
@@ -1065,7 +1126,11 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error(result.message);
           }
         } catch (err) {
-          showToast("Gagal update opini: " + err.message, "error", "UPDATE GAGAL");
+          showToast(
+            "Gagal update opini: " + err.message,
+            "error",
+            "UPDATE GAGAL",
+          );
         }
       });
     }

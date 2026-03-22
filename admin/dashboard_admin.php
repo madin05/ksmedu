@@ -14,14 +14,14 @@ include 'components/sidebar.php';
             <div class="stat-icon">
               <i id="bar-chart-2" data-feather="bar-chart-2"></i>
             </div>
-            <div class="stat-number" id="articleCount">0</div>
+            <div class="stat-number skeleton-stat" id="articleCount"></div>
             <div class="stat-label">Artikel</div>
           </div>
           <div class="stat-card">
             <div class="stat-icon">
               <i id="eye" data-feather="eye"></i>
             </div>
-            <div class="stat-number" id="visitorCount">0</div>
+            <div class="stat-number skeleton-stat" id="visitorCount"></div>
             <div class="stat-label">Pengunjung</div>
           </div>
         </div>

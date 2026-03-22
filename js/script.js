@@ -831,8 +831,10 @@ function syncLoginStatusUI() {
     }),
   );
 
+  // Jangan render paksa jika masih loading data dari database
   if (
     window.journalManager &&
+    !window.journalManager.isLoading &&
     typeof window.journalManager.renderJournals === "function"
   ) {
     window.journalManager.renderJournals();
@@ -840,6 +842,7 @@ function syncLoginStatusUI() {
 
   if (
     window.paginationManager &&
+    !window.paginationManager.isLoading &&
     typeof window.paginationManager.render === "function"
   ) {
     window.paginationManager.render();
@@ -1158,10 +1161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Page: dashboard_admin.php & index.html
-  if (typeof StatisticsManager !== "undefined")
-    window.statsManager = new StatisticsManager();
-
+  // Search initialization
   if (typeof SearchManager !== "undefined")
     window.searchManager = new SearchManager();
 
@@ -1174,27 +1174,8 @@ document.addEventListener("DOMContentLoaded", () => {
     window.loginManager.syncLoginStatus();
   }
 
-  try {
-    if (
-      window.statsManager &&
-      typeof window.statsManager.updateArticleCount === "function"
-    ) {
-      setTimeout(() => {
-        try {
-          window.statsManager.updateArticleCount();
-          if (typeof window.statsManager.startCounterAnimation === "function") {
-            window.statsManager.startCounterAnimation();
-          }
-        } catch (e) {
-          console.warn("Stats manager error (safe to ignore):", e);
-        }
-      }, 100);
-    }
-  } catch (e) {
-    console.warn("Stats manager not available");
-  }
-
   syncLoginStatusUI();
+
 
   console.log(" All systems initialized successfully");
 });

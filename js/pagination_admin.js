@@ -18,6 +18,7 @@ class PaginationManager {
     this.filteredItems = [];
     this.currentSort = "newest";
     this.currentFilter = "all";
+    this.isLoading = true;
 
     console.log(`PaginationManager init: ${this.dataType}`);
     this.init();
@@ -25,11 +26,14 @@ class PaginationManager {
 
   async init() {
     await this.loadData();
+    this.isLoading = false;
+    
     this.setupSearch();
     this.setupSort();
     this.setupFilter();
     this.setupIconSort();
     this.applyFiltersAndSort();
+
 
     const eventName = this.dataType === "jurnal" ? "journals:changed" : "opinions:changed";
     window.addEventListener(eventName, async () => {
@@ -130,26 +134,45 @@ class PaginationManager {
     if (!container) return;
 
     container.innerHTML = "";
+    const isListView = container.classList.contains("list-view");
+
     for (let i = 0; i < 6; i++) {
       const skeleton = document.createElement("div");
-      skeleton.className = "skeleton-card";
-      skeleton.innerHTML = `
-        <div class="skeleton-image skeleton"></div>
-        <div class="skeleton-content">
-          <div class="skeleton-title skeleton"></div>
-          <div class="skeleton-text skeleton"></div>
-          <div class="skeleton-text skeleton"></div>
-          <div class="skeleton-text short skeleton"></div>
-          <div class="skeleton-tag-container">
-            <div class="skeleton-tag skeleton"></div>
-            <div class="skeleton-tag skeleton"></div>
-          </div>
-          <div class="skeleton-meta">
-            <div class="skeleton-avatar skeleton"></div>
+      
+      if (isListView) {
+        skeleton.className = "skeleton-list";
+        skeleton.innerHTML = `
+          <div class="skeleton-list-thumb skeleton"></div>
+          <div class="skeleton-list-content">
+            <div class="skeleton-title medium skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
             <div class="skeleton-text short skeleton"></div>
+            <div class="skeleton-meta" style="margin-top: auto;">
+              <div class="skeleton-text short skeleton"></div>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      } else {
+        skeleton.className = "skeleton-card";
+        skeleton.innerHTML = `
+          <div class="skeleton-image skeleton"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text short skeleton"></div>
+            <div class="skeleton-tag-container">
+              <div class="skeleton-tag skeleton"></div>
+              <div class="skeleton-tag skeleton"></div>
+            </div>
+            <div class="skeleton-meta">
+              <div class="skeleton-avatar skeleton"></div>
+              <div class="skeleton-text short skeleton"></div>
+            </div>
+          </div>
+        `;
+      }
       container.appendChild(skeleton);
     }
   }
@@ -158,6 +181,12 @@ class PaginationManager {
   render() {
     const container = document.querySelector(this.containerSelector);
     if (!container) return;
+
+    // Jangan render jika masih loading
+    if (this.isLoading && this.allItems.length === 0) {
+      console.log(`Still loading ${this.dataType}s, keeping skeleton...`);
+      return;
+    }
 
     container.innerHTML = "";
     this.updateTotalCount();

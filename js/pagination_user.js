@@ -107,28 +107,46 @@ class PaginationUser {
     if (!container) return;
 
     container.innerHTML = "";
-    const count = this.dataType === "jurnal" ? 6 : 6; // default skeletons
+    const isListView = container.classList.contains("list-view");
+    const count = 6;
 
     for (let i = 0; i < count; i++) {
       const skeleton = document.createElement("div");
-      skeleton.className = "skeleton-card";
-      skeleton.innerHTML = `
-        <div class="skeleton-image skeleton"></div>
-        <div class="skeleton-content">
-          <div class="skeleton-title skeleton"></div>
-          <div class="skeleton-text skeleton"></div>
-          <div class="skeleton-text skeleton"></div>
-          <div class="skeleton-text short skeleton"></div>
-          <div class="skeleton-tag-container">
-            <div class="skeleton-tag skeleton"></div>
-            <div class="skeleton-tag skeleton"></div>
-          </div>
-          <div class="skeleton-meta">
-            <div class="skeleton-avatar skeleton"></div>
+      
+      if (isListView) {
+        skeleton.className = "skeleton-list";
+        skeleton.innerHTML = `
+          <div class="skeleton-list-thumb skeleton"></div>
+          <div class="skeleton-list-content">
+            <div class="skeleton-title medium skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
             <div class="skeleton-text short skeleton"></div>
+            <div class="skeleton-meta" style="margin-top: auto;">
+              <div class="skeleton-text short skeleton"></div>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      } else {
+        skeleton.className = "skeleton-card";
+        skeleton.innerHTML = `
+          <div class="skeleton-image skeleton"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-title skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text short skeleton"></div>
+            <div class="skeleton-tag-container">
+              <div class="skeleton-tag skeleton"></div>
+              <div class="skeleton-tag skeleton"></div>
+            </div>
+            <div class="skeleton-meta">
+              <div class="skeleton-avatar skeleton"></div>
+              <div class="skeleton-text short skeleton"></div>
+            </div>
+          </div>
+        `;
+      }
       container.appendChild(skeleton);
     }
   }

@@ -9,7 +9,8 @@ class JournalManager {
       document.getElementById("articlesGrid");
 
     this.journals = [];
-
+    this.isLoading = true;
+    
     // ===== 1) JANGAN JALAN DI HALAMAN USER DASHBOARD =====
     // Biarkan dashboard_user.js yang handle render untuk user
     const path = window.location.pathname.toLowerCase();
@@ -50,6 +51,7 @@ class JournalManager {
     localStorage.removeItem("journals");
 
     await this.loadJournals();
+    this.isLoading = false;
     this.renderJournals();
 
     window.addEventListener("journals:changed", async () => {
@@ -162,9 +164,14 @@ class JournalManager {
     this.journalContainer.innerHTML = "";
 
     // Check if we are on index or dashboard
+    const path = window.location.pathname.toLowerCase();
     const isDashboard =
-      window.location.pathname.includes("dashboard_admin.php") ||
-      window.location.pathname.includes("index.html");
+      path.includes("dashboard_admin.php") ||
+      path.includes("dashboard_user.php") ||
+      path.endsWith("/admin/") ||
+      path.endsWith("/user/") ||
+      path.includes("index.html") ||
+      path.includes("index.php");
 
     const count = isDashboard ? 6 : 9;
 
@@ -182,8 +189,22 @@ class JournalManager {
           </div>
         `;
         this.journalContainer.appendChild(skeleton);
+      } else if (this.journalContainer.classList.contains("list-view")) {
+        // Horizontal List View (journals.php, opinions.php)
+        const skeleton = document.createElement("div");
+        skeleton.className = "skeleton-list";
+        skeleton.innerHTML = `
+          <div class="skeleton-list-thumb skeleton"></div>
+          <div class="skeleton-list-content">
+            <div class="skeleton-title medium skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text skeleton"></div>
+            <div class="skeleton-text short skeleton"></div>
+          </div>
+        `;
+        this.journalContainer.appendChild(skeleton);
       } else {
-        // Grid cards
+        // Grid cards (Dashboard)
         const skeleton = document.createElement("div");
         skeleton.className = "skeleton-card";
         skeleton.innerHTML = `
@@ -210,8 +231,11 @@ class JournalManager {
 
   // ===== RENDER JOURNALS =====
   renderJournals() {
-    if (!this.journalContainer) {
-      console.warn("Journal container not found!");
+    if (!this.journalContainer) return;
+    
+    // Jangan render jika masih loading (biarkan skeleton tetap ada)
+    if (this.isLoading && this.journals.length === 0) {
+      console.log("Still loading journals, keeping skeleton...");
       return;
     }
 

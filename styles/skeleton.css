@@ -103,3 +103,61 @@
     flex-direction: column;
     gap: 10px;
 }
+
+/* New specific for Horizontal List View (journals.php, opinions.php) */
+.skeleton-list {
+    display: flex;
+    background: white;
+    border-radius: 8px;
+    height: 160px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 16px;
+    align-items: stretch;
+}
+
+.skeleton-list-thumb {
+    width: 160px;
+    height: 160px;
+    flex-shrink: 0;
+}
+
+.skeleton-list-content {
+    flex: 1;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.skeleton-title.medium {
+    width: 80%;
+    height: 24px;
+}
+
+/* Specific for Statistics Numbers */
+.skeleton-stat {
+    display: block;
+    width: 60px;
+    height: 48px;
+    min-width: 60px;
+    min-height: 48px;
+    margin: 5px auto;
+    border-radius: 8px;
+    background: #e2e8f0;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+}
+
+.stat-card .stat-number.skeleton-stat {
+    background: #e2e8f0;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s infinite;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+

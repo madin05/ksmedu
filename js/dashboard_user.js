@@ -97,6 +97,11 @@ async function loadArticles() {
 
     if (opinionsData.ok && opinionsData.results) {
       opinions = opinionsData.results.map((o) => {
+        const tags = o.tags
+          ? typeof o.tags === "string"
+            ? JSON.parse(o.tags)
+            : o.tags
+          : [];
         return {
           id: o.id,
           title: o.title,
@@ -108,6 +113,7 @@ async function loadArticles() {
           author: [o.author_name || "Anonymous"],
           authors: [o.author_name || "Anonymous"],
           penulis: o.author_name || "Anonymous",
+          tags: tags,
           date: o.created_at,
           uploadDate: o.created_at,
           coverImage:
@@ -463,10 +469,6 @@ function setupSearch() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Initializing User Dashboard (Database Mode)...");
-
-  if (typeof StatisticsManager !== "undefined" && !window.statsManager) {
-    window.statsManager = new StatisticsManager();
-  }
 
   setupGuestMode();
   setupLogout();

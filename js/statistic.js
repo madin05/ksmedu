@@ -1,10 +1,17 @@
 // ===== STATISTICS MANAGER - DATABASE VERSION (NO CACHE) =====
 class StatisticsManager {
   constructor() {
+    if (window.statisticsManager) {
+      console.warn("StatisticsManager already exists. Skipping duplicate init.");
+      return window.statisticsManager;
+    }
     console.log("StatisticsManager constructor called");
 
     this.articleCountElement = document.getElementById("articleCount");
     this.visitorCountElement = document.getElementById("visitorCount");
+
+    window.statisticsManager = this;
+    window.statsManager = this; // Backward compatibility
 
     console.log("Elements found:", {
       articleCount: this.articleCountElement ? "" : "",
@@ -13,6 +20,7 @@ class StatisticsManager {
 
     this.currentArticles = 0;
     this.currentVisitors = 0;
+    this.isLoading = true;
     this.init();
   }
 
@@ -24,11 +32,24 @@ class StatisticsManager {
 
     console.log("StatisticsManager initializing...");
 
-    if (this.articleCountElement) this.articleCountElement.textContent = "0";
-    if (this.visitorCountElement) this.visitorCountElement.textContent = "0";
+    // Show initial skeletons if not already there
+    if (this.articleCountElement) this.articleCountElement.classList.add("skeleton-stat");
+    if (this.visitorCountElement) this.visitorCountElement.classList.add("skeleton-stat");
 
     await this.loadStatisticsFromDatabase();
     await this.trackVisitorToDatabase();
+
+    this.isLoading = false;
+
+    // Remove skeletons before animating
+    if (this.articleCountElement) {
+      this.articleCountElement.classList.remove("skeleton-stat");
+      this.articleCountElement.textContent = "0";
+    }
+    if (this.visitorCountElement) {
+      this.visitorCountElement.classList.remove("skeleton-stat");
+      this.visitorCountElement.textContent = "0";
+    }
 
     console.log("Starting animation with values:", {
       articles: this.currentArticles,

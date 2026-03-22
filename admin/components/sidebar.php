@@ -63,7 +63,7 @@
             USER
           </a>
           <a href="#" class="btn-register">
-            ADMIN
+            LOGIN
           </a>
         </div>
       </div>

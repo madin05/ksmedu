@@ -94,11 +94,11 @@ $page_title = 'User Login - KSM Education';
 
       <!-- Footer Links -->
       <div class="signup-link">
-        Belum punya akun? <a href="#">Daftar Sekarang</a>
+        Belum punya akun? <a href="register_user.php">Daftar Sekarang</a>
       </div>
 
       <div class="back-to-home">
-        <a href="../admin/dashboard_admin.php">
+        <a href="../user/dashboard_user.php">
           <i data-feather="arrow-left"></i>
           Kembali ke Beranda
         </a>

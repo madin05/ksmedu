@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../styles/admin.css?v=20240316" />
+    <link rel="stylesheet" href="../styles/admin.css?v=20260323" />
     <link rel="stylesheet" href="../styles/skeleton.css" />
     <link rel="stylesheet" href="../styles/custom_alerts.css" />
     <link rel="shortcut icon" type="image/x-icon" href="../assets/favicon.ico" />

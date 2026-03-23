@@ -33,100 +33,85 @@ header {
   color: #2c3e50;
 }
 
+/* ===== NAVIGATION ===== */
 nav {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 30px;
 }
 
 nav a {
   text-decoration: none;
-  color: #666;
+  color: #64748b;
   font-weight: 500;
   font-size: 14px;
-  transition: color 0.3s;
-  padding: 1em;
+  transition: all 0.3s;
+  padding: 8px 16px;
+  border-radius: 8px;
 }
 
-nav a:hover {
-  background-color: #2c3e50;
-  border-radius: 8px;
-  color: white;
+nav a:hover, .nav-link.has-caret:hover {
+  background-color: #f1f5f9;
+  color: #2c3e50;
 }
 
 nav a.active {
-  /* background-color: #2c3e50; */
   color: #2c3e50;
-  border-radius: 12px;
+  font-weight: 600;
 }
 
-.auth-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.btn-register {
-  background-color: #2c3e50;
-  color: white;
-  padding: 8px 20px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s;
-}
-
-.btn-register:hover {
-  background-color: #1a252f;
-}
-
+/* ===== SEARCH BOX ===== */
 .search-box {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
   border-radius: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid #e2e8f0;
   background: white;
 }
 
 .search-box #icon-search {
-  color: #888;
+  color: #94a3b8;
   width: 18px;
   height: 18px;
-  flex-shrink: 0;
 }
 
 .search-box input {
-  padding: 0;
   border: none;
   outline: none;
   font-size: 13px;
-  width: 200px;
+  width: 180px;
   background: transparent;
 }
 
-/* ===== Nav Dropdown ===== */
+/* ===== NAV DROPDOWN ===== */
 .nav-dropdown {
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
 }
+
 .nav-link.has-caret {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   background: transparent;
   border: 0;
-  color: #2c3e50;
+  color: #64748b;
   cursor: pointer;
-  font: 600 14px/1 Inter, system-ui, sans-serif;
-  padding: 0;
-  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s;
 }
+
 .nav-link.has-caret .caret {
   transition: transform 0.2s ease;
 }
+
 .nav-dropdown.open .caret {
   transform: rotate(180deg);
 }
@@ -144,9 +129,11 @@ nav a.active {
   display: none;
   z-index: 1000;
 }
+
 .nav-dropdown.open .dropdown-menu {
   display: block;
 }
+
 .dropdown-menu a {
   display: block;
   padding: 10px 12px;
@@ -155,12 +142,13 @@ nav a.active {
   text-decoration: none;
   font: 500 13px/1.2 Inter, system-ui, sans-serif;
 }
+
 .dropdown-menu a:hover {
   background: #f1f5f9;
   color: #111827;
 }
 
-/* Additional styles for dual login buttons */
+/* ===== AUTH SECTION ===== */
 .auth-section {
   display: flex;
   align-items: center;
@@ -207,11 +195,87 @@ nav a.active {
   height: 16px;
 }
 
+/* Nav auth section - only visible on mobile (inside side nav) */
+.nav-auth-section {
+  display: none;
+}
+
+/* User Profile Section in Navbar (Shared) */
+.user-profile {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.btn-logout {
+  font-size: 12px;
+  color: #ef4444 !important;
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 8px;
+  border-left: 1px solid #e2e8f0;
+  padding-left: 10px;
+  transition: opacity 0.2s;
+}
+
+.btn-logout:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 /* Responsive untuk mobile */
 @media (max-width: 768px) {
+  .logo img {
+    width: 80px;
+  }
+  
+  .header-container {
+    padding: 15px 20px;
+  }
+
   .auth-section {
-    flex-direction: column;
-    gap: 10px;
+    display: none !important;
+  }
+
+  .nav-auth-section {
+    display: flex !important;
+    padding: 1.5rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: 10px;
+  }
+
+  .user-profile {
+    width: 100%;
+    justify-content: space-between;
+    background: transparent;
+    border: none;
+    padding: 0;
   }
 
   .btn-user-login,
@@ -221,12 +285,46 @@ nav a.active {
     padding: 12px 20px;
   }
 
-  .search-box {
+  /* Nav & Dropdown for Mobile */
+  nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
     width: 100%;
   }
-}
 
-/* Nav auth section - only visible on mobile (inside side nav) */
-.nav-auth-section {
-  display: none;
+  .nav-dropdown {
+    width: 100% !important;
+    position: static !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .nav-link.has-caret {
+    width: 100%;
+    justify-content: space-between;
+    padding: 12px 16px;
+  }
+
+  .dropdown-menu {
+    position: static !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #f8fafc !important;
+    padding: 5px 0 5px 20px !important;
+    margin-top: 0 !important;
+    display: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+
+  .nav-dropdown.open .dropdown-menu {
+    display: block !important;
+  }
+
+  .dropdown-menu a {
+    padding: 10px 16px;
+  }
 }

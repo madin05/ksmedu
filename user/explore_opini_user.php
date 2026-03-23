@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 $page_title = 'Detail Artikel - KSM Education';
 $base_css = '<link rel="stylesheet" href="../styles/explore_jurnal_user.css" />
 <link rel="stylesheet" href="../styles/skeleton.css" />';
@@ -181,10 +181,13 @@ include 'components/navbar.php';
       </div>
     </div>
 
-    <!-- Main Footer -->
-    
+    <!-- Comments Section -->
+    <section id="comments-section" style="max-width:900px;margin:0 auto;padding:0 24px;"></section>
 
-    
+    <!-- Main Footer -->
+
+
+
 <?php
 $extra_scripts = <<<'EOT'
 <script src="../js/script.js"></script>
@@ -194,10 +197,17 @@ $extra_scripts = <<<'EOT'
     <script src="../js/api.js"></script>
     <script src="../js/storage.js"></script>
     <script src="../js/mobile_menu.js?v=20251130"></script>
+    <script src="../js/comments.js"></script>
     <script>
-      if (typeof feather !== 'undefined') {
-        feather.replace();
-      }
+      if (typeof feather !== 'undefined') feather.replace();
+      (function() {
+        var params = new URLSearchParams(window.location.search);
+        var articleId = parseInt(params.get('id') || 0);
+        var articleType = params.get('type') || 'opini';
+        if (articleId && window.CommentsModule) {
+          window.CommentsModule.init(articleId, articleType);
+        }
+      })();
     </script>
   
 EOT;

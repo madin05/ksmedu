@@ -17,4 +17,5 @@ if (!password_verify($data['password'], $user['password_hash'])) {
 }
 
 $_SESSION['user_id'] = $user['id'];
+$_SESSION['role'] = $user['role'];
 echo json_encode(['ok'=>true,'user'=>['id'=>$user['id'],'name'=>$user['name'],'role'=>$user['role']]]);

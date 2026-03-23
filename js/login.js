@@ -95,7 +95,7 @@ class LoginManager {
     document.body.style.overflow = "hidden";
 
     setTimeout(() => {
-      feather.replace();
+      if (typeof feather !== 'undefined') feather.replace();
     }, 100);
   }
 
@@ -136,7 +136,24 @@ class LoginManager {
     ) {
       this.isLoggedIn = true;
 
-      // SET SESSIONSTROAGE UNTUK FUNGSI DELETE
+      // SYNC PHP SESSION (SET COOKIE)
+      fetch('/ksmaja/api/auth_login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: this.adminCredentials.email, 
+          password: this.adminCredentials.password 
+        })
+      }).then(res => res.json())
+        .then(res => {
+          if(!res.ok) console.warn("PHP Session sync failed:", res.message);
+          else console.log("PHP Session synced for Administrator");
+          
+          // Dispatch identity change event for components like comments.js
+          window.dispatchEvent(new CustomEvent('userIdentityChanged'));
+        });
+
+      // SET SESSIONSTORAGE UNTUK FUNGSI DELETE
       sessionStorage.setItem("userLoggedIn", "true");
       sessionStorage.setItem("userType", "admin");
       sessionStorage.setItem("userEmail", email);
@@ -164,11 +181,7 @@ class LoginManager {
 
       this.loginForm.reset();
 
-      window.dispatchEvent(
-        new CustomEvent("adminLoginStatusChanged", {
-          detail: { isLoggedIn: true },
-        })
-      );
+      this.updateLoginStatusState(true);
     } else {
       showToast("Email atau password yang Anda masukkan salah.", "error", "LOGIN GAGAL");
     }
@@ -187,6 +200,14 @@ class LoginManager {
         sessionStorage.removeItem("userType");
         sessionStorage.removeItem("userEmail");
 
+        // SYNC PHP SESSION (CLEAR COOKIE)
+        fetch("/ksmaja/api/auth_logout.php")
+          .then(() => {
+            console.log("PHP Session cleared");
+            window.dispatchEvent(new CustomEvent("userIdentityChanged"));
+          });
+
+        this.updateLoginStatusState(false);
         this.updateLoginButton();
         this.updateUploadSection();
 
@@ -200,18 +221,12 @@ class LoginManager {
           "success",
           "LOGOUT BERHASIL"
         );
-
-        window.dispatchEvent(
-          new CustomEvent("adminLoginStatusChanged", {
-            detail: { isLoggedIn: false },
-          })
-        );
       },
       "Konfirmasi Logout"
     );
   }
 
-  checkLoginStatus() {
+  async checkLoginStatus() {
     const loggedIn = localStorage.getItem("adminLoggedIn");
     const loginTime = localStorage.getItem("adminLoginTime");
 
@@ -220,22 +235,55 @@ class LoginManager {
       const now = new Date();
       const diffMinutes = (now - loginDate) / 1000 / 60;
 
-      if (diffMinutes > 60) {
-        localStorage.removeItem("adminLoggedIn");
-        localStorage.removeItem("adminLoginTime");
-        // HAPUS JUGA DARI sessionStorage
-        sessionStorage.removeItem("userLoggedIn");
-        sessionStorage.removeItem("userType");
-        sessionStorage.removeItem("userEmail");
-        this.isLoggedIn = false;
+      // Token/Session expiry client-side (120 mins for admin)
+      if (diffMinutes > 120) {
+        this.clearAdminSession();
         return;
+      }
+
+      this.isLoggedIn = true;
+      
+      // SYNC CHECK: Verify with Server
+      try {
+        const res = await fetch('/ksmaja/api/auth_me.php');
+        const data = await res.json();
+        
+        const isAdminPage = window.location.pathname.includes('/admin/');
+        
+        if (!data.ok || data.user.role !== 'admin') {
+          // JANGAN silent re-sync jika kita sedang di halaman USER.
+          // Biarkan user tetep login sebagai role 'user' mereka.
+          if (!isAdminPage) {
+             console.log("Session is not admin, but we are on a user page. Skipping admin sync.");
+             return;
+          }
+
+          console.log("PHP Session expired for Admin. Attempting silent re-sync...");
+          // SILENT LOGIN using hardcoded credentials
+          const loginRes = await fetch('/ksmaja/api/auth_login.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: this.adminCredentials.email, 
+              password: this.adminCredentials.password 
+            })
+          });
+          const loginData = await loginRes.json();
+          if (loginData.ok) {
+            console.log("PHP Session restored silently for Admin.");
+            window.dispatchEvent(new CustomEvent('userIdentityChanged'));
+          } else {
+            console.warn("Silent re-sync failed. Clearing session.");
+            this.clearAdminSession();
+          }
+        }
+      } catch (e) {
+        console.error("Auth sync check failed:", e);
       }
     }
 
-    if (loggedIn === "true") {
-      this.isLoggedIn = true;
-
-      // SET SESSIONSTROAGE JIKA BELUM ADA (saat page reload)
+    if (this.isLoggedIn) {
+      // SET SESSIONSTORAGE JIKA BELUM ADA (saat page reload)
       if (sessionStorage.getItem("userLoggedIn") !== "true") {
         sessionStorage.setItem("userLoggedIn", "true");
         sessionStorage.setItem("userType", "admin");
@@ -248,8 +296,35 @@ class LoginManager {
       this.updateLoginButton();
       this.updateUploadSection();
     } else {
-      this.isLoggedIn = false;
+      this.updateLoginButton();
+      this.updateUploadSection();
     }
+  }
+
+  clearAdminSession() {
+    localStorage.removeItem("adminLoggedIn");
+    localStorage.removeItem("adminLoginTime");
+    sessionStorage.removeItem("userLoggedIn");
+    sessionStorage.removeItem("userType");
+    sessionStorage.removeItem("userEmail");
+    
+    fetch("/ksmaja/api/auth_logout.php")
+      .then(() => {
+        window.dispatchEvent(new CustomEvent("userIdentityChanged"));
+      });
+      
+    this.isLoggedIn = false;
+    this.updateLoginStatusState(false);
+    this.updateLoginButton();
+    this.updateUploadSection();
+  }
+
+  updateLoginStatusState(isLoggedIn) {
+    window.dispatchEvent(
+      new CustomEvent("adminLoginStatusChanged", {
+        detail: { isLoggedIn: isLoggedIn },
+      })
+    );
   }
 
   updateLoginButton() {
@@ -261,25 +336,27 @@ class LoginManager {
     loginBtns.forEach(btn => {
       if (this.isLoggedIn) {
         btn.innerHTML = `
-        <i data-feather="log-out"></i>
-        LOGOUT
-      `;
+          <i data-feather="log-out"></i>
+          LOGOUT
+        `;
         btn.classList.add("admin-logged-in");
       } else {
-        btn.textContent = "LOGIN";
+        btn.innerHTML = `
+          <i data-feather="log-in"></i>
+          LOGIN
+        `;
         btn.classList.remove("admin-logged-in");
       }
     });
     
-    // Call feather replace once after updating all buttons
-    if (this.isLoggedIn) {
+    if (typeof feather !== 'undefined') {
       feather.replace();
     }
   }
 
   updateUploadSection() {
     if (!this.uploadSection) {
-      return; // Tidak ada upload section di halaman ini
+      return;
     }
 
     if (this.isLoggedIn) {
@@ -293,10 +370,14 @@ class LoginManager {
     return this.isLoggedIn;
   }
 
-  // Sync login status across pages
   syncLoginStatus() {
     this.checkLoginStatus();
     this.updateLoginButton();
     this.updateUploadSection();
   }
 }
+
+// Inisialisasi
+document.addEventListener("DOMContentLoaded", () => {
+  window.loginManager = new LoginManager();
+});

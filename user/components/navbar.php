@@ -48,5 +48,9 @@
             </div>
           </div>
         </nav>
+
+        <div class="auth-section" id="navbarAuth">
+          <!-- Dynamically populated by script.js -->
+        </div>
       </div>
     </header>

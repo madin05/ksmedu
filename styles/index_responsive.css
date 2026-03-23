@@ -108,6 +108,8 @@ body.menu-open {
   .nav-dropdown {
     width: 100% !important;
     position: static !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
   }
 
   .nav-link.has-caret {
@@ -131,7 +133,7 @@ body.menu-open {
     transition: transform 0.3s ease;
   }
 
-  .nav-dropdown.active .nav-link.has-caret .caret {
+  .nav-dropdown.open .nav-link.has-caret .caret {
     transform: rotate(180deg);
   }
 
@@ -149,7 +151,7 @@ body.menu-open {
     margin: 0 !important;
   }
 
-  .nav-dropdown.active .dropdown-menu {
+  .nav-dropdown.open .dropdown-menu {
     display: block !important;
   }
 

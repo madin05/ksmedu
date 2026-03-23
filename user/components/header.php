@@ -13,6 +13,7 @@
     />
     <link rel="shortcut icon" type="image/x-icon" href="../assets/favicon.ico" />
     <?php if (isset($base_css)) echo $base_css; ?>
+    <link rel="stylesheet" href="../styles/header.css?v=20260323" />
     <link rel="stylesheet" href="../styles/toast.css" />
     <link rel="stylesheet" href="../styles/custom_alerts.css" />
     <link rel="stylesheet" href="../styles/journal.css?v=20260321" />

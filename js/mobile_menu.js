@@ -68,20 +68,19 @@ document.addEventListener("DOMContentLoaded", function () {
   // EXPOSE TO GLOBALS SO EXTERNAL SCRIPTS CAN CLOSE MENU (e.g. login.js)
   window.closeMobileMenu = closeMenu;
 
-  /**
-   * Close dropdown
-   */
-  function closeDropdown() {
-    const dropdown = document.querySelector(".nav-dropdown");
-    if (dropdown) {
-      dropdown.classList.remove("active");
-      dropdown.classList.remove("open"); // For desktop
-      const dropdownButton = dropdown.querySelector(".nav-link.has-caret");
-      if (dropdownButton) {
-        dropdownButton.setAttribute("aria-expanded", "false");
-      }
-    }
-  }
+   /**
+    * Close dropdown
+    */
+   function closeDropdown() {
+     const dropdown = document.querySelector(".nav-dropdown");
+     if (dropdown) {
+       dropdown.classList.remove("open");
+       const dropdownButton = dropdown.querySelector(".nav-link.has-caret");
+       if (dropdownButton) {
+         dropdownButton.setAttribute("aria-expanded", "false");
+       }
+     }
+   }
 
   /**
    * Toggle mobile menu
@@ -130,14 +129,14 @@ document.addEventListener("DOMContentLoaded", function () {
       e.stopPropagation();
 
       if (window.innerWidth <= 768) {
-        // MOBILE: Toggle active class
-        const isActive = dropdown.classList.contains("active");
+        // MOBILE: Toggle open class
+        const isOpen = dropdown.classList.contains("open");
 
-        if (isActive) {
-          dropdown.classList.remove("active");
+        if (isOpen) {
+          dropdown.classList.remove("open");
           this.setAttribute("aria-expanded", "false");
         } else {
-          dropdown.classList.add("active");
+          dropdown.classList.add("open");
           this.setAttribute("aria-expanded", "true");
         }
       } else {
@@ -183,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("click", function (e) {
     if (
       dropdown &&
-      (dropdown.classList.contains("open") || dropdown.classList.contains("active"))
+      (dropdown.classList.contains("open"))
     ) {
       const isClickInsideDropdown = dropdown.contains(e.target);
       const isClickOnButton = dropdownButton && dropdownButton.contains(e.target);
@@ -201,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const dropdownButton = document.querySelector(".nav-link.has-caret");
       const dropdownMenu = document.querySelector(".dropdown-menu");
 
-      if (dropdown && dropdown.classList.contains("active")) {
+      if (dropdown && dropdown.classList.contains("open")) {
         const isClickOnButton = dropdownButton && dropdownButton.contains(e.target);
         const isClickInDropdown = dropdownMenu && dropdownMenu.contains(e.target);
 
@@ -228,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.key === "Escape") {
       if (window.innerWidth <= 768) {
         const dropdown = document.querySelector(".nav-dropdown");
-        if (dropdown && dropdown.classList.contains("active")) {
+        if (dropdown && dropdown.classList.contains("open")) {
           closeDropdown();
         } else if (nav.classList.contains("active")) {
           closeMenu();

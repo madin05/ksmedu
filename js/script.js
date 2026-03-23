@@ -1181,3 +1181,69 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 console.log("script.js loaded");
+
+// ===== NAVBAR AUTH DYNAMIC CONTENT =====
+async function updateNavbarAuth() {
+    // Skip auth update if we are on an admin page to avoid leaking user session into admin UI
+    if (window.location.pathname.includes('/admin/')) {
+        return;
+    }
+
+    const navAuth = document.getElementById('navbarAuth');
+    if (!navAuth) return;
+
+    try {
+        // Fetch current user from API
+        const response = await fetch('/ksmaja/api/auth_me.php', { credentials: 'include' });
+        const result = await response.json();
+
+        if (result.ok && result.user) {
+            // Logged in
+            const user = result.user;
+            const avatarChar = (user.name || 'U').charAt(0).toUpperCase();
+            
+            navAuth.innerHTML = `
+                <div class="user-profile">
+                    <div class="user-avatar">${avatarChar}</div>
+                    <span class="user-name">${user.name}</span>
+                    <a href="/ksmaja/api/auth_logout.php" class="btn-logout" id="btnLogout">Logout</a>
+                </div>
+            `;
+            
+            // Sync sessionStorage just in case
+            sessionStorage.setItem('userLoggedIn', 'true');
+            sessionStorage.setItem('userEmail', user.email);
+            sessionStorage.setItem('userName', user.name);
+            sessionStorage.setItem('userType', user.role);
+
+            // Handle logout click
+            document.getElementById('btnLogout')?.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const res = await fetch('/ksmaja/api/auth_logout.php');
+                const out = await res.json();
+                if (out.ok) {
+                    sessionStorage.clear();
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/ksmaja/user/login_user.php';
+                }
+            });
+        } else {
+            // Not logged in
+            navAuth.innerHTML = `
+                <a href="/ksmaja/user/login_user.php" class="btn-login">Login</a>
+                <a href="/ksmaja/user/login_user.php" class="btn-register">Daftar</a>
+            `;
+            sessionStorage.setItem('userLoggedIn', 'false');
+        }
+    } catch (error) {
+        console.error('Navbar auth error:', error);
+        navAuth.innerHTML = '<a href="/ksmaja/user/login_user.php" class="btn-login">Login</a>';
+    }
+}
+
+// Initialize navbar auth on load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateNavbarAuth);
+} else {
+    updateNavbarAuth();
+}

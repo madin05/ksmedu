@@ -83,9 +83,9 @@ try {
     $fileUploadId = $opinion['file_upload_id'];
     $coverUploadId = $opinion['cover_upload_id'];
 
-    $uploadDir = __DIR__ . '/../../uploads';
+    $uploadDir = UPLOAD_DIR_ABS;
     if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
+        mkdir($uploadDir, 0777, true);
     }
 
     // Handle file upload (only from FormData)
@@ -101,7 +101,7 @@ try {
         $pdfTarget = $uploadDir . '/' . $pdfSafeName;
 
         if (move_uploaded_file($pdfFile['tmp_name'], $pdfTarget)) {
-            $pdfPublicUrl = '/uploads/' . $pdfSafeName;
+            $pdfPublicUrl = APP_ROOT . '/uploads/' . $pdfSafeName;
             $pdfMime = $pdfFile['type'] ?? mime_content_type($pdfTarget);
             $pdfSize = (int)$pdfFile['size'];
 
@@ -135,7 +135,7 @@ try {
             $coverTarget = $uploadDir . '/' . $coverSafeName;
 
             if (move_uploaded_file($coverFile['tmp_name'], $coverTarget)) {
-                $coverPublicUrl = '/uploads/' . $coverSafeName;
+                $coverPublicUrl = APP_ROOT . '/uploads/' . $coverSafeName;
                 $coverMime = $coverFile['type'] ?? mime_content_type($coverTarget);
                 $coverSize = (int)$coverFile['size'];
 

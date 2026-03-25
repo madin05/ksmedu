@@ -599,12 +599,7 @@ body.menu-open {
 }
 
 .article-card .journal-tags .opinion-tag .tag {
-  background: #f0f0f0;
-  color: #666;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 500;
+  /* Inherit from body.css .tag */
 }
 
 .article-card .journal-tags .opinion-tag .tag-more {
@@ -760,10 +755,10 @@ a[class*="quickshare"]:hover {
 .share-button.white-style,
 .btn-share.white-style,
 .btn-share-article {
-  background: #2c3e50 !important;
-  color: white !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-  border: 1px solid #2c3e50 !important;
+  background: transparent !important;
+  color: #3b82f6 !important;
+  box-shadow: none !important;
+  border: 1.5px solid #3b82f6 !important;
   margin-top: 0 !important;
   width: 100% !important;
   position: relative;
@@ -791,11 +786,11 @@ a[class*="quickshare"]:hover {
 .share-button.white-style:hover,
 .btn-share.white-style:hover,
 .btn-share-article:hover {
-  background: white !important;
-  color: #2c3e50 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  background: #3b82f6 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25) !important;
   transform: translateY(-2px) !important;
-  border-color: #2c3e50 !important;
+  border-color: #3b82f6 !important;
 }
 
 .article-card .share-button:active,
@@ -817,7 +812,7 @@ a[class*="quickshare"]:hover {
 .share-button.white-style svg,
 .btn-share.white-style svg,
 .btn-share-article svg {
-  stroke: white !important;
+  stroke: #3b82f6 !important;
   width: 18px !important;
   height: 18px !important;
   flex-shrink: 0 !important;
@@ -832,7 +827,7 @@ a[class*="quickshare"]:hover {
 .share-button.white-style:hover svg,
 .btn-share.white-style:hover svg,
 .btn-share-article:hover svg {
-  stroke: #2c3e50 !important;
+  stroke: white !important;
 }
 
 /* Pastikan container share button konsisten */
@@ -1356,36 +1351,26 @@ a[class*="quickshare"]:hover {
 }
 
 .btn-user-login, .btn-login, .btn-register {
-  padding: 8px 20px;
+  padding: 8px 18px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.btn-login {
   background: transparent;
   color: #3b82f6;
   border: 1.5px solid #3b82f6;
+  text-transform: none;
 }
 
-.btn-login:hover {
-  background: rgba(59, 130, 246, 0.05);
-}
-
-.btn-register {
+.btn-user-login:hover, .btn-login:hover, .btn-register:hover {
   background: #3b82f6;
   color: white;
-  border: 1.5px solid #3b82f6;
-}
-
-.btn-register:hover {
-  background: #2563eb;
-  border-color: #2563eb;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 /* User Profile in Navbar */

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="../styles/skeleton.css" />
     <link rel="stylesheet" href="../styles/custom_alerts.css" />
     <link rel="shortcut icon" type="image/x-icon" href="../assets/favicon.ico" />
+    <script src="../js/config.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <?php if (isset($extra_head)) echo $extra_head; ?>

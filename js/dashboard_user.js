@@ -38,7 +38,7 @@ async function loadArticles() {
     const timestamp = Date.now();
 
     const journalsResponse = await fetchWithTimeout(
-      `/ksmaja/api/list_journals.php?limit=50&offset=0&t=${timestamp}`,
+      `${window.APP_CONFIG.apiBase}/list_journals.php?limit=50&offset=0&t=${timestamp}`,
       { cache: "no-store", headers: { "Cache-Control": "no-cache" } },
     );
     const journalsData = await journalsResponse.json();
@@ -46,7 +46,7 @@ async function loadArticles() {
     let opinionsData = { ok: false, results: [] };
     try {
       const opinionsResponse = await fetch(
-        `/ksmaja/api/list_opinions.php?limit=50&offset=0&t=${timestamp}`,
+        `${window.APP_CONFIG.apiBase}/list_opinions.php?limit=50&offset=0&t=${timestamp}`,
         {
           cache: "no-store",
           headers: { "Cache-Control": "no-cache" },
@@ -166,7 +166,7 @@ function openArticleDetail(articleId, articleType) {
 // ===== UPDATE VIEWS (ONLY ONCE PER USER) =====
 async function updateArticleViews(id, type) {
   try {
-    await fetch(`/ksmaja/api/update_views.php`, {
+    await fetch(`${window.APP_CONFIG.apiBase}/update_views.php`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -613,14 +613,14 @@ class DynamicCategoriesManager {
 
       const [journalsResponse, opinionsResponse] = await Promise.all([
         fetch(
-          `/ksmaja/api/list_journals.php?limit=100&offset=0&t=${timestamp}`,
+          `${window.APP_CONFIG.apiBase}/list_journals.php?limit=100&offset=0&t=${timestamp}`,
           {
             cache: "no-store",
             headers: { "Cache-Control": "no-cache" },
           },
         ),
         fetch(
-          `/ksmaja/api/list_opinions.php?limit=1000&offset=0&t=${timestamp}`,
+          `${window.APP_CONFIG.apiBase}/list_opinions.php?limit=1000&offset=0&t=${timestamp}`,
           {
             cache: "no-store",
             headers: { "Cache-Control": "no-cache" },
@@ -776,8 +776,8 @@ window.downloadDashboardArticle = async function (fileUrlOrId, itemTitle, dataTy
       const id = fileUrlOrId || itemId;
       const endpoint =
         dataType === "opini"
-          ? `/ksmaja/api/get_opinion.php?id=${id}`
-          : `/ksmaja/api/get_journal.php?id=${id}`;
+          ? `${window.APP_CONFIG.apiBase}/get_opinion.php?id=${id}`
+          : `${window.APP_CONFIG.apiBase}/get_journal.php?id=${id}`;
 
       console.log("Fetching file URL from API:", endpoint);
       const response = await fetch(endpoint);
@@ -835,7 +835,7 @@ window.openDashboardShareModal = function (itemId, itemTitle, dataType) {
       ? `explore_opini_user.php?id=${itemId}&type=opini`
       : `explore_jurnal_user.php?id=${itemId}&type=jurnal`;
 
-  const baseUrl = window.location.origin + "/ksmaja/";
+  const baseUrl = window.location.origin + window.APP_CONFIG.ROOT + "/";
   const fullShareUrl = baseUrl + pageUrl;
 
   let modal = document.getElementById("dashboardShareModal");

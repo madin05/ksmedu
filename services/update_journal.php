@@ -83,7 +83,7 @@ try {
 
     // ========= FILE PDF (LEWAT serve_pdf.php) =========
     if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/ksmaja/uploads/';
+        $upload_dir = UPLOAD_DIR_ABS;
 
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
@@ -98,9 +98,9 @@ try {
 
         if (move_uploaded_file($_FILES['file']['tmp_name'], $file_path)) {
             // path fisik relatif
-            $file_url   = '/ksmaja/uploads/' . $file_name;
+            $file_url   = APP_ROOT . '/uploads/' . $file_name;
             // URL publik ke serve_pdf.php (di dalam /api)
-            $public_url = '/ksmaja/api/serve_pdf.php?file=' . urlencode($file_url);
+            $public_url = APP_ROOT . '/services/serve_pdf.php?file=' . urlencode($file_url);
 
 
 
@@ -123,7 +123,7 @@ try {
                 $oldFileData = $oldFile->fetch(PDO::FETCH_ASSOC);
 
                 if ($oldFileData && !empty($oldFileData['url'])) {
-                    // url lama bentuknya: /ksmaja/serve_pdf.php?file=/ksmaja/uploads/xxx.pdf
+                    // url lama bentuknya: [APP_ROOT]/serve_pdf.php?file=[APP_ROOT]/uploads/xxx.pdf
                     $parts = parse_url($oldFileData['url']);
                     parse_str($parts['query'] ?? '', $q);
                     $oldRel = $q['file'] ?? null;
@@ -141,7 +141,7 @@ try {
 
     // ========= COVER IMAGE (LANGSUNG URL) =========
     if (isset($_FILES['cover']) && $_FILES['cover']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/ksmaja/uploads/';
+        $upload_dir = UPLOAD_DIR_ABS;
 
         if (!file_exists($upload_dir)) {
             mkdir($upload_dir, 0777, true);
@@ -158,7 +158,7 @@ try {
             $stmt = $pdo->prepare(
                 "INSERT INTO uploads (filename, url, created_at) VALUES (?, ?, NOW())"
             );
-            $stmt->execute([$cover_name, '/ksmaja/uploads/' . $cover_name]);
+            $stmt->execute([$cover_name, APP_ROOT . '/uploads/' . $cover_name]);
             $cover_upload_id = $pdo->lastInsertId();
 
             $updates[] = "cover_upload_id = ?";

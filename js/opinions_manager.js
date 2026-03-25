@@ -1,7 +1,7 @@
 // opinions_manager.js - Database-focused Opinion Manager
 class OpinionManager {
   constructor() {
-    this.apiBase = "/ksmaja/api";
+    this.apiBase = window.APP_CONFIG.apiBase;
     console.log("OpinionManager initialized (Database Mode)");
   }
 

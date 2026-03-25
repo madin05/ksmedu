@@ -1,11 +1,13 @@
 <?php
-// ksmaja/api/serve_pdf.php
+// Dynamic path for API endpoint, e.g., /api/serve_pdf.php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+require_once __DIR__ . '/db.php';
+
 header('Access-Control-Allow-Origin: *');
 
-// Ambil parameter ?file=/ksmaja/uploads/xxx.pdf
+// Ambil parameter ?file=/uploads/xxx.pdf
 $file = isset($_GET['file']) ? $_GET['file'] : '';
 
 // Cek basic security
@@ -15,10 +17,10 @@ if (!$file || strpos($file, '..') !== false) {
     exit;
 }
 
-// Pastikan selalu pakai path absolut mulai dari /ksmaja/
-if (strpos($file, '/ksmaja/') !== 0) {
+// Pastikan selalu pakai path absolut mulai dari APP_ROOT
+if (strpos($file, APP_ROOT . '/') !== 0) {
     // kalau yang dikirim cuma /uploads/... atau nama file
-    $file = '/ksmaja/uploads/' . ltrim($file, '/');
+    $file = APP_ROOT . '/uploads/' . ltrim($file, '/');
 }
 
 // Path absolut di server

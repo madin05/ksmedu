@@ -405,7 +405,7 @@ class EditJournalManager {
   async fetchJournalData(journalId) {
     try {
       const response = await fetch(
-        `/ksmaja/api/get_journal.php?id=${journalId}`,
+        `${window.APP_CONFIG.apiBase}/get_journal.php?id=${journalId}`,
       );
       const result = await response.json();
 
@@ -709,7 +709,7 @@ class EditJournalManager {
 
       this.showLoading("Menyimpan perubahan...");
 
-      const response = await fetch("/ksmaja/api/update_journal.php", {
+      const response = await fetch(`${window.APP_CONFIG.apiBase}/update_journal.php`, {
         method: "POST",
         body: formData,
       });
@@ -864,7 +864,7 @@ window.deleteOpinion = async function (id, title) {
   }
 
   try {
-    const response = await fetch(`/ksmaja/api/delete_opinion.php?id=${id}`, {
+    const response = await fetch(`${window.APP_CONFIG.apiBase}/delete_opinion.php?id=${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
@@ -899,7 +899,7 @@ window.deleteOpinion = async function (id, title) {
 // ===== GLOBAL EDIT OPINION =====
 window.openEditOpinionModal = async function (id) {
   try {
-    const response = await fetch(`/ksmaja/api/get_opinion.php?id=${id}`);
+    const response = await fetch(`${window.APP_CONFIG.apiBase}/get_opinion.php?id=${id}`);
     const result = await response.json();
     if (!result.ok) throw new Error("Gagal load data opini");
 
@@ -1101,7 +1101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-          const response = await fetch("/ksmaja/api/update_opinion.php", {
+          const response = await fetch(`${window.APP_CONFIG.apiBase}/update_opinion.php`, {
             method: "POST",
             body: formData,
           });
@@ -1189,12 +1189,22 @@ async function updateNavbarAuth() {
         return;
     }
 
-    const navAuth = document.getElementById('navbarAuth');
-    if (!navAuth) return;
+    // Target both desktop ID and mobile class containers
+    // Target all auth containers
+    const authContainers = [];
+    const desktopAuth = document.getElementById('navbarAuth');
+    if (desktopAuth) authContainers.push(desktopAuth);
+    
+    const mobileAuth = document.querySelectorAll('.nav-auth-section');
+    mobileAuth.forEach(el => authContainers.push(el));
+
+    const mobileHeaderAuth = document.getElementById('mobileAuthHeader');
+
+    if (authContainers.length === 0 && !mobileHeaderAuth) return;
 
     try {
         // Fetch current user from API
-        const response = await fetch('/ksmaja/api/auth_me.php', { credentials: 'include' });
+        const response = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`, { credentials: 'include' });
         const result = await response.json();
 
         if (result.ok && result.user) {
@@ -1202,13 +1212,38 @@ async function updateNavbarAuth() {
             const user = result.user;
             const avatarChar = (user.name || 'U').charAt(0).toUpperCase();
             
-            navAuth.innerHTML = `
+            const profileHTML = `
                 <div class="user-profile">
                     <div class="user-avatar">${avatarChar}</div>
                     <span class="user-name">${user.name}</span>
-                    <a href="/ksmaja/api/auth_logout.php" class="btn-logout" id="btnLogout">Logout</a>
+                    <a href="${window.APP_CONFIG.apiBase}/auth_logout.php?redirect=${encodeURIComponent(window.location.origin + window.APP_CONFIG.root + '/user/dashboard_user.php')}" class="btn-logout" id="btnLogout">Logout</a>
                 </div>
             `;
+
+            // Mobile Header HTML (Avatar only, with hidden dropdown)
+            const mobileHeaderHTML = `
+                <div class="mobile-avatar-container">
+                    <div class="user-avatar mobile-header-avatar" id="mobileAvatar">${avatarChar}</div>
+                    <div class="mobile-logout-dropdown" id="mobileLogoutDropdown">
+                        <div class="dropdown-user-info">
+                            <strong>${user.name}</strong>
+                            <span>${user.email}</span>
+                        </div>
+                        <a href="#" class="btn-logout-mobile" id="btnMobileLogout">
+                            <i data-feather="log-out"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            `;
+            
+            authContainers.forEach(container => {
+                container.innerHTML = profileHTML;
+            });
+
+            if (mobileHeaderAuth) {
+                mobileHeaderAuth.innerHTML = mobileHeaderHTML;
+                setupMobileHeaderAuth();
+            }
             
             // Sync sessionStorage just in case
             sessionStorage.setItem('userLoggedIn', 'true');
@@ -1216,30 +1251,98 @@ async function updateNavbarAuth() {
             sessionStorage.setItem('userName', user.name);
             sessionStorage.setItem('userType', user.role);
 
-            // Handle logout click
-            document.getElementById('btnLogout')?.addEventListener('click', async (e) => {
-                e.preventDefault();
-                const res = await fetch('/ksmaja/api/auth_logout.php');
-                const out = await res.json();
-                if (out.ok) {
-                    sessionStorage.clear();
-                    localStorage.removeItem('authToken');
-                    window.location.href = '/ksmaja/user/login_user.php';
-                }
-            });
+            if (typeof feather !== 'undefined') feather.replace();
+
         } else {
             // Not logged in
-            navAuth.innerHTML = `
-                <a href="/ksmaja/user/login_user.php" class="btn-login">Login</a>
-                <a href="/ksmaja/user/login_user.php" class="btn-register">Daftar</a>
+            const loginHTML = `
+                <a href="${window.APP_CONFIG.root}/user/login_user.php" class="btn-login">Login</a>
+                <a href="${window.APP_CONFIG.root}/user/login_user.php" class="btn-register">Daftar</a>
             `;
+            
+            authContainers.forEach(container => {
+                container.innerHTML = loginHTML;
+            });
+
+            if (mobileHeaderAuth) {
+                mobileHeaderAuth.innerHTML = ''; // Hide on mobile header if not logged in
+            }
+            
             sessionStorage.setItem('userLoggedIn', 'false');
         }
     } catch (error) {
         console.error('Navbar auth error:', error);
-        navAuth.innerHTML = '<a href="/ksmaja/user/login_user.php" class="btn-login">Login</a>';
+        authContainers.forEach(container => {
+            container.innerHTML = `<a href="${window.APP_CONFIG.root}/user/login_user.php" class="btn-login">Login</a>`;
+        });
     }
 }
+
+// Function to handle mobile header auth interactions
+function setupMobileHeaderAuth() {
+    const avatar = document.getElementById('mobileAvatar');
+    const dropdown = document.getElementById('mobileLogoutDropdown');
+    const mobileLogoutBtn = document.getElementById('btnMobileLogout');
+
+    if (!avatar || !dropdown) return;
+
+    avatar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('active');
+    });
+
+    if (mobileLogoutBtn) {
+        mobileLogoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`, { credentials: 'include' });
+                const out = await res.json();
+                if (out.ok) {
+                    sessionStorage.clear();
+                    window.location.href = window.location.origin + window.APP_CONFIG.root + '/user/dashboard_user.php';
+                }
+            } catch (err) {
+                console.error('Mobile logout error:', err);
+            }
+        });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (dropdown.classList.contains('active')) {
+            if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        }
+    });
+}
+
+// ===== GLOBAL LOGOUT HANDLER (EVENT DELEGATION) =====
+document.addEventListener('click', async (e) => {
+    const logoutBtn = e.target.closest('#btnLogout');
+    if (logoutBtn) {
+        e.preventDefault();
+        try {
+            console.log("Logout initiated...");
+            const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`, { credentials: 'include' });
+            const out = await res.json();
+            
+            if (out.ok) {
+                sessionStorage.clear();
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('adminLoggedIn');
+                localStorage.removeItem('adminLoginTime');
+                // Ensure the redirect is absolute from the origin
+                window.location.href = window.location.origin + window.APP_CONFIG.root + '/user/dashboard_user.php';
+            }
+        } catch (err) {
+            console.error('Logout script error:', err);
+            // Fallback: Navigate directly to have PHP handle redirect
+            window.location.href = logoutBtn.getAttribute('href');
+        }
+    }
+});
 
 // Initialize navbar auth on load
 if (document.readyState === 'loading') {

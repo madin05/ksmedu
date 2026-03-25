@@ -160,7 +160,7 @@ $extra_scripts = <<<'EOT'
         </td>
       </tr>`;
 
-    let url = `/ksmaja/api/comments/list_all.php?page=${page}&limit=${limit}`;
+    let url = `${window.APP_CONFIG.apiBase}/comments/list_all.php?page=${page}&limit=${limit}`;
     if (type)   url += `&type=${encodeURIComponent(type)}`;
     if (search) url += `&search=${encodeURIComponent(search)}`;
 
@@ -251,7 +251,7 @@ $extra_scripts = <<<'EOT'
     if (!confirmed) return;
 
     try {
-      const res  = await fetch('/ksmaja/api/comments/delete.php', {
+      const res  = await fetch(`${window.APP_CONFIG.apiBase}/comments/delete.php`, {
         method:      'POST',
         credentials: 'include',
         headers:     { 'Content-Type': 'application/json' },

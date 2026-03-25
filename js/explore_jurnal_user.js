@@ -23,7 +23,7 @@ async function getArticleById(id, type) {
 
   try {
     if (type === "jurnal") {
-      const response = await fetch(`/ksmaja/api/get_journal.php?id=${id}`);
+      const response = await fetch(`${window.APP_CONFIG.apiBase}/get_journal.php?id=${id}`);
       const data = await response.json();
 
       console.log("API Response:", data);
@@ -90,7 +90,7 @@ async function getArticleById(id, type) {
         return null;
       }
     } else if (type === "opini") {
-      const response = await fetch(`/ksmaja/api/get_opinion.php?id=${id}`);
+      const response = await fetch(`${window.APP_CONFIG.apiBase}/get_opinion.php?id=${id}`);
       const data = await response.json();
 
       console.log("Opinion Response:", data);
@@ -450,12 +450,12 @@ if (searchModal) {
 async function performSearch(query) {
   try {
     const journalsResp = await fetch(
-      "/ksmaja/api/list_journals.php?limit=50&offset=0"
+      `${window.APP_CONFIG.apiBase}/list_journals.php?limit=50&offset=0`
     );
     const journalsData = await journalsResp.json();
 
     const opinionsResp = await fetch(
-      "/ksmaja/api/list_opinion.php?limit=50&offset=0"
+      `${window.APP_CONFIG.apiBase}/list_opinion.php?limit=50&offset=0`
     );
     const opinionsData = await opinionsResp.json();
 

@@ -51,7 +51,7 @@ if (loginForm) {
 
         try {
             // Call actual auth API (using relative path to be safe regardless of subdir)
-            const response = await fetch('/ksmaja/api/auth_login.php', {
+            const response = await fetch(`${window.APP_CONFIG.SERVICES}/auth_login.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
@@ -109,7 +109,7 @@ setupSocial('facebookLogin');
 window.addEventListener('load', async () => {
     // If session storage says logged in, we check if PHP session is actually alive
     if (sessionStorage.getItem('userLoggedIn') === 'true') {
-        const res = await fetch('/ksmaja/api/auth_me.php');
+        const res = await fetch(`${window.APP_CONFIG.SERVICES}/auth_me.php`);
         const data = await res.json();
         if (data.ok) {
             // Yes, actually logged in. If we are on login page, redirect to dashboard.

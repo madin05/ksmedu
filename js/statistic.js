@@ -71,7 +71,7 @@ class StatisticsManager {
       const timestamp = Date.now();
       console.log(`Fetching stats from API... (t=${timestamp})`);
 
-      const response = await fetch(`/ksmaja/api/get_stats.php?t=${timestamp}`, {
+      const response = await fetch(`${window.APP_CONFIG.SERVICES}/get_stats.php?t=${timestamp}`, {
         cache: "no-store",
         headers: {
           "Cache-Control": "no-cache, no-store, must-revalidate",
@@ -104,7 +104,7 @@ class StatisticsManager {
     }
 
     try {
-      const response = await fetch("/ksmaja/api/track_visitor.php", {
+      const response = await fetch(`${window.APP_CONFIG.SERVICES}/track_visitor.php`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "page_url=" + encodeURIComponent(window.location.pathname),

@@ -80,8 +80,10 @@
 .btn-edit,
 .btn-delete {
   padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
+  background: transparent;
+  color: #3b82f6;
+  border: 1.5px solid #3b82f6;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -93,46 +95,11 @@
   justify-content: center;
 }
 
-.btn-download {
-  padding: 15px 25px;
-  border: none;
-  border-radius: 15px;
-  color: #212121;
-  z-index: 1;
-  background: #e8e8e8;
-  position: relative;
-  font-weight: 1000;
-  font-size: 17px;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-  transition: all 250ms;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.btn-download::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  border-radius: 15px;
-  background-color: #3b82f6;
-  z-index: -1;
-  transition: all 250ms;
-}
-
 .btn-download:hover {
-  color: #e8e8e8;
-}
-
-.btn-download:hover::before {
-  width: 100%;
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
 }
 
 .btn-edit {
@@ -172,10 +139,11 @@
 }
 
 .btn-view-all {
-  background: linear-gradient(135deg, #34495e, #2c3e50);
-  color: white;
-  padding: 12px 40px;
-  border-radius: 6px;
+  background: transparent;
+  color: #3b82f6;
+  padding: 10px 30px;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
   text-decoration: none;
   font-size: 14px;
   font-weight: 600;
@@ -186,9 +154,10 @@
 }
 
 .btn-view-all:hover {
-  background: linear-gradient(135deg, #2c3e50, #1a252f);
+  background: #3b82f6;
+  color: white;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(44, 62, 80, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .btn-view-all i {
@@ -245,7 +214,7 @@
 
 .search-box:focus-within {
   background: white;
-  box-shadow: 0 0 0 2px #2c3e50;
+  box-shadow: 0 0 0 2px #3b82f6;
 }
 
 .search-box input {
@@ -286,11 +255,11 @@
 
 /* ===== SHARE BUTTON ===== */
 .btn-share {
-  background: #34495e;
-  color: white;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 6px;
+  background: transparent;
+  color: #3b82f6;
+  padding: 10px 20px;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -300,16 +269,16 @@
   gap: 10px;
   transition: all 0.3s ease;
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none;
+  letter-spacing: 0;
   width: 100%;
 }
 
 .btn-share:hover {
-  background: white;
-  color: #34495e;
+  background: #3b82f6;
+  color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .btn-share svg {
@@ -348,26 +317,40 @@
   flex-wrap: wrap;
 }
 
-.pagination-item {
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.pagination-item, .pagination-btn {
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
   cursor: pointer;
   background: white;
-  color: #333;
-  font-weight: 500;
+  color: #64748b;
+  font-weight: 600;
   transition: all 0.3s ease;
   text-decoration: none;
+  min-width: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.pagination-item:hover {
-  background: #f0f0f0;
+.pagination-item:hover, .pagination-btn:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateY(-1px);
 }
 
-.pagination-item.active {
-  background: #2196f3;
-  color: white;
-  border-color: #2196f3;
+.pagination-item.active, .pagination-btn.active {
+  background: #3b82f6 !important;
+  color: white !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f5f9;
 }
 
 .pagination-item.disabled {
@@ -383,12 +366,14 @@
 }
 
 .btn-back {
-  background: #34495e;
-  color: #d0d0d0;
-  padding: 8px 8px;
-  border-radius: 999px;
+  background: transparent;
+  color: #3b82f6;
+  padding: 8px 16px;
+  border: 1.5px solid #3b82f6;
+  border-radius: 30px;
   text-decoration: none;
   font-weight: 600;
+  font-size: 14px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -396,7 +381,8 @@
 }
 
 .btn-back:hover {
-  background: #a4a4a4;
+  background: #3b82f6;
+  color: white;
   transform: translateX(-3px);
 }
 
@@ -471,8 +457,8 @@
 
 .pengurus-input:focus {
   outline: none;
-  border-color: #2c3e50;
-  box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* ===== HAMBURGER MENU (MOBILE) ===== */
@@ -543,20 +529,20 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid #2c3e50;
-  background: white;
-  color: #2c3e50;
+  border: 1.5px solid #3b82f6;
+  background: transparent;
+  color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
 .btn-icon-sort:hover {
-  background: #2c3e50;
+  background: #3b82f6;
   color: white;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .btn-icon-sort svg {
@@ -610,7 +596,7 @@
 }
 
 .sort-item.active {
-  background: #2c3e50;
+  background: #3b82f6;
   color: white;
 }
 
@@ -628,31 +614,50 @@
 }
 
 /* Tombol Lihat semua artikel */
+.btn-preview {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  color: #3b82f6;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-preview:hover {
+  background: #3b82f6;
+  color: white;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+}
+
 .btn-see-all {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
-  border-radius: 999px;
-  border: none;
-  outline: none;
-  cursor: pointer;
-
-  background: #3498db;
-  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 30px;
+  border: 1.5px solid #3b82f6;
+  background: transparent;
+  color: #3b82f6;
   font-size: 14px;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .btn-see-all:hover {
-  background: #2980b9;
+  background: #3b82f6;
+  color: white;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(52, 152, 219, 0.5);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.25);
 }
 
 .btn-see-all:active {
@@ -957,7 +962,7 @@
     left: 15px !important;
     right: 15px !important;
     width: calc(100% - 30px) !important;
-    max-width: 100px !important;
+    max-width: 100% !important;
     margin-top: 4px;
   }
 
@@ -1050,7 +1055,7 @@
 
 .dropdown-item-btn.dd-detail,
 .dropdown-item-btn.dd-download {
-    color: #3498db;
+    color: #3b82f6;
 }
 
 .dropdown-item-btn.dd-edit {
@@ -1090,7 +1095,7 @@
     height: 16px;
 }
 
-.share-btn-modal.copy { background: #3498db; }
+.share-btn-modal.copy { background: transparent; color:#3b82f6; border:1.5px solid #3b82f6; }
 .share-btn-modal.wa { background: #25d366; }
 .share-btn-modal.fb { background: #1877f2; }
 .share-btn-modal.x { background: #000000; }

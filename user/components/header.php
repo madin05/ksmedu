@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="../styles/journal.css?v=20260321" />
     <link rel="stylesheet" href="../styles/footer.css" />
     <link rel="stylesheet" href="../styles/skeleton.css" />
+    <script src="../js/config.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <?php if (isset($extra_head)) echo $extra_head; ?>
   </head>

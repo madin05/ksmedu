@@ -74,7 +74,7 @@ class OpinionsPageManager {
       console.log("Loading opinions from database...");
 
       const response = await fetch(
-        "/ksmaja/api/list_opinions.php?limit=100&offset=0",
+        `${window.APP_CONFIG.apiBase}/list_opinions.php?limit=100&offset=0`,
       );
       const data = await response.json();
 
@@ -289,7 +289,7 @@ class OpinionsPageManager {
       }
 
       //  Delete from database via API
-      const response = await fetch(`/ksmaja/api/delete_opinion.php?id=${id}`, {
+      const response = await fetch(`${window.APP_CONFIG.apiBase}/delete_opinion.php?id=${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -353,7 +353,7 @@ class OpinionsPageManager {
       console.log("Updating views for opinion:", id);
 
       //  Update views in database
-      const response = await fetch(`/ksmaja/api/update_views.php`, {
+      const response = await fetch(`${window.APP_CONFIG.apiBase}/update_views.php`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

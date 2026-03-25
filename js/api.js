@@ -2,7 +2,7 @@
 // API wrapper functions untuk komunikasi dengan backend
 
 // Set base API URL
-window.API_BASE = window.API_BASE || "/ksmaja/api";
+window.API_BASE = window.APP_CONFIG.apiBase;
 
 // ===== FILE UPLOAD =====
 async function uploadFileToServer(file, onProgress) {

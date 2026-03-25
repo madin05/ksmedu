@@ -26,7 +26,7 @@
     // Check current user session
     try {
       const isAdminPage = window.location.pathname.includes('/admin/');
-      const res = await fetch('/ksmaja/api/auth_me.php', { credentials: 'include' });
+      const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`, { credentials: 'include' });
       const data = await res.json();
       
       if (data.ok && data.user) {
@@ -87,7 +87,7 @@
          </div>`
       : `<div class="comment-login-prompt">
            <i data-feather="lock"></i>
-           <p>Silakan <a href="/ksmaja/user/login_user.php">login</a> untuk berkomentar.</p>
+           <p>Silakan <a href="${window.APP_CONFIG.ROOT}/user/login_user.php">login</a> untuk berkomentar.</p>
          </div>`;
 
     section.innerHTML = `
@@ -129,7 +129,7 @@
 
     try {
       const res = await fetch(
-        `/ksmaja/api/comments/get.php?article_id=${articleId}&type=${articleType}`,
+        `${window.APP_CONFIG.apiBase}/comments/get.php?article_id=${articleId}&type=${articleType}`,
         { credentials: 'include' }
       );
       const data = await res.json();
@@ -296,7 +296,7 @@
     }
 
     try {
-      const res = await fetch('/ksmaja/api/comments/add.php', {
+      const res = await fetch(`${window.APP_CONFIG.apiBase}/comments/add.php`, {
         method:      'POST',
         credentials: 'include',
         headers:     { 'Content-Type': 'application/json' },
@@ -335,7 +335,7 @@
     if (!confirmed) return;
 
     try {
-      const res = await fetch('/ksmaja/api/comments/delete.php', {
+      const res = await fetch(`${window.APP_CONFIG.apiBase}/comments/delete.php`, {
         method:      'POST',
         credentials: 'include',
         headers:     { 'Content-Type': 'application/json' },

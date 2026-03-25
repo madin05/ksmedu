@@ -243,4 +243,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   console.log("Mobile menu initialized successfully");
+  
+  // Force an auth update to populate the newly created mobile auth container
+  if (typeof updateNavbarAuth === 'function') {
+    updateNavbarAuth();
+  }
 });

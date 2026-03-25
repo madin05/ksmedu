@@ -13,6 +13,7 @@ $page_title = 'User Login - KSM Education';
     />
     <link rel="shortcut icon" type="image/x-icon" href="../assets/favicon.ico" />
     <link rel="stylesheet" href="../styles/login_user.css" />
+    <script src="../js/config.js?v=20260325"></script>
     <script src="https://unpkg.com/feather-icons"></script>
   </head>
 
@@ -105,7 +106,7 @@ $page_title = 'User Login - KSM Education';
       </div>
     </div>
 
-    <script src="../js/login_user.js"></script>
+    <script src="../js/login_user.js?v=20260325"></script>
     <script>
       feather.replace();
     </script>

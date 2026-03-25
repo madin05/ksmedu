@@ -41,8 +41,8 @@ class PaginationUser {
       const t = Date.now();
       const endpoint =
         this.dataType === "jurnal"
-          ? `/ksmaja/api/list_journals.php?limit=100&offset=0&t=${t}`
-          : `/ksmaja/api/list_opinions.php?limit=100&offset=0&t=${t}`;
+          ? `${window.APP_CONFIG.apiBase}/list_journals.php?limit=100&offset=0&t=${t}`
+          : `${window.APP_CONFIG.apiBase}/list_opinions.php?limit=100&offset=0&t=${t}`;
 
       const res = await fetch(endpoint, { cache: "no-store" });
       const data = await res.json();
@@ -246,7 +246,7 @@ class PaginationUser {
                 <button class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); window.paginationUser?.downloadFile('${item.file_url || ''}', '${item.title.replace(/'/g, "\\'")}', '${this.dataType}', '${item.id}')">
                   <i data-feather="download"></i> Download
                 </button>
-                <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); window.paginationUser?.copyToClipboard('${window.location.origin + "/ksmaja/" + exploreUrl}', '${item.title.replace(/'/g, "\\'")}')">
+                <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); window.paginationUser?.copyToClipboard('${window.location.origin + window.APP_CONFIG.ROOT + "/" + exploreUrl}', '${item.title.replace(/'/g, "\\'")}')">
                   <i data-feather="share-2"></i> Share
                 </button>
               </div>
@@ -334,8 +334,8 @@ class PaginationUser {
         const id = fileUrlOrId || itemId;
         const endpoint =
           dataType === "jurnal"
-            ? `/ksmaja/api/get_journal.php?id=${id}`
-            : `/ksmaja/api/get_opinion.php?id=${id}`;
+            ? `${window.APP_CONFIG.apiBase}/get_journal.php?id=${id}`
+            : `${window.APP_CONFIG.apiBase}/get_opinion.php?id=${id}`;
 
         console.log("Fetching file URL from API:", endpoint);
         const response = await fetch(endpoint);
@@ -391,7 +391,7 @@ class PaginationUser {
 
   // ===== OPEN SHARE MODAL WITH OPTIONS =====
   openShareModal(itemId, itemTitle, pageUrl) {
-    const baseUrl = window.location.origin + "/ksmaja/";
+    const baseUrl = window.location.origin + window.APP_CONFIG.ROOT + "/";
     const fullShareUrl = baseUrl + pageUrl;
 
     // Create temporary modal if not exists
@@ -420,17 +420,17 @@ class PaginationUser {
                   font-size: 14px;
                 "
               />
-              <button onclick="window.paginationUser?.copyLink()" class="share-btn copy" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#3498db; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i data-feather="copy" style="width:16px;height:16px;"></i> Copy Link
+              <button onclick="window.paginationUser?.copyLink()" class="share-btn-modal copy">
+                <i data-feather="copy"></i> Copy Link
               </button>
-              <button onclick="window.paginationUser?.shareToWhatsApp('${fullShareUrl}', '${itemTitle}')" class="share-btn wa" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#25d366; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i data-feather="message-circle" style="width:16px;height:16px;"></i> Share ke WhatsApp
+              <button onclick="window.paginationUser?.shareToWhatsApp('${fullShareUrl}', '${itemTitle}')" class="share-btn-modal wa">
+                <i data-feather="message-circle"></i> WhatsApp
               </button>
-              <button onclick="window.paginationUser?.shareToFacebook('${fullShareUrl}')" class="share-btn fb" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#1877f2; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i data-feather="facebook" style="width:16px;height:16px;"></i> Share ke Facebook
+              <button onclick="window.paginationUser?.shareToFacebook('${fullShareUrl}')" class="share-btn-modal fb">
+                <i data-feather="facebook"></i> Facebook
               </button>
-              <button onclick="window.paginationUser?.shareToTwitter('${fullShareUrl}', '${itemTitle}')" class="share-btn x" style="width:100%; padding:10px; border:none; cursor:pointer; border-radius:6px; background:#000000; color:white; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i data-feather="x" style="width:16px;height:16px;"></i> Share ke X
+              <button onclick="window.paginationUser?.shareToTwitter('${fullShareUrl}', '${itemTitle}')" class="share-btn-modal x">
+                <i data-feather="x"></i> Twitter / X
               </button>
             </div>
           </div>

@@ -39,7 +39,7 @@ registerForm.addEventListener('submit', async function(e) {
     submitButton.textContent = 'Mendaftar...';
 
     try {
-        const response = await fetch('/ksmaja/api/auth_register.php', {
+        const response = await fetch(`${window.APP_CONFIG.SERVICES}/auth_register.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password })

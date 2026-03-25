@@ -67,7 +67,7 @@ class JournalManager {
     try {
       const timestamp = Date.now();
       const journalRes = await fetch(
-        `/ksmaja/api/list_journals.php?limit=100&offset=0&_=${timestamp}`,
+        `${window.APP_CONFIG.apiBase}/list_journals.php?limit=100&offset=0&_=${timestamp}`,
         {
           cache: "no-store",
         },
@@ -85,7 +85,7 @@ class JournalManager {
       // Kalau di dashboard, ambil juga opinions
       if (window.location.pathname.includes("dashboard_admin.php")) {
         const opiniRes = await fetch(
-          `/ksmaja/api/list_opinions.php?limit=100&offset=0&_=${timestamp}`,
+          `${window.APP_CONFIG.apiBase}/list_opinions.php?limit=100&offset=0&_=${timestamp}`,
           {
             cache: "no-store",
           },
@@ -470,8 +470,8 @@ class JournalManager {
       const item = this.journals.find((j) => String(j.id) === String(id));
       const isOpini = item?._type === "opini";
       const deleteEndpoint = isOpini
-        ? `/ksmaja/api/delete_opinion.php?id=${encodeURIComponent(id)}`
-        : `/ksmaja/api/delete_journal.php?id=${encodeURIComponent(id)}`;
+        ? `${window.APP_CONFIG.apiBase}/delete_opinion.php?id=${encodeURIComponent(id)}`
+        : `${window.APP_CONFIG.apiBase}/delete_journal.php?id=${encodeURIComponent(id)}`;
 
       const response = await fetch(deleteEndpoint, {
         method: "DELETE",
@@ -513,7 +513,7 @@ class JournalManager {
 
   async updateViews(id) {
     try {
-      const response = await fetch(`/ksmaja/api/update_views.php`, {
+      const response = await fetch(`${window.APP_CONFIG.apiBase}/update_views.php`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: id, type: "journal" }),

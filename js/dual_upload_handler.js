@@ -446,7 +446,7 @@ if (window._dualUploadHandlerLoaded) {
         const fileFormData = new FormData();
         fileFormData.append("file", file);
 
-        const fileUploadResponse = await fetch("/ksmaja/api/upload.php", {
+        const fileUploadResponse = await fetch(`${window.APP_CONFIG.apiBase}/upload.php`, {
           method: "POST",
           body: fileFormData,
         });
@@ -469,7 +469,7 @@ if (window._dualUploadHandlerLoaded) {
           const coverFormData = new FormData();
           coverFormData.append("file", coverFile);
 
-          const coverUploadResponse = await fetch("/ksmaja/api/upload.php", {
+          const coverUploadResponse = await fetch(`${window.APP_CONFIG.apiBase}/upload.php`, {
             method: "POST",
             body: coverFormData,
           });
@@ -501,7 +501,7 @@ if (window._dualUploadHandlerLoaded) {
 
         console.log("Sending metadata:", metadata);
 
-        const createResponse = await fetch("/ksmaja/api/create_journal.php", {
+        const createResponse = await fetch(`${window.APP_CONFIG.apiBase}/create_journal.php`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(metadata),
@@ -632,7 +632,7 @@ if (window._dualUploadHandlerLoaded) {
         const fileFormData = new FormData();
         fileFormData.append("file", file);
 
-        const fileUploadResponse = await fetch("/ksmaja/api/upload.php", {
+        const fileUploadResponse = await fetch(`${window.APP_CONFIG.apiBase}/upload.php`, {
           method: "POST",
           body: fileFormData,
         });
@@ -655,7 +655,7 @@ if (window._dualUploadHandlerLoaded) {
           const coverFormData = new FormData();
           coverFormData.append("file", coverFile);
 
-          const coverUploadResponse = await fetch("/ksmaja/api/upload.php", {
+          const coverUploadResponse = await fetch(`${window.APP_CONFIG.apiBase}/upload.php`, {
             method: "POST",
             body: coverFormData,
           });
@@ -685,7 +685,7 @@ if (window._dualUploadHandlerLoaded) {
 
         console.log("Sending opinion metadata:", metadata);
 
-        const createResponse = await fetch("/ksmaja/api/create_opinion.php", {
+        const createResponse = await fetch(`${window.APP_CONFIG.apiBase}/create_opinion.php`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(metadata),

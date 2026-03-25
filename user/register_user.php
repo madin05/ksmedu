@@ -13,6 +13,7 @@ $page_title = 'User Register - KSM Education';
     />
     <link rel="shortcut icon" type="image/x-icon" href="../assets/favicon.ico" />
     <link rel="stylesheet" href="../styles/login_user.css" />
+    <script src="../js/config.js?v=20260325"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
         .register-wrapper {
@@ -109,7 +110,7 @@ $page_title = 'User Register - KSM Education';
       </div>
     </div>
 
-    <script src="../js/register_user.js"></script>
+    <script src="../js/register_user.js?v=20260325"></script>
     <script>
       feather.replace();
       function togglePass(id, btn) {

@@ -881,59 +881,50 @@ body.menu-open {
 
 /* ===== DOWNLOAD BUTTON (Animated sweep style) ===== */
 .btn-download {
-  padding: 15px 25px;
-  border: none;
-  border-radius: 15px;
-  color: #212121;
-  z-index: 1;
-  background: #e8e8e8;
-  position: relative;
-  font-weight: 700;
-  font-size: 17px;
-  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
-  transition: all 250ms;
-  overflow: hidden;
+  padding: 12px 24px;
+  background: transparent;
+  color: #3b82f6;
+  border: 1.5px solid #3b82f6;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.btn-download::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  border-radius: 15px;
-  background-color: #3b82f6;
-  z-index: -1;
-  transition: all 250ms;
+  box-shadow: none;
 }
 
 .btn-download:hover {
-  color: #e8e8e8;
+  background: #3b82f6;
+  color: white;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-.btn-download:hover::before {
-  width: 100%;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 /* ===== VIEW BUTTON ===== */
 .btn-view {
-  background: rgba(255, 255, 255, 0.2);
+  padding: 12px 24px;
+  background: transparent;
   color: white;
-  border: 2px solid white;
+  border: 1.5px solid white;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .btn-view:hover {
   background: white;
-  color: #667eea;
+  color: #3b82f6;
+  transform: translateY(-2px);
 }
 
 /* ===== EXPLORE PDF SECTION ===== */
@@ -1297,27 +1288,26 @@ body.menu-open {
 }
 
 .btn-user-login, .btn-login, .btn-register {
-  padding: 8px 20px;
+  padding: 8px 18px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-.btn-login {
   background: transparent;
   color: #3b82f6;
   border: 1.5px solid #3b82f6;
+  text-transform: none;
 }
 
-.btn-register {
+.btn-user-login:hover, .btn-login:hover, .btn-register:hover {
   background: #3b82f6;
   color: white;
-  border: 1.5px solid #3b82f6;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }
 
 /* User Profile in Navbar */

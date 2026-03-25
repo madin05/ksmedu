@@ -137,7 +137,7 @@ class LoginManager {
       this.isLoggedIn = true;
 
       // SYNC PHP SESSION (SET COOKIE)
-      fetch('/ksmaja/api/auth_login.php', {
+      fetch(`${window.APP_CONFIG.apiBase}/auth_login.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -201,7 +201,7 @@ class LoginManager {
         sessionStorage.removeItem("userEmail");
 
         // SYNC PHP SESSION (CLEAR COOKIE)
-        fetch("/ksmaja/api/auth_logout.php")
+        fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`)
           .then(() => {
             console.log("PHP Session cleared");
             window.dispatchEvent(new CustomEvent("userIdentityChanged"));
@@ -245,7 +245,7 @@ class LoginManager {
       
       // SYNC CHECK: Verify with Server
       try {
-        const res = await fetch('/ksmaja/api/auth_me.php');
+        const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`);
         const data = await res.json();
         
         const isAdminPage = window.location.pathname.includes('/admin/');
@@ -260,7 +260,7 @@ class LoginManager {
 
           console.log("PHP Session expired for Admin. Attempting silent re-sync...");
           // SILENT LOGIN using hardcoded credentials
-          const loginRes = await fetch('/ksmaja/api/auth_login.php', {
+          const loginRes = await fetch(`${window.APP_CONFIG.apiBase}/auth_login.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -308,7 +308,7 @@ class LoginManager {
     sessionStorage.removeItem("userType");
     sessionStorage.removeItem("userEmail");
     
-    fetch("/ksmaja/api/auth_logout.php")
+    fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`)
       .then(() => {
         window.dispatchEvent(new CustomEvent("userIdentityChanged"));
       });

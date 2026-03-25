@@ -50,8 +50,8 @@ class PaginationManager {
       const timestamp = Date.now();
       const endpoint =
         this.dataType === "jurnal"
-          ? `/ksmaja/api/list_journals.php?limit=100&offset=0&t=${timestamp}`
-          : `/ksmaja/api/list_opinions.php?limit=100&offset=0&t=${timestamp}`;
+          ? `${window.APP_CONFIG.apiBase}/list_journals.php?limit=100&offset=0&t=${timestamp}`
+          : `${window.APP_CONFIG.apiBase}/list_opinions.php?limit=100&offset=0&t=${timestamp}`;
 
       const response = await fetch(endpoint, {
         cache: "no-store",

@@ -163,9 +163,9 @@ nav a.active {
 .auth-section .btn-login,
 .auth-section .btn-register {
   padding: 8px 18px;
-  background: transparent;
-  color: #3b82f6;
-  border: 1.5px solid #3b82f6;
+  background: #2c3e50;
+  color: #f1f5f9;
+  border: 1.5px solid transparent;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -180,10 +180,16 @@ nav a.active {
   box-shadow: none;
 }
 
+.auth-section .btn-register {
+  background: transparent;
+  border: 1.5px solid #2c3e50;
+  color: #2c3e50;
+}
+
 .auth-section .btn-user-login:hover,
 .auth-section .btn-login:hover,
 .auth-section .btn-register:hover {
-  background: #3b82f6;
+  background: #3b5c92;
   color: white;
   transform: translateY(-1.5px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
@@ -272,9 +278,11 @@ nav a.active {
 
   .nav-auth-section {
     display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
     padding: 1.5rem;
     border-top: 1px solid #f0f0f0;
-    margin-top: 10px;
+    margin-top: auto !important;
   }
 
   .user-profile {
@@ -299,6 +307,7 @@ nav a.active {
   }
 
   .btn-user-login,
+  .btn-login,
   .btn-register {
     width: 100%;
     justify-content: center;

@@ -1001,6 +1001,15 @@ body.menu-open {
     left: 0 !important;
   }
 
+  .nav-auth-section {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 1.5rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: auto !important;
+  }
+
   nav a {
     font-size: 15px !important;
     padding: 1rem 1.5rem !important;
@@ -1080,6 +1089,14 @@ body.menu-open {
 
   .pdf-actions {
     flex-direction: column !important;
+  }
+
+  .btn-user-login,
+  .btn-login,
+  .btn-register {
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 12px 20px !important;
   }
 
   .btn-pdf {
@@ -1297,15 +1314,20 @@ body.menu-open {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: transparent;
-  color: #3b82f6;
-  border: 1.5px solid #3b82f6;
+  background: #2c3e50;
+  color: #f1f5f9;
+  border: 1.5px solid transparent;
   text-transform: none;
 }
 
+.btn-register {
+  background: transparent !important;
+  border: 1.5px solid #2c3e50 !important;
+  color: #2c3e50 !important;
+}
+
 .btn-user-login:hover, .btn-login:hover, .btn-register:hover {
-  background: #3b82f6;
-  color: white;
+  color: #2c3e50;
   transform: translateY(-1.5px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
 }

@@ -1360,17 +1360,23 @@ a[class*="quickshare"]:hover {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: transparent;
-  color: #3b82f6;
-  border: 1.5px solid #3b82f6;
+  background: #2c3e50;
+  color: #f1f5f9;
+  border: 1.5px solid transparent;
   text-transform: none;
 }
 
+
 .btn-user-login:hover, .btn-login:hover, .btn-register:hover {
-  background: #3b82f6;
-  color: white;
+  color: #2c3e50;
   transform: translateY(-1.5px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.btn-register {
+  background: transparent;
+  border: 1.5px solid #2c3e50;
+  color: #2c3e50;
 }
 
 /* User Profile in Navbar */

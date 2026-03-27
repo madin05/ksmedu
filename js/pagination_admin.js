@@ -18,6 +18,9 @@ class PaginationManager {
     this.filteredItems = [];
     this.currentSort = "newest";
     this.currentFilter = "all";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    this.searchQuery = urlParams.get("search") || "";
     this.isLoading = true;
 
     console.log(`PaginationManager init: ${this.dataType}`);
@@ -432,6 +435,11 @@ class PaginationManager {
   setupSearch() {
     const searchInput = document.querySelector(this.searchInputSelector);
     if (!searchInput) return;
+
+    if (this.searchQuery) {
+      searchInput.value = this.searchQuery;
+      this.applyFiltersAndSort(this.searchQuery);
+    }
 
     searchInput.addEventListener("input", (e) => {
       const query = e.target.value.toLowerCase().trim();

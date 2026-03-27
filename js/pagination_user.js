@@ -13,7 +13,8 @@ class PaginationUser {
     this.allItems = [];
     this.filteredItems = [];
     this.currentSort = "newest";
-    this.searchQuery = "";
+    const urlParams = new URLSearchParams(window.location.search);
+    this.searchQuery = urlParams.get("search") || "";
 
     console.log(`PaginationUser init: ${this.dataType}`);
     this.init();
@@ -542,6 +543,15 @@ class PaginationUser {
   setupSearch() {
     const input = document.querySelector(this.searchInputSelector);
     if (!input) return;
+
+    if (this.searchQuery) {
+      input.value = this.searchQuery;
+      // Scroll to search or container if query from URL
+      setTimeout(() => {
+        const container = document.querySelector(this.containerSelector);
+        if (container) container.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 500);
+    }
 
     input.addEventListener("input", (e) => {
       this.searchQuery = e.target.value.toLowerCase().trim();

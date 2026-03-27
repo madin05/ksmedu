@@ -1,4 +1,8 @@
 // ===== LOGIN MANAGER =====
+if (window.LoginManagerInstance) {
+  console.warn("LoginManager already initialized.");
+} else {
+  window.LoginManagerInstance = true;
 
 class LoginManager {
   constructor() {
@@ -28,13 +32,21 @@ class LoginManager {
 
     // Gunakan event delegation agar tombol yang di-clone oleh mobile_menu.js tetap berfungsi
     document.addEventListener("click", (e) => {
-      const btn = e.target.closest(".btn-register");
+      const btn = e.target.closest(".btn-register, .btn-login-nav, .btn-user-login, .btn-login");
       if (btn) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (this.isLoggedIn) {
+        // Jika ini adalah tombol SUBMIT di dalam form login, biarkan form.submit yang handle
+        if (btn.type === "submit" && btn.closest("#loginForm")) return;
+
+        const text = btn.textContent.trim().toUpperCase();
+        const isLogoutAction = text.includes("LOGOUT") || btn.classList.contains("admin-logged-in");
+
+        if (isLogoutAction) {
+          e.preventDefault();
+          e.stopPropagation();
           this.logout();
-        } else {
+        } else if (text.includes("LOGIN")) {
+          e.preventDefault();
+          e.stopPropagation();
           this.openLoginModal();
         }
       }
@@ -126,101 +138,111 @@ class LoginManager {
   }
 
   handleLogin() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
+    const emailInput = document.getElementById("loginEmail");
+    const passwordInput = document.getElementById("loginPassword");
     const rememberMe = document.getElementById("rememberMe").checked;
+    
+    if (!emailInput || !passwordInput) return;
+    
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
-    if (
-      email === this.adminCredentials.email &&
-      password === this.adminCredentials.password
-    ) {
-      this.isLoggedIn = true;
+    if (!email || !password) {
+        showToast("Email dan password wajib diisi.", "warning", "INPUT KOSONG");
+        return;
+    }
 
-      // SYNC PHP SESSION (SET COOKIE)
-      fetch(`${window.APP_CONFIG.apiBase}/auth_login.php`, {
+    const submitBtn = this.loginForm.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : "MASUK";
+    
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="loader sm" style="margin:0"></span>';
+    }
+
+    // PRIMARY AUTH via SERVER
+    fetch(`${window.APP_CONFIG.apiBase}/auth_login.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email: this.adminCredentials.email, 
-          password: this.adminCredentials.password 
-        })
-      }).then(res => res.json())
-        .then(res => {
-          if(!res.ok) console.warn("PHP Session sync failed:", res.message);
-          else console.log("PHP Session synced for Administrator");
-          
-          // Dispatch identity change event for components like comments.js
-          window.dispatchEvent(new CustomEvent('userIdentityChanged'));
-        });
+        body: JSON.stringify({ email, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) {
+            this.isLoggedIn = true;
+            
+            // Dispatch identity change event for components like comments.js
+            window.dispatchEvent(new CustomEvent('userIdentityChanged'));
 
-      // SET SESSIONSTORAGE UNTUK FUNGSI DELETE
-      sessionStorage.setItem("userLoggedIn", "true");
-      sessionStorage.setItem("userType", "admin");
-      sessionStorage.setItem("userEmail", email);
+            // SET SESSION & LOCAL STORAGE
+            sessionStorage.setItem("userLoggedIn", "true");
+            sessionStorage.setItem("userType", data.user?.role || "admin");
+            sessionStorage.setItem("userEmail", email);
 
-      // SET LOCALSTORAGE UNTUK PERSISTENT LOGIN
-      localStorage.setItem("adminLoggedIn", "true");
-      localStorage.setItem("adminLoginTime", new Date().toISOString());
+            localStorage.setItem("adminLoggedIn", "true");
+            localStorage.setItem("adminLoginTime", new Date().toISOString());
 
-      if (rememberMe) {
-        localStorage.setItem("rememberedEmail", email);
-      } else {
-        localStorage.removeItem("rememberedEmail");
-      }
+            if (rememberMe) {
+                localStorage.setItem("rememberedEmail", email);
+            } else {
+                localStorage.removeItem("rememberedEmail");
+            }
 
-      this.updateLoginButton();
-      this.updateUploadSection();
-      this.closeLoginModal();
-      
-      // Close mobile menu if it's open
-      if (typeof window.closeMobileMenu === 'function') {
-        window.closeMobileMenu();
-      }
+            this.updateLoginButton();
+            this.updateUploadSection();
+            this.closeLoginModal();
+            
+            if (typeof window.closeMobileMenu === 'function') {
+                window.closeMobileMenu();
+            }
 
-      showToast("Selamat datang kembali, Admin!", "success", "LOGIN BERHASIL");
-
-      this.loginForm.reset();
-
-      this.updateLoginStatusState(true);
-    } else {
-      showToast("Email atau password yang Anda masukkan salah.", "error", "LOGIN GAGAL");
-    }
+            showToast("Selamat datang kembali, Admin!", "success", "LOGIN BERHASIL");
+            this.loginForm.reset();
+            this.updateLoginStatusState(true);
+        } else {
+            showToast(data.message || "Email atau password yang Anda masukkan salah.", "error", "LOGIN GAGAL");
+        }
+    })
+    .catch(err => {
+        console.error("Login Error:", err);
+        showToast("Terjadi kesalahan jaringan saat mencoba login.", "error", "LOGIN ERROR");
+    })
+    .finally(() => {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+            if (typeof feather !== "undefined") feather.replace();
+        }
+    });
   }
 
   logout() {
     showConfirm(
       "Apakah Anda yakin ingin keluar dari sistem admin?",
       () => {
-        this.isLoggedIn = false;
-        localStorage.removeItem("adminLoggedIn");
-        localStorage.removeItem("adminLoginTime");
-
-        // HAPUS JUGA DARI sessionStorage
-        sessionStorage.removeItem("userLoggedIn");
-        sessionStorage.removeItem("userType");
-        sessionStorage.removeItem("userEmail");
-
         // SYNC PHP SESSION (CLEAR COOKIE)
         fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`)
           .then(() => {
             console.log("PHP Session cleared");
+            this.isLoggedIn = false;
+            localStorage.removeItem("adminLoggedIn");
+            localStorage.removeItem("adminLoginTime");
+
+            sessionStorage.removeItem("userLoggedIn");
+            sessionStorage.removeItem("userType");
+            sessionStorage.removeItem("userEmail");
+
             window.dispatchEvent(new CustomEvent("userIdentityChanged"));
+            this.updateLoginStatusState(false);
+            this.updateLoginButton();
+            this.updateUploadSection();
+
+            if (typeof window.closeMobileMenu === "function") {
+              window.closeMobileMenu();
+            }
+
+            showToast("Anda telah keluar dari sistem.", "success", "LOGOUT BERHASIL");
           });
-
-        this.updateLoginStatusState(false);
-        this.updateLoginButton();
-        this.updateUploadSection();
-
-        // Close mobile menu if it's open
-        if (typeof window.closeMobileMenu === "function") {
-          window.closeMobileMenu();
-        }
-
-        showToast(
-          "Anda telah keluar dari sistem admin.",
-          "success",
-          "LOGOUT BERHASIL"
-        );
       },
       "Konfirmasi Logout"
     );
@@ -399,3 +421,4 @@ class LoginManager {
 document.addEventListener("DOMContentLoaded", () => {
   window.loginManager = new LoginManager();
 });
+}

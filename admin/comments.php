@@ -59,7 +59,7 @@ include 'components/sidebar.php';
             placeholder="Cari username atau isi komentar..." />
         </div>
         <button onclick="loadAllComments()" class="btn-search">
-          Cari
+          <i data-feather="search"></i>
         </button>
       </div>
       <span id="totalCount"></span>
@@ -82,7 +82,7 @@ include 'components/sidebar.php';
         <tbody id="commentsTableBody">
           <tr>
             <td colspan="5" style="padding:48px;text-align:center;color:#94a3b8;">
-              <div class="loading-spinner" style="margin:0 auto 12px;"></div>
+              <div id="commentsLoading" class="loader" style="margin:0 auto 12px;"></div>
               Memuat komentar...
             </td>
           </tr>

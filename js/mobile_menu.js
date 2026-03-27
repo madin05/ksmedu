@@ -243,6 +243,21 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   console.log("Mobile menu initialized successfully");
+
+  // Handle header glassmorphism on scroll
+  const headerEl = document.querySelector("header");
+  if (headerEl) {
+    const handleScroll = () => {
+      if (window.scrollY > 15) {
+        headerEl.classList.add("scrolled");
+      } else {
+        headerEl.classList.remove("scrolled");
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Initial check
+  }
   
   // Force an auth update to populate the newly created mobile auth container
   if (typeof updateNavbarAuth === 'function') {

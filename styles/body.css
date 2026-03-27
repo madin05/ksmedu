@@ -1019,6 +1019,7 @@
 .list-view .journal-abstract,
 .list-view .opinion-description {
     -webkit-line-clamp: 2; /* Reduce lines to make it smaller */
+    line-clamp: 2;
     margin-bottom: 12px;
     font-size: 13px;
     flex-shrink: 0; /* Prevent description from disappearing */

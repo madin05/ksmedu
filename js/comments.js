@@ -102,7 +102,7 @@
 
         <div id="commentsList" class="comments-list">
           <div class="comments-loading">
-            <div class="loading-spinner"></div>
+          <div class="loader"></div>
           </div>
         </div>
       </div>

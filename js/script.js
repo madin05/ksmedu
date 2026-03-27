@@ -754,7 +754,7 @@ class EditJournalManager {
       overlay = document.createElement("div");
       overlay.id = "editLoadingOverlay";
       overlay.innerHTML = `
-        <div class="loading-spinner"></div>
+        <div class="loader"></div>
         <p class="loading-message">${message}</p>
       `;
       overlay.style.cssText = `
@@ -762,6 +762,35 @@ class EditJournalManager {
         background: rgba(0,0,0,0.8); display: flex; flex-direction: column;
         justify-content: center; align-items: center; z-index: 10000; color: white;
       `;
+
+      if (!document.getElementById("loader-style")) {
+        const style = document.createElement("style");
+        style.id = "loader-style";
+        style.textContent = `
+          .loader {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin-bottom: 20px;
+          }
+          .loader::before {
+            content: "";
+            box-sizing: border-box;
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border-top: 3px solid #8900FF;
+            border-right: 3px solid transparent;
+            animation: spinner8217 0.8s linear infinite;
+          }
+          @keyframes spinner8217 {
+            to { transform: rotate(360deg); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
       document.body.appendChild(overlay);
     } else {
       overlay.querySelector(".loading-message").textContent = message;

@@ -763,7 +763,7 @@ if (window._dualUploadHandlerLoaded) {
         overlay = document.createElement("div");
         overlay.id = "uploadLoadingOverlay";
         overlay.innerHTML = `
-        <div class="loading-spinner"></div>
+        <div class="loader"></div>
         <p class="loading-message">${message}</p>
       `;
         overlay.style.cssText = `
@@ -774,16 +774,25 @@ if (window._dualUploadHandlerLoaded) {
 
         const style = document.createElement("style");
         style.textContent = `
-        .loading-spinner {
-          width: 60px; height: 60px;
-          border: 4px solid rgba(255,255,255,0.3);
-          border-top: 4px solid white;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
+        .loader {
+          width: 60px;
+          height: 60px;
+          position: relative;
+          margin-bottom: 20px;
         }
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+        .loader::before {
+          content: "";
+          box-sizing: border-box;
+          position: absolute;
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          border-top: 3px solid #8900FF;
+          border-right: 3px solid transparent;
+          animation: spinner8217 0.8s linear infinite;
+        }
+        @keyframes spinner8217 {
+          to { transform: rotate(360deg); }
         }
       `;
         document.head.appendChild(style);

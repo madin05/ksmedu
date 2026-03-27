@@ -461,21 +461,64 @@
   color: #94a3b8;
 }
 
-/* ===== LOADING & ERROR ===== */
-.loading,
-.error-message {
+/* ===== LOADING STATE ===== */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 60px 24px;
+  padding: 4rem 2rem;
+  gap: 1.5rem;
 }
 
-.loading-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #e2e8f0;
-  border-top-color: #3b82f6;
+/* From Uiverse.io by Clemix37 */
+.loader {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.loader::before {
+  content: "";
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 0 auto 20px;
+  border-top: 2.5px solid #8900FF;
+  border-right: 2.5px solid transparent;
+  animation: spinner8217 0.8s linear infinite;
+}
+
+@keyframes spinner8217 {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Alias for existing elements */
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    margin: 0 auto;
+}
+.loading-spinner::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border-top: 2.5px solid #8900FF;
+    border-right: 2.5px solid transparent;
+    animation: spinner8217 0.8s linear infinite;
 }
 
 .loading-spinner.sm {
@@ -1148,17 +1191,25 @@ body.menu-open {
 }
 
 .btn-cancel-reply {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 600;
+  background: white;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font: 600 12px "Inter", sans-serif;
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-cancel-reply:hover {
-  color: #64748b;
-  text-decoration: underline;
+  background: #f8fafc;
+  color: #1e293b;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 @media (max-width: 600px) {

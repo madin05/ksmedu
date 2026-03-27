@@ -203,6 +203,10 @@ function setupFilterDropdown() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    this.loadingSpinner = document.getElementById("commentsLoading");
+    if (this.loadingSpinner) {
+        this.loadingSpinner.className = "loader";
+    }
     const searchInput = document.getElementById("searchInput");
     if (searchInput) {
         searchInput.addEventListener("keydown", (e) => {

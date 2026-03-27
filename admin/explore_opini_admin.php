@@ -31,7 +31,7 @@ include 'components/sidebar.php';
     <div class="container">
       <!-- Loading State -->
       <div id="loadingState" class="loading">
-        <div class="loading-spinner"></div>
+        <div class="loader"></div>
         <p>Memuat artikel...</p>
       </div>
 

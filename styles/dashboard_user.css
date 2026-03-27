@@ -631,6 +631,7 @@ body.menu-open {
 
 .article-card .journal-tags .opinion-tag .tag {
   /* Inherit from body.css .tag */
+  display: inline-block; /* Added dummy property to avoid empty ruleset warning while keeping the comment */
 }
 
 .article-card .journal-tags .opinion-tag .tag-more {
@@ -885,6 +886,7 @@ a[class*="quickshare"]:hover {
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -896,6 +898,7 @@ a[class*="quickshare"]:hover {
   margin-bottom: 16px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1049,6 +1052,7 @@ a[class*="quickshare"]:hover {
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1217,245 +1221,4 @@ a[class*="quickshare"]:hover {
 .user-dashboard .article-card,
 .user-dashboard .journal-card {
   cursor: pointer !important;
-}
-
-/* ===== MOBILE RESPONSIVE (MAX 768PX) ===== */
-@media (max-width: 768px) {
-  /* Show hamburger */
-  .hamburger-menu {
-    display: flex;
-    order: 2;
-    margin-left: auto;
-  }
-
-  .header-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .logo {
-    order: 0;
-    flex: 0 0 auto;
-  }
-
-  .logo img {
-    width: 60px;
-    height: auto;
-  }
-
-  /* Mobile Navigation - Sidebar from left */
-  nav {
-    position: fixed !important;
-    top: 0 !important;
-    left: -100% !important;
-    right: auto !important;
-    width: 80% !important;
-    max-width: 320px !important;
-    height: 100vh !important;
-    background: white !important;
-    flex-direction: column !important;
-    padding: 20px 0 2rem 0 !important;
-    gap: 0 !important;
-    transition: left 0.3s ease !important;
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.2) !important;
-    z-index: 1000 !important;
-    overflow-y: auto !important;
-    display: flex !important;
-  }
-
-  nav.active {
-    left: 0 !important;
-  }
-
-  /* Logo inside sidebar */
-  .nav-logo {
-    display: block;
-    padding: 10px 1.5rem 20px;
-    border-bottom: 1px solid #e9ecef;
-    margin-bottom: 8px;
-  }
-
-  .nav-logo img {
-    width: 70px;
-    height: auto;
-  }
-
-  nav > a {
-    font-size: 15px !important;
-    padding: 1rem 1.5rem !important;
-    border-bottom: 1px solid #f0f0f0 !important;
-    width: 100% !important;
-    display: block !important;
-    text-align: left !important;
-    border-radius: 0 !important;
-    margin: 0;
-  }
-
-  nav a:hover {
-    background: #f5f5f5 !important;
-  }
-
-  /* Dropdown in mobile */
-  .nav-dropdown {
-    width: 100% !important;
-    position: static !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    margin: 0;
-  }
-
-  .nav-link.has-caret {
-    width: 100% !important;
-    padding: 1rem 1.5rem !important;
-    justify-content: space-between !important;
-    text-align: left !important;
-    border-bottom: 1px solid #f0f0f0 !important;
-    font-size: 15px !important;
-    border-radius: 0 !important;
-    color: #666 !important;
-    font-weight: 500 !important;
-    background: none !important;
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
-    cursor: pointer;
-    display: flex !important;
-    align-items: center !important;
-    margin: 0;
-  }
-
-  .nav-link.has-caret:hover {
-    background: #f5f5f5 !important;
-    color: #2c3e50 !important;
-  }
-
-  .nav-link.has-caret .caret {
-    transition: transform 0.3s ease;
-  }
-
-  .nav-dropdown.open .nav-link.has-caret .caret {
-    transform: rotate(180deg);
-  }
-
-  .nav-dropdown.open .nav-link.has-caret {
-    border-bottom: none;
-  }
-
-  .dropdown-menu {
-    position: static !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-    box-shadow: none !important;
-    display: none !important;
-    background: #f8f9fa !important;
-    padding: 0 !important;
-    min-width: 100% !important;
-    border: none !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
-  }
-
-  .nav-dropdown.open .dropdown-menu {
-    display: block !important;
-  }
-
-  .dropdown-menu a {
-    padding: 0.75rem 2.5rem !important;
-    font-size: 14px !important;
-    background: #f8f9fa !important;
-    border-bottom: 1px solid #e9ecef !important;
-  }
-
-  .dropdown-menu a:hover {
-    background: #e9ecef !important;
-    color: #2c3e50 !important;
-  }
-}
-/* ===== AUTH SECTION (NAVBAR) ===== */
-.auth-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.btn-user-login, .btn-login, .btn-register {
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #2c3e50;
-  color: #f1f5f9;
-  border: 1.5px solid transparent;
-  text-transform: none;
-}
-
-
-.btn-user-login:hover, .btn-login:hover, .btn-register:hover {
-  color: #2c3e50;
-  transform: translateY(-1.5px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-}
-
-.btn-register {
-  background: transparent;
-  border: 1.5px solid #2c3e50;
-  color: #2c3e50;
-}
-
-/* User Profile in Navbar */
-.user-profile {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #f8fafc;
-  padding: 6px 12px;
-  border-radius: 30px;
-  border: 1px solid #e2e8f0;
-}
-
-.user-avatar {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-}
-
-.user-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.btn-logout {
-  font-size: 12px;
-  color: #ef4444;
-  text-decoration: none;
-  font-weight: 600;
-  margin-left: 8px;
-  padding-left: 12px;
-  border-left: 1px solid #e2e8f0;
-}
-
-.btn-logout:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .auth-section {
-    display: none; /* Mobile menu should handle auth */
-  }
 }

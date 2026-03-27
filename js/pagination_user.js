@@ -651,58 +651,26 @@ class PaginationUser {
       return;
     }
 
-    container.innerHTML = "";
+    container.innerHTML = `
+      <div class="pill-pagination">
+        <button class="prev-page" id="prevPage" ${this.currentPage === 1 ? "disabled" : ""}>
+          <i data-feather="chevron-left"></i>
+        </button>
+        <div class="page-info">
+          ${this.currentPage} of ${totalPages}
+        </div>
+        <button class="next-page" id="nextPage" ${this.currentPage === totalPages ? "disabled" : ""}>
+          <i data-feather="chevron-right"></i>
+        </button>
+      </div>
+    `;
 
-    // Previous
-    const prev = document.createElement("button");
-    prev.textContent = "Previous";
-    prev.className = "pagination-btn";
-    prev.disabled = this.currentPage === 1;
-    prev.onclick = () => this.goToPage(this.currentPage - 1);
-    container.appendChild(prev);
+    // Add event listeners
+    const prevBtn = container.querySelector("#prevPage");
+    const nextBtn = container.querySelector("#nextPage");
 
-    // Page numbers with ellipsis
-    const max = 5;
-    let start = Math.max(1, this.currentPage - Math.floor(max / 2));
-    let end = Math.min(totalPages, start + max - 1);
-    if (end - start < max - 1) start = Math.max(1, end - max + 1);
-
-    if (start > 1) {
-      container.appendChild(this.pageBtn(1));
-      if (start > 2) {
-        const e = document.createElement("span");
-        e.textContent = "...";
-        e.className = "pagination-ellipsis";
-        container.appendChild(e);
-      }
-    }
-    for (let i = start; i <= end; i++) container.appendChild(this.pageBtn(i));
-    if (end < totalPages) {
-      if (end < totalPages - 1) {
-        const e = document.createElement("span");
-        e.textContent = "...";
-        e.className = "pagination-ellipsis";
-        container.appendChild(e);
-      }
-      container.appendChild(this.pageBtn(totalPages));
-    }
-
-    // Next
-    const next = document.createElement("button");
-    next.textContent = "Next";
-    next.className = "pagination-btn";
-    next.disabled = this.currentPage === totalPages;
-    next.onclick = () => this.goToPage(this.currentPage + 1);
-    container.appendChild(next);
-  }
-
-  pageBtn(num) {
-    const btn = document.createElement("button");
-    btn.textContent = num;
-    btn.className =
-      num === this.currentPage ? "pagination-btn active" : "pagination-btn";
-    btn.onclick = () => this.goToPage(num);
-    return btn;
+    if (prevBtn) prevBtn.onclick = () => this.goToPage(this.currentPage - 1);
+    if (nextBtn) nextBtn.onclick = () => this.goToPage(this.currentPage + 1);
   }
 
   goToPage(num) {

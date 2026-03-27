@@ -76,7 +76,6 @@
   margin-top: 0;
 }
 
-.btn-download,
 .btn-edit,
 .btn-delete {
   padding: 6px 12px;
@@ -93,13 +92,6 @@
   transition: all 0.3s ease;
   min-width: 70px;
   justify-content: center;
-}
-
-.btn-download:hover {
-  background: #3b82f6;
-  color: white;
-  transform: translateY(-1.5px);
-  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
 }
 
 .btn-edit {
@@ -122,7 +114,7 @@
   transform: translateY(-1px);
 }
 
-.btn-download svg,
+
 .btn-edit svg,
 .btn-delete svg {
   width: 13px;
@@ -214,7 +206,7 @@
 
 .search-box:focus-within {
   background: white;
-  box-shadow: 0 0 0 2px #3b82f6;
+  box-shadow: 0 0 0 2px #2c3e50;
 }
 
 .search-box input {
@@ -529,9 +521,9 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1.5px solid #3b82f6;
+  border: 1.5px solid #2c3e50;
   background: transparent;
-  color: #3b82f6;
+  color: #2c3e50;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -540,7 +532,7 @@
 }
 
 .btn-icon-sort:hover {
-  background: #3b82f6;
+  background: #2c3e50;
   color: white;
   transform: scale(1.05);
 }
@@ -596,7 +588,7 @@
 }
 
 .sort-item.active {
-  background: #3b82f6;
+  background: #2c3e50;
   color: white;
 }
 
@@ -929,7 +921,7 @@
     flex-wrap: wrap;
   }
 
-  .btn-download,
+
   .btn-edit,
   .btn-delete,
   .btn-share {

@@ -54,10 +54,11 @@ if (!in_array($article_type, ['jurnal', 'opini'], true)) {
 
 try {
     $stmt = $pdo->prepare(
-        "SELECT id, parent_id, user_id, user_name, content, created_at
-         FROM comments
-         WHERE article_id = ? AND article_type = ?
-         ORDER BY created_at ASC"
+        "SELECT c.id, c.parent_id, c.user_id, c.user_name, c.content, c.created_at, u.role
+         FROM comments c
+         LEFT JOIN users u ON c.user_id = u.id
+         WHERE c.article_id = ? AND c.article_type = ?
+         ORDER BY c.created_at ASC"
     );
     $stmt->execute([$article_id, $article_type]);
     $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);

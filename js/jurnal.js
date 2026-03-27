@@ -403,9 +403,7 @@ class JournalManager {
                 <i data-feather="more-vertical"></i>
               </button>
               <div id="dropdown-${journal.id}" class="dropdown-content">
-                <button class="dropdown-item-btn dd-detail" onclick="event.stopPropagation(); journalManager.viewJournal('${journal.id}'); closeDropdown('${journal.id}')">
-                  <i data-feather="eye"></i> Detail
-                </button>
+               
                 <button class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.editJournalManager.openEditModal('${journal.id}'); closeDropdown('${journal.id}')">
                   <i data-feather="edit"></i> Edit
                 </button>

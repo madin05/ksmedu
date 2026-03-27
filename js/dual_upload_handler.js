@@ -372,10 +372,18 @@ if (window._dualUploadHandlerLoaded) {
         // Set flag menjadi true
         this.isSubmittingJurnal = true;
 
-        if (!window.loginManager || !window.loginManager.isAdmin()) {
+        // Enhanced Admin Check
+        const isAdmin = window.loginManager && typeof window.loginManager.isAdmin === 'function' 
+                        ? window.loginManager.isAdmin() 
+                        : (localStorage.getItem("adminLoggedIn") === "true");
+
+        if (!isAdmin) {
           showAlert.warning("Login sebagai admin terlebih dahulu!", "Login Diperlukan");
-          if (window.loginManager) window.loginManager.openLoginModal();
-          this.isSubmittingJurnal = false; // Reset flag
+          if (window.loginManager && typeof window.loginManager.openLoginModal === 'function') {
+            window.loginManager.openLoginModal();
+          }
+          this.isSubmittingJurnal = false;
+          this.enableSubmitButton("uploadFormJurnal"); 
           return;
         }
 
@@ -578,9 +586,18 @@ if (window._dualUploadHandlerLoaded) {
       this.disableSubmitButton("uploadFormOpini");
 
       try {
-        if (!window.loginManager || !window.loginManager.isAdmin()) {
+        // Enhanced Admin Check
+        const isAdmin = window.loginManager && typeof window.loginManager.isAdmin === 'function' 
+                        ? window.loginManager.isAdmin() 
+                        : (localStorage.getItem("adminLoggedIn") === "true");
+
+        if (!isAdmin) {
           showAlert.warning("Login sebagai admin terlebih dahulu!", "Login Diperlukan");
-          if (window.loginManager) window.loginManager.openLoginModal();
+          if (window.loginManager && typeof window.loginManager.openLoginModal === 'function') {
+            window.loginManager.openLoginModal();
+          }
+          this.isSubmittingOpini = false;
+          this.enableSubmitButton("uploadFormOpini");
           return;
         }
 

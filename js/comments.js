@@ -68,7 +68,7 @@
 
     const formHTML = isLoggedIn
       ? `<div class="comment-form-wrap top-level-form">
-           <div class="comment-avatar">${avatarLetter(currentUser.name)}</div>
+           <div class="comment-avatar" style="background: ${getAvatarColor(currentUser.name)}">${avatarLetter(currentUser.name)}</div>
            <div class="comment-input-area">
              <textarea
                id="commentInput"
@@ -192,8 +192,9 @@
 
   // ========== RENDER SINGLE NODE (RECURSIVE) ==========
   function renderCommentNode(comment, depth) {
-    const isAdmin = currentUser && currentUser.role === 'admin';
+    const isCommenterAdmin = comment.role === 'admin';
     const isOwner = currentUser && (parseInt(currentUser.id) === parseInt(comment.user_id));
+    const isAdmin = currentUser && currentUser.role === 'admin';
     const canDelete = isOwner || isAdmin;
     const canReply = !!currentUser;
     const isChild = depth > 0;
@@ -208,11 +209,11 @@
       <div class="comment-node ${isChild ? 'is-reply' : ''}" data-comment-id="${comment.id}">
         <div class="comment-card">
           <div class="comment-header">
-            <div class="comment-avatar-sm">${avatarLetter(comment.user_name)}</div>
+            <div class="comment-avatar-sm" style="background: ${getAvatarColor(comment.user_name)}">${avatarLetter(comment.user_name)}</div>
             <div class="comment-meta">
               <span class="comment-author">${comment.user_name}</span>
               <span class="comment-date">${formatDate(comment.created_at)}</span>
-              ${isAdmin ? '<span class="admin-badge">Admin</span>' : ''}
+              ${isCommenterAdmin ? '<span class="admin-badge">Admin</span>' : ''}
             </div>
             <div class="comment-actions">
               ${canReply ? `<button class="btn-reply-toggle" onclick="window.CommentsModule.toggleReplyForm(${comment.id})"><i data-feather="corner-up-left"></i> Balas</button>` : ''}
@@ -248,7 +249,7 @@
 
     row.innerHTML = `
       <div class="comment-form-wrap reply-form">
-         <div class="comment-avatar-vs">${avatarLetter(currentUser.name)}</div>
+         <div class="comment-avatar-vs" style="background: ${getAvatarColor(currentUser.name)}">${avatarLetter(currentUser.name)}</div>
          <div class="comment-input-area">
            <textarea
              id="replyInput-${commentId}"

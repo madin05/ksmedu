@@ -53,6 +53,7 @@ $offset = ($page - 1) * $limit;
 $type   = isset($_GET['type']) && in_array($_GET['type'], ['jurnal', 'opini'], true)
             ? $_GET['type'] : null;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$sort   = $_GET['sort'] ?? 'newest';
 
 // ===== BUILD QUERY =====
 $where  = [];
@@ -70,6 +71,16 @@ if (!empty($search)) {
 
 $whereSQL  = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
+// Sorting logic
+$orderSQL = "c.created_at DESC"; // Default (newest)
+if ($sort === 'oldest') {
+    $orderSQL = "c.created_at ASC";
+} elseif ($sort === 'user_az') {
+    $orderSQL = "c.user_name ASC";
+} elseif ($sort === 'user_za') {
+    $orderSQL = "c.user_name DESC";
+}
+
 try {
     // Count total for pagination
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM comments c $whereSQL");
@@ -81,7 +92,7 @@ try {
         "SELECT c.id, c.article_id, c.article_type, c.user_id, c.user_name, c.content, c.created_at
          FROM comments c
          $whereSQL
-         ORDER BY c.created_at DESC
+         ORDER BY $orderSQL
          LIMIT $limit OFFSET $offset"
     );
     $dataStmt->execute($params);

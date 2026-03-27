@@ -30,7 +30,9 @@ include 'components/sidebar.php';
       <!-- Journal List Section -->
       <section id="journal" class="journal-list">
         <h2>ARTIKEL TERBARU</h2>
-        <div id="journalContainer" class="articles-grid"></div>
+        <div class="articles-wrapper">
+          <div id="journalContainer" class="articles-grid"></div>
+        </div>
         <div id="latestArticlesNavAdmin"></div>
         <div
           id="viewAllContainer"

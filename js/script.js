@@ -1182,6 +1182,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 console.log("script.js loaded");
 
+// ===== AVATAR COLOR HELPER =====
+const AVATAR_COLORS = [
+    '#ef4444', // Red
+    '#3b82f6', // Blue
+    '#10b981', // Emerald
+    '#f59e0b', // Amber
+    '#6366f1', // Indigo
+    '#8b5cf6', // Violet
+    '#ec4899', // Pink
+    '#14b8a6', // Teal
+    '#ff7043', // Deep Orange
+    '#0ea5e9', // Sky
+];
+
+function getAvatarColor(name) {
+    if (!name) return AVATAR_COLORS[0];
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % AVATAR_COLORS.length;
+    return AVATAR_COLORS[index];
+}
+
 // ===== NAVBAR AUTH DYNAMIC CONTENT =====
 async function updateNavbarAuth() {
     // Skip auth update if we are on an admin page to avoid leaking user session into admin UI
@@ -1211,10 +1235,11 @@ async function updateNavbarAuth() {
             // Logged in
             const user = result.user;
             const avatarChar = (user.name || 'U').charAt(0).toUpperCase();
+            const avatarColor = getAvatarColor(user.name);
             
             const profileHTML = `
                 <div class="user-profile">
-                    <div class="user-avatar">${avatarChar}</div>
+                    <div class="user-avatar" style="background: ${avatarColor}">${avatarChar}</div>
                     <span class="user-name">${user.name}</span>
                     <a href="${window.APP_CONFIG.apiBase}/auth_logout.php?redirect=${encodeURIComponent(window.location.origin + window.APP_CONFIG.root + '/user/dashboard_user.php')}" class="btn-logout" id="btnLogout">Logout</a>
                 </div>
@@ -1223,7 +1248,7 @@ async function updateNavbarAuth() {
             // Mobile Header HTML (Avatar only, with hidden dropdown)
             const mobileHeaderHTML = `
                 <div class="mobile-avatar-container">
-                    <div class="user-avatar mobile-header-avatar" id="mobileAvatar">${avatarChar}</div>
+                    <div class="user-avatar mobile-header-avatar" id="mobileAvatar" style="background: ${avatarColor}">${avatarChar}</div>
                     <div class="mobile-logout-dropdown" id="mobileLogoutDropdown">
                         <div class="dropdown-user-info">
                             <strong>${user.name}</strong>

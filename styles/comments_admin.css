@@ -1,0 +1,233 @@
+/* styles/comments_admin.css */
+.comments-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+}
+
+.filter-row-left {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.filter-row-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  justify-content: flex-end;
+  max-width: 600px;
+}
+
+/* SEARCH BOX */
+.search-box-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0 12px;
+  transition: all 0.3s;
+  flex: 1;
+  height: 44px; /* Match button and filter icon height */
+}
+
+.search-box-wrapper:focus-within {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-box-wrapper i {
+  color: #94a3b8;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.search-box-wrapper .search-input {
+  border: none;
+  background: transparent;
+  padding: 0 10px;
+  flex: 1;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+  height: 100%;
+}
+
+.btn-search {
+  height: 44px;
+  padding: 0 24px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-search:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* SORT DROPDOWN (Reuse from journal/dashboard) */
+.sort-dropdown {
+  position: relative;
+}
+
+.btn-icon-sort {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid #2c3e50;
+  background: #eff6ff;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-icon-sort:hover {
+  background: #2c3e50;
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-icon-sort i {
+  width: 20px;
+  height: 20px;
+}
+
+.sort-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  min-width: 220px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 100;
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.sort-dropdown.active .sort-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menu-section-label {
+  padding: 10px 16px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+
+.menu-separator {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 8px 0;
+}
+
+.filter-type-item, .filter-sort-item {
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  font-family: inherit;
+  text-align: left;
+}
+
+.filter-type-item:hover, .filter-sort-item:hover {
+  background: #f8fafc;
+  color: #3b82f6;
+}
+
+.filter-type-item.active, .filter-sort-item.active {
+  background: #eff6ff;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.filter-sort-item i {
+  width: 16px;
+  height: 16px;
+}
+
+#totalCount {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+}
+@media (max-width: 768px) {
+  .comments-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .filter-row-right {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .filter-group {
+    max-width: none;
+    width: 100%;
+  }
+  
+  .search-box-wrapper {
+    max-width: none;
+  }
+  
+  #totalCount {
+    text-align: center;
+    padding-top: 10px;
+    border-top: 1px solid #f1f5f9;
+    width: 100%;
+  }
+}

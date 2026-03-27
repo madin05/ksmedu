@@ -279,6 +279,10 @@ class LoginManager {
         }
       } catch (e) {
         console.error("Auth sync check failed:", e);
+        // If we are on an admin page, don't clear session just because of a network/API failure
+        if (!window.location.pathname.includes('/admin/')) {
+          this.clearAdminSession();
+        }
       }
     }
 
@@ -367,7 +371,21 @@ class LoginManager {
   }
 
   isAdmin() {
-    return this.isLoggedIn;
+    if (this.isLoggedIn) return true;
+    
+    // Fallback: If we are on an admin page and localStorage says we are logged in,
+    // allow the action. This handles cases where the async PHP sync is still running
+    // or transiently failed but the user has a valid local session.
+    const isAdminPath = window.location.pathname.includes('/admin/') || 
+                       window.location.hash.includes('#admin');
+    const hasLocalAdmin = localStorage.getItem("adminLoggedIn") === "true";
+    
+    if (isAdminPath && hasLocalAdmin) {
+      console.log("Admin check fallback triggered via localStorage");
+      return true;
+    }
+    
+    return false;
   }
 
   syncLoginStatus() {

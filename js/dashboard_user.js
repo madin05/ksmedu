@@ -397,7 +397,12 @@ function setUserName() {
     const userNameEl = document.querySelector(".user-name");
     const userAvatarEl = document.querySelector(".user-avatar");
     if (userNameEl) userNameEl.textContent = userName;
-    if (userAvatarEl) userAvatarEl.textContent = userName.charAt(0);
+    if (userAvatarEl) {
+      userAvatarEl.textContent = userName.charAt(0);
+      if (typeof getAvatarColor === "function") {
+        userAvatarEl.style.background = getAvatarColor(userName);
+      }
+    }
   }
 }
 
@@ -434,7 +439,12 @@ function setupGuestMode() {
     const userNameEl = document.querySelector(".user-name");
     const userAvatarEl = document.querySelector(".user-avatar");
     if (userNameEl) userNameEl.textContent = "GUEST";
-    if (userAvatarEl) userAvatarEl.textContent = "G";
+    if (userAvatarEl) {
+      userAvatarEl.textContent = "G";
+      if (typeof getAvatarColor === "function") {
+        userAvatarEl.style.background = getAvatarColor("GUEST");
+      }
+    }
   } else {
     loggedInElements.forEach((el) => {
       if (el) el.style.display = "block";

@@ -1304,14 +1304,15 @@ async function updateNavbarAuth() {
             sessionStorage.setItem('userEmail', user.email);
             sessionStorage.setItem('userName', user.name);
             sessionStorage.setItem('userType', user.role);
-
-            if (typeof feather !== 'undefined') feather.replace();
-
         } else {
             // Not logged in
             const loginHTML = `
-                <a href="${window.APP_CONFIG.root}/user/login_user.php" class="btn-login">Login</a>
-                <a href="${window.APP_CONFIG.root}/user/login_user.php" class="btn-register">Daftar</a>
+                <a href="${window.APP_CONFIG.root}/user/login_user.php" class="guest-profile" style="text-decoration: none;">
+                    <div class="guest-avatar">
+                        <i data-feather="user"></i>
+                    </div>
+                    <span class="guest-label">Guest</span>
+                </a>
             `;
             
             authContainers.forEach(container => {
@@ -1319,11 +1320,13 @@ async function updateNavbarAuth() {
             });
 
             if (mobileHeaderAuth) {
-                mobileHeaderAuth.innerHTML = ''; // Hide on mobile header if not logged in
+                mobileHeaderAuth.innerHTML = loginHTML;
             }
             
             sessionStorage.setItem('userLoggedIn', 'false');
         }
+
+        if (typeof feather !== 'undefined') feather.replace();
     } catch (error) {
         console.error('Navbar auth error:', error);
         authContainers.forEach(container => {
@@ -1331,6 +1334,8 @@ async function updateNavbarAuth() {
         });
     }
 }
+
+// Dropdown logic removed as guest icon now links directly to login
 
 // Function to handle mobile header auth interactions
 function setupMobileHeaderAuth() {

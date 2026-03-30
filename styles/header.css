@@ -278,6 +278,57 @@ nav a.active {
   text-decoration: underline;
 }
 
+/* ===== GUEST PROFILE (Global) ===== */
+.guest-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 50px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1.5px solid #e2e8f0;
+  background: white;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.guest-profile:hover {
+  background: #f8fafc;
+  border-color: #2c3e50;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.guest-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.guest-profile:hover .guest-avatar {
+  background: #2c3e50;
+  color: white;
+}
+
+.guest-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  transition: color 0.3s ease;
+}
+
+.guest-profile:hover .guest-label {
+  color: #2c3e50;
+}
+
 /* Responsive untuk mobile */
 @media (max-width: 768px) {
   .logo img {
@@ -292,36 +343,6 @@ nav a.active {
     display: none !important;
   }
 
-  .nav-auth-section {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    padding: 1.5rem;
-    border-top: 1px solid #f0f0f0;
-    margin-top: auto !important;
-  }
-
-  .user-profile {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 12px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-  }
-
-  .user-profile .user-name {
-    flex: 1;
-  }
-
-  .user-profile .btn-logout {
-    border-left: 1px solid #e2e8f0;
-    padding-left: 12px;
-    margin-left: 0;
-  }
-
   .btn-user-login,
   .btn-login,
   .btn-register {
@@ -330,15 +351,35 @@ nav a.active {
     padding: 12px 20px;
   }
 
-  /* Mobile Header Profile */
+  /* Mobile Header Profiling */
   .header-right {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
   }
 
   .mobile-auth-header {
     display: block;
+  }
+
+  .mobile-auth-header .guest-profile {
+    padding: 2px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .mobile-auth-header .guest-label {
+    display: none;
+  }
+
+  .mobile-auth-header .guest-avatar {
+    width: 32px;
+    height: 32px;
+    background: #f1f5f9;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    color: #64748b;
   }
 
   .mobile-avatar-container {
@@ -484,7 +525,7 @@ nav a.active {
     padding: 12px 16px;
   }
 
-  .dropdown-menu {
+  .nav-dropdown .dropdown-menu {
     position: static !important;
     width: 100% !important;
     box-shadow: none !important;
@@ -502,12 +543,12 @@ nav a.active {
     display: block !important;
   }
 
-  .dropdown-menu a {
+  .nav-dropdown .dropdown-menu a {
     padding: 10px 16px;
   }
 }
 
-/* ===== NAVBAR SEARCH BAR ===== */
+/* ===== NAVBAR SEARCH BAR (Desktop) ===== */
 .navbar-search-container {
   position: relative;
   box-sizing: border-box;
@@ -515,203 +556,9 @@ nav a.active {
   display: flex;
   align-items: center;
   margin-right: 15px;
-}
-
-.navbar-search-mainbox {
-  box-sizing: border-box;
-  position: relative;
-  width: 230px;
-  height: 44px;
-  display: flex;
-  flex-direction: row-reverse;
-  align-items: center;
-  justify-content: center;
-  border-radius: 160px;
-  background-color: #2c3e50;
-  transition: all 0.3s ease;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.navbar-search-checkbox {
-  box-sizing: border-box;
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  right: 17px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 9;
-  cursor: pointer;
-  appearance: none;
-  margin: 0;
-}
-
-.navbar-search-checkbox:focus {
-  border: none;
-  outline: none;
-}
-
-/* Collapse behavior: checked = collapsed */
-.navbar-search-checkbox:checked ~ .navbar-search-mainbox {
-  width: 44px;
-}
-
-.navbar-search-checkbox:checked ~ .navbar-search-mainbox .navbar-search-input {
-  width: 0;
-  opacity: 0;
-  padding: 0;
-  pointer-events: none;
-}
-
-.navbar-search-checkbox:checked ~ .navbar-search-mainbox .navbar-search-icon-container {
-  padding-right: 0;
-  width: 44px;
-  padding-left: 0;
-  justify-content: center;
-}
-
-.navbar-search-input {
-  box-sizing: border-box;
-  height: 100%;
-  width: 170px;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  padding-bottom: 2px;
-  padding-left: 15px;
-  font-size: 14px;
-  color: #f1f5f9;
-  transition: all 0.3s ease;
-  font-family: 'Inter', sans-serif;
-}
-
-.navbar-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.navbar-search-icon-container {
-  box-sizing: border-box;
-  padding-top: 4px;
-  width: fit-content;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-right: 12px;
-  flex-shrink: 0;
-}
-
-.navbar-search-icon {
-  box-sizing: border-box;
-  fill: #f1f5f9;
-  font-size: 1.3em;
-}
-
-.logo {
-  order: 1;
-}
-
-nav {
-  order: 2;
-}
-
-.navbar-search-container {
   order: 3;
 }
 
-.auth-section {
-  order: 4;
-}
-
-.navbar-search-checkbox:not(:checked) ~ .navbar-search-mainbox .navbar-search-icon-container {
-  z-index: 10;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-@media (max-width: 768px) {
-  .logo {
-    order: 1;
-    margin-right: auto;
-  }
-
-  .navbar-search-container {
-    order: 2;
-    margin-right: 12px;
-    display: block !important;
-    position: relative;
-    z-index: 1001;
-  }
-
-  .header-right {
-    order: 3;
-
-  @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.95) translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-
-  /* Nav & Dropdown for Mobile */
-  nav {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 5px;
-    width: 100%;
-  }
-
-  .nav-dropdown {
-    width: 100% !important;
-    position: static !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-
-  .nav-link.has-caret {
-    width: 100%;
-    justify-content: space-between;
-    padding: 12px 16px;
-  }
-
-  .dropdown-menu {
-    position: static !important;
-    width: 100% !important;
-    box-shadow: none !important;
-    border: none !important;
-    background: #f8fafc !important;
-    padding: 5px 0 5px 20px !important;
-    margin-top: 0 !important;
-    display: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    transform: none !important;
-  }
-
-  .nav-dropdown.open .dropdown-menu {
-    display: block !important;
-  }
-
-  .dropdown-menu a {
-    padding: 10px 16px;
-  }
-}
-
-/* ===== NAVBAR SEARCH BAR ===== */
-.navbar-search-container {
-  position: relative;
-  box-sizing: border-box;
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  margin-right: 15px;
-}
-
 .navbar-search-mainbox {
   box-sizing: border-box;
   position: relative;
@@ -742,12 +589,6 @@ nav {
   margin: 0;
 }
 
-.navbar-search-checkbox:focus {
-  border: none;
-  outline: none;
-}
-
-/* Collapse behavior: checked = collapsed */
 .navbar-search-checkbox:checked ~ .navbar-search-mainbox {
   width: 44px;
 }
@@ -757,13 +598,6 @@ nav {
   opacity: 0;
   padding: 0;
   pointer-events: none;
-}
-
-.navbar-search-checkbox:checked ~ .navbar-search-mainbox .navbar-search-icon-container {
-  padding-right: 0;
-  width: 44px;
-  padding-left: 0;
-  justify-content: center;
 }
 
 .navbar-search-input {
@@ -778,18 +612,12 @@ nav {
   font-size: 14px;
   color: #f1f5f9;
   transition: all 0.3s ease;
-  font-family: 'Inter', sans-serif;
-}
-
-.navbar-search-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
 }
 
 .navbar-search-icon-container {
   box-sizing: border-box;
   padding-top: 4px;
   width: fit-content;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -798,7 +626,6 @@ nav {
 }
 
 .navbar-search-icon {
-  box-sizing: border-box;
   fill: #f1f5f9;
   font-size: 1.3em;
 }
@@ -806,15 +633,9 @@ nav {
 /* Flex Order for Desktop Layout */
 .logo { order: 1; }
 nav { order: 2; }
-.navbar-search-container { order: 3; }
 .auth-section { order: 4; }
 
-.navbar-search-checkbox:not(:checked) ~ .navbar-search-mainbox .navbar-search-icon-container {
-  z-index: 10;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
+/* ===== MOBILE RESPONSIVE (Search & Layout) ===== */
 @media (max-width: 768px) {
   .header-container .logo {
     order: 1 !important;
@@ -823,10 +644,10 @@ nav { order: 2; }
 
   .header-container .navbar-search-container {
     order: 2 !important;
-    margin-right: 5px !important; /* Moved left by increasing margin */
+    margin-right: 5px !important;
     display: block !important;
     position: relative;
-    z-index: 1010; /* Slightly higher than header but lower than menu */
+    z-index: 1010;
     width: 42px;
     height: 42px;
   }
@@ -839,31 +660,28 @@ nav { order: 2; }
   }
 
   .header-container .hamburger-menu {
-    order: 4 !important; /* Put at the very end */
+    order: 4 !important;
     position: relative;
     display: flex !important;
   }
 
+  /* Mobile Search Bar Behavior */
   .navbar-search-mainbox {
     width: 42px;
     height: 42px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: transparent;
     box-shadow: none;
   }
 
   .navbar-search-checkbox:checked ~ .navbar-search-mainbox {
     width: 42px;
-    background-color: transparent;
-    box-shadow: none;
   }
 
   .navbar-search-checkbox:checked ~ .navbar-search-mainbox .navbar-search-icon {
     fill: #2c3e50;
-    font-size: 1.5em; /* Scaled up icon */
+    font-size: 1.5em;
   }
 
-  /* Mobile Drop-down Overlay */
   .navbar-search-checkbox:not(:checked) ~ .navbar-search-mainbox {
     width: 85vw;
     height: 48px;
@@ -875,14 +693,8 @@ nav { order: 2; }
     background-color: #2c3e50;
     border-radius: 100px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-    padding: 0 5px;
     display: flex;
     flex-direction: row-reverse;
-    align-items: center;
-  }
-
-  .navbar-search-checkbox:not(:checked) ~ .navbar-search-mainbox .navbar-search-icon {
-    fill: #f1f5f9;
   }
 
   .navbar-search-checkbox:not(:checked) ~ .navbar-search-mainbox .navbar-search-input {
@@ -890,18 +702,6 @@ nav { order: 2; }
     opacity: 1;
     pointer-events: auto;
     padding-left: 15px;
-    font-size: 16px;
     color: white;
   }
-
-  .navbar-search-checkbox:not(:checked) ~ .navbar-search-mainbox .navbar-search-icon-container {
-    width: 45px;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .navbar-search-icon {
-    font-size: 1.1em;
-  }
-}
 }

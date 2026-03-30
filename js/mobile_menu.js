@@ -26,14 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     nav.insertBefore(navLogo, nav.firstChild);
   }
 
-  // Clone auth buttons into nav for mobile side menu
-  const authSection = document.querySelector(".auth-section");
-  if (authSection) {
-    const mobileAuth = document.createElement("div");
-    mobileAuth.className = "nav-auth-section";
-    mobileAuth.innerHTML = authSection.innerHTML;
-    nav.appendChild(mobileAuth);
-  }
+  // The auth section in the sidebar has been removed, as the icon in the mobile header is sufficient.
 
   // Create overlay for mobile menu
   const overlay = document.createElement("div");
@@ -152,15 +145,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     });
-
-    // Close button inside dropdown (mobile only)
-    // const closeButton = dropdown.querySelector(".dropdown-close");
-    // if (closeButton) {
-    //   closeButton.addEventListener("click", function (e) {
-    //     e.stopPropagation();
-    //     closeDropdown();
-    //   });
-    // }
 
     // Close dropdown when clicking dropdown links
     const dropdownLinks = dropdown.querySelectorAll(".dropdown-menu a");

@@ -1,4 +1,4 @@
-/* Main Container */
+﻿/* Main Container */
 .container {
   max-width: 1200px;
   margin: 40px auto;
@@ -452,7 +452,7 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   transition: border-color 0.3s ease;
 }
 
@@ -547,7 +547,7 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   transition: border-color 0.3s ease;
 }
 
@@ -1147,3 +1147,4 @@
   justify-content: center;
   width: 100%;
 }
+

@@ -3,15 +3,66 @@ ErrorDocument 404 404.html
 ErrorDocument 500 500.html
 ErrorDocument 505 505.html
 
-# Block access to sensitive files and folders
-<FilesMatch "^\.env|^\.git|^\.vscode|^\.gitignore|^README\.md">
-    Order allow,deny
-    Deny from all
+# ===== JWT: Pass Authorization header to PHP =====
+# Apache strips Authorization header by default. This fixes it.
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
+
+# Fallback for CGI/FastCGI mode
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# Prevent PHP execution in uploads directory
+RewriteRule ^uploads/.*\.ph(p[345s]?|tml|ar)$ - [F,L]
+
+# Disable directory listing
+Options -Indexes
+
+# ===== Block access to sensitive files =====
+
+# Block hidden files (.env, .git, .gitignore, etc.)
+<FilesMatch "^\.">
+    Require all denied
 </FilesMatch>
 
-# Block access to specific directories
+# Block access to sensitive file types
+<FilesMatch "\.(sql|log|zip|bak|old|orig|tmp|swp|md)$">
+    Require all denied
+</FilesMatch>
+
+# Block access to error_log
+<Files "error_log">
+    Require all denied
+</Files>
+
+# Block access to debug/utility scripts
+<FilesMatch "^(debug_|fix_|list_all_|list_temp_)">
+    Require all denied
+</FilesMatch>
+
+# Block access to Google verification files (hacker artifacts)
+<FilesMatch "^google[a-z0-9]+\.html$">
+    Require all denied
+</FilesMatch>
+
+# Block directory traversal
 RedirectMatch 404 /\.git
 RedirectMatch 404 /\.vscode
 
-# Prevent directory listing
-Options -Indexes
+# ===== Security Headers =====
+<IfModule mod_headers.c>
+    # Prevent MIME type sniffing
+    Header set X-Content-Type-Options "nosniff"
+    
+    # Clickjacking protection
+    Header set X-Frame-Options "SAMEORIGIN"
+    
+    # XSS Protection
+    Header set X-XSS-Protection "1; mode=block"
+    
+    # Referrer Policy
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Content Security Policy
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; frame-src 'self';"
+</IfModule>

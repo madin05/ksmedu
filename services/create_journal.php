@@ -1,11 +1,15 @@
 <?php
 // ===== CREATE JOURNAL - WITH DATETIME CONVERSION =====
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/jwt_middleware.php';
 
 error_reporting(E_ERROR | E_PARSE);
 ini_set('display_errors', '0');
 
 header('Content-Type: application/json');
+
+// ===== JWT AUTH: Admin Only =====
+require_admin();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);

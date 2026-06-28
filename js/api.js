@@ -1,5 +1,142 @@
 // js/api.js
-// API wrapper functions untuk komunikasi dengan backend
+// API wrapper functions dengan JWT Authentication
+// ===== JWT TOKEN MANAGER =====
+const TokenManager = {
+  ACCESS_TOKEN_KEY: 'jwt_access_token',
+  REFRESH_TOKEN_KEY: 'jwt_refresh_token',
+  TOKEN_EXPIRY_KEY: 'jwt_token_expiry',
+
+  getAccessToken() {
+    return localStorage.getItem(this.ACCESS_TOKEN_KEY);
+  },
+
+  getRefreshToken() {
+    return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  },
+
+  setTokens(accessToken, refreshToken, expiresIn) {
+    localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
+    if (refreshToken) {
+      localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
+    }
+    if (expiresIn) {
+      const expiryTime = Date.now() + (expiresIn * 1000);
+      localStorage.setItem(this.TOKEN_EXPIRY_KEY, expiryTime.toString());
+    }
+  },
+
+  clearTokens() {
+    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+    localStorage.removeItem(this.REFRESH_TOKEN_KEY);
+    localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
+  },
+
+  isTokenExpired() {
+    const expiry = localStorage.getItem(this.TOKEN_EXPIRY_KEY);
+    if (!expiry) return true;
+    // Add 30 second buffer before actual expiry
+    return Date.now() > (parseInt(expiry) - 30000);
+  },
+
+  hasTokens() {
+    return !!this.getAccessToken();
+  },
+
+  /**
+   * Get valid access token — auto-refresh if expired
+   */
+  async getValidToken() {
+    if (!this.hasTokens()) return null;
+
+    // If token is not expired, return it
+    if (!this.isTokenExpired()) {
+      return this.getAccessToken();
+    }
+
+    // Token is expired, try to refresh
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      this.clearTokens();
+      return null;
+    }
+
+    try {
+      const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_refresh.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+
+      const data = await res.json();
+
+      if (data.ok && data.access_token) {
+        this.setTokens(data.access_token, null, data.expires_in);
+        console.log('🔄 JWT Access Token refreshed successfully');
+        return data.access_token;
+      } else {
+        console.warn('🔒 Token refresh failed:', data.message);
+        this.clearTokens();
+        return null;
+      }
+    } catch (err) {
+      console.error('🔒 Token refresh error:', err);
+      // Don't clear tokens on network error — might be temporary
+      return this.getAccessToken(); // Return possibly expired token, let server decide
+    }
+  }
+};
+
+// Expose globally
+window.TokenManager = TokenManager;
+
+// ===== AUTH HEADERS HELPER =====
+async function getAuthHeaders(extraHeaders = {}) {
+  const headers = { ...extraHeaders };
+  const token = await TokenManager.getValidToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+/**
+ * Authenticated fetch wrapper — auto-injects JWT token
+ * Falls back to cookies/session if no token available
+ */
+async function authFetch(url, options = {}) {
+  // Merge auth headers
+  const authHeaders = await getAuthHeaders(options.headers || {});
+
+  const config = {
+    ...options,
+    headers: authHeaders,
+    credentials: 'same-origin', // Still send cookies for session fallback
+  };
+
+  // If Content-Type is not set and body is not FormData, set it
+  if (options.body && !(options.body instanceof FormData) && !config.headers['Content-Type']) {
+    config.headers['Content-Type'] = 'application/json';
+  }
+
+  // For FormData, don't set Content-Type (browser sets it with boundary)
+  if (options.body instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
+
+  let res = await fetch(url, config);
+
+  // If 401, try refreshing token and retry ONCE
+  if (res.status === 401 && TokenManager.hasTokens()) {
+    console.log('🔄 Got 401, attempting token refresh and retry...');
+    const refreshedToken = await TokenManager.getValidToken();
+    if (refreshedToken) {
+      config.headers['Authorization'] = `Bearer ${refreshedToken}`;
+      res = await fetch(url, config);
+    }
+  }
+
+  return res;
+}
 
 // Set base API URL
 window.API_BASE = window.APP_CONFIG.apiBase;
@@ -11,8 +148,14 @@ async function uploadFileToServer(file, onProgress) {
   form.append("file", file);
 
   try {
+    const token = await TokenManager.getValidToken();
     const xhr = new XMLHttpRequest();
     xhr.open("POST", endpoint, true);
+
+    // Set JWT header
+    if (token) {
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
 
     // Progress tracking
     if (typeof onProgress === "function") {
@@ -39,6 +182,8 @@ async function uploadFileToServer(file, onProgress) {
           } catch (err) {
             reject(new Error("Invalid JSON response"));
           }
+        } else if (xhr.status === 401) {
+          reject(new Error("Authentication required. Please login."));
         } else {
           reject(new Error("Upload failed: " + xhr.statusText));
         }
@@ -62,10 +207,9 @@ async function uploadFileToServer(file, onProgress) {
 async function createJournal(metadata) {
   const endpoint = window.API_BASE + "/create_journal.php";
   try {
-    const res = await fetch(endpoint, {
+    const res = await authFetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
       body: JSON.stringify(metadata),
     });
     return await res.json();
@@ -106,12 +250,19 @@ async function getJournal(id) {
 async function updateJournal(payload) {
   const endpoint = window.API_BASE + "/update_journal.php";
   try {
-    const res = await fetch(endpoint, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      credentials: "same-origin",
-    });
+    let requestConfig = {
+      method: "POST",
+    };
+
+    // Support both FormData and JSON
+    if (payload instanceof FormData) {
+      requestConfig.body = payload;
+    } else {
+      requestConfig.headers = { "Content-Type": "application/json" };
+      requestConfig.body = JSON.stringify(payload);
+    }
+
+    const res = await authFetch(endpoint, requestConfig);
     return await res.json();
   } catch (err) {
     console.error("Update journal error:", err);
@@ -122,11 +273,10 @@ async function updateJournal(payload) {
 async function deleteJournal(id) {
   const endpoint = window.API_BASE + "/delete_journal.php";
   try {
-    const res = await fetch(endpoint, {
+    const res = await authFetch(endpoint, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
-      credentials: "same-origin",
     });
     return await res.json();
   } catch (err) {
@@ -164,21 +314,17 @@ async function createOpinion(opinionData) {
   try {
     let requestConfig = {
       method: "POST",
-      credentials: "same-origin",
     };
 
     // Check if opinionData is FormData or plain object
     if (opinionData instanceof FormData) {
-      // FormData with files
       requestConfig.body = opinionData;
-      // Don't set Content-Type, let browser set it with boundary
     } else {
-      // JSON metadata
       requestConfig.headers = { "Content-Type": "application/json" };
       requestConfig.body = JSON.stringify(opinionData);
     }
 
-    const res = await fetch(endpoint, requestConfig);
+    const res = await authFetch(endpoint, requestConfig);
     const data = await res.json();
     return data;
   } catch (err) {
@@ -206,23 +352,20 @@ async function updateOpinion(id, updatedData) {
   try {
     let requestConfig = {
       method: "POST",
-      credentials: "same-origin",
     };
 
     // Check if updatedData is FormData or plain object
     if (updatedData instanceof FormData) {
-      // Ensure ID is in FormData
       if (!updatedData.has("id")) {
         updatedData.append("id", id);
       }
       requestConfig.body = updatedData;
     } else {
-      // JSON payload
       requestConfig.headers = { "Content-Type": "application/json" };
       requestConfig.body = JSON.stringify({ id, ...updatedData });
     }
 
-    const res = await fetch(endpoint, requestConfig);
+    const res = await authFetch(endpoint, requestConfig);
     return await res.json();
   } catch (err) {
     console.error("Update opinion error:", err);
@@ -235,10 +378,9 @@ async function deleteOpinion(id) {
     window.API_BASE
   }/delete_opinion.php?id=${encodeURIComponent(id)}`;
   try {
-    const res = await fetch(endpoint, {
+    const res = await authFetch(endpoint, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      credentials: "same-origin",
     });
     const data = await res.json();
     return data;
@@ -252,11 +394,10 @@ async function deleteOpinion(id) {
 async function syncPush(changes) {
   const endpoint = window.API_BASE + "/sync_push.php";
   try {
-    const res = await fetch(endpoint, {
+    const res = await authFetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ changes }),
-      credentials: "same-origin",
     });
     return await res.json();
   } catch (err) {
@@ -297,6 +438,10 @@ async function updateViews(id, type) {
 }
 
 // ===== EXPOSE GLOBALLY =====
+// Core auth
+window.authFetch = authFetch;
+window.getAuthHeaders = getAuthHeaders;
+
 // Journals
 window.uploadFileToServer = uploadFileToServer;
 window.createJournal = createJournal;
@@ -319,4 +464,4 @@ window.syncPull = syncPull;
 // Views
 window.updateViews = updateViews;
 
-console.log("API module loaded successfully");
+console.log("🔐 API module loaded with JWT authentication");

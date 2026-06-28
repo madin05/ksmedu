@@ -62,6 +62,16 @@ if (loginForm) {
             if (result.ok && result.user) {
                 showAlert('Login berhasil! Mengalihkan...', 'success');
 
+                // ===== STORE JWT TOKENS =====
+                if (result.access_token && window.TokenManager) {
+                    window.TokenManager.setTokens(
+                        result.access_token,
+                        result.refresh_token,
+                        result.expires_in
+                    );
+                    console.log('\ud83d\udd10 JWT tokens stored for user');
+                }
+
                 // Keep local data
                 if (rememberMe) {
                     localStorage.setItem('userEmail', email);
@@ -109,7 +119,16 @@ setupSocial('facebookLogin');
 window.addEventListener('load', async () => {
     // If session storage says logged in, we check if PHP session is actually alive
     if (sessionStorage.getItem('userLoggedIn') === 'true') {
-        const res = await fetch(`${window.APP_CONFIG.SERVICES}/auth_me.php`);
+        // Build auth headers with JWT if available
+        const authHeaders = {};
+        if (window.TokenManager && window.TokenManager.hasTokens()) {
+            const token = await window.TokenManager.getValidToken();
+            if (token) authHeaders['Authorization'] = `Bearer ${token}`;
+        }
+
+        const res = await fetch(`${window.APP_CONFIG.SERVICES}/auth_me.php`, {
+            headers: authHeaders
+        });
         const data = await res.json();
         if (data.ok) {
             // Yes, actually logged in. If we are on login page, redirect to dashboard.
@@ -119,6 +138,7 @@ window.addEventListener('load', async () => {
             return;
         } else {
             // Local mock says logged in, but server says no. Clear it.
+            if (window.TokenManager) window.TokenManager.clearTokens();
             sessionStorage.clear();
         }
     }

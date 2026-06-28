@@ -4,8 +4,13 @@ ini_set('display_errors', 1);
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/jwt_middleware.php';
+
+// ===== JWT AUTH: Admin Only =====
+require_admin();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['ok' => false, 'message' => 'Only POST allowed']);

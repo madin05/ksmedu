@@ -13,10 +13,7 @@ class LoginManager {
     this.togglePasswordBtn = document.getElementById("togglePassword");
     this.uploadSection = document.querySelector(".upload-section");
 
-    this.adminCredentials = {
-      email: "admin@ksmeducation.com",
-      password: "admin123",
-    };
+    // Admin credentials removed for security — never store in client-side code
 
     this.isLoggedIn = false;
 
@@ -37,14 +34,14 @@ class LoginManager {
         // Jika ini adalah tombol SUBMIT di dalam form login, biarkan form.submit yang handle
         if (btn.type === "submit" && btn.closest("#loginForm")) return;
 
-        const text = btn.textContent.trim().toUpperCase();
-        const isLogoutAction = text.includes("LOGOUT") || btn.classList.contains("admin-logged-in");
+        // Using class instead of text to detect status (fixes icon-only buttons)
+        const isLoggedOut = !btn.classList.contains("admin-logged-in");
 
-        if (isLogoutAction) {
+        if (!isLoggedOut) {
           e.preventDefault();
           e.stopPropagation();
           this.logout();
-        } else if (text.includes("LOGIN")) {
+        } else {
           e.preventDefault();
           e.stopPropagation();
           this.openLoginModal();
@@ -95,6 +92,7 @@ class LoginManager {
     }
 
     this.updateUploadSection();
+    this.renderMobileAuth();
   }
 
   openLoginModal() {
@@ -171,6 +169,16 @@ class LoginManager {
         if (data.ok) {
             this.isLoggedIn = true;
             
+            // ===== STORE JWT TOKENS =====
+            if (data.access_token && window.TokenManager) {
+                window.TokenManager.setTokens(
+                    data.access_token,
+                    data.refresh_token,
+                    data.expires_in
+                );
+                console.log('🔐 JWT tokens stored successfully');
+            }
+
             // Dispatch identity change event for components like comments.js
             window.dispatchEvent(new CustomEvent('userIdentityChanged'));
 
@@ -220,11 +228,32 @@ class LoginManager {
     showConfirm(
       "Apakah Anda yakin ingin keluar dari sistem admin?",
       () => {
-        // SYNC PHP SESSION (CLEAR COOKIE)
-        fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`)
+        // Build logout request with JWT token for server-side blacklisting
+        const logoutHeaders = { 'Content-Type': 'application/json' };
+        const logoutBody = {};
+
+        if (window.TokenManager) {
+          const accessToken = window.TokenManager.getAccessToken();
+          const refreshToken = window.TokenManager.getRefreshToken();
+          if (accessToken) logoutHeaders['Authorization'] = `Bearer ${accessToken}`;
+          if (refreshToken) logoutBody.refresh_token = refreshToken;
+        }
+
+        // SYNC PHP SESSION + BLACKLIST JWT TOKENS
+        fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`, {
+          method: 'POST',
+          headers: logoutHeaders,
+          body: JSON.stringify(logoutBody)
+        })
           .then(() => {
-            console.log("PHP Session cleared");
+            console.log("PHP Session cleared + JWT tokens blacklisted");
             this.isLoggedIn = false;
+
+            // ===== CLEAR JWT TOKENS =====
+            if (window.TokenManager) {
+              window.TokenManager.clearTokens();
+            }
+
             localStorage.removeItem("adminLoggedIn");
             localStorage.removeItem("adminLoginTime");
 
@@ -267,7 +296,15 @@ class LoginManager {
       
       // SYNC CHECK: Verify with Server
       try {
-        const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`);
+        // Use JWT for auth check if available
+        const authHeaders = {};
+        if (window.TokenManager && window.TokenManager.hasTokens()) {
+          const token = await window.TokenManager.getValidToken();
+          if (token) authHeaders['Authorization'] = `Bearer ${token}`;
+        }
+        const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`, {
+          headers: authHeaders
+        });
         const data = await res.json();
         
         const isAdminPage = window.location.pathname.includes('/admin/');
@@ -280,24 +317,8 @@ class LoginManager {
              return;
           }
 
-          console.log("PHP Session expired for Admin. Attempting silent re-sync...");
-          // SILENT LOGIN using hardcoded credentials
-          const loginRes = await fetch(`${window.APP_CONFIG.apiBase}/auth_login.php`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              email: this.adminCredentials.email, 
-              password: this.adminCredentials.password 
-            })
-          });
-          const loginData = await loginRes.json();
-          if (loginData.ok) {
-            console.log("PHP Session restored silently for Admin.");
-            window.dispatchEvent(new CustomEvent('userIdentityChanged'));
-          } else {
-            console.warn("Silent re-sync failed. Clearing session.");
-            this.clearAdminSession();
-          }
+          console.log("Admin session expired. Clearing session.");
+          this.clearAdminSession();
         }
       } catch (e) {
         console.error("Auth sync check failed:", e);
@@ -328,6 +349,11 @@ class LoginManager {
   }
 
   clearAdminSession() {
+    // Clear JWT tokens
+    if (window.TokenManager) {
+      window.TokenManager.clearTokens();
+    }
+
     localStorage.removeItem("adminLoggedIn");
     localStorage.removeItem("adminLoginTime");
     sessionStorage.removeItem("userLoggedIn");
@@ -343,6 +369,7 @@ class LoginManager {
     this.updateLoginStatusState(false);
     this.updateLoginButton();
     this.updateUploadSection();
+    this.renderMobileAuth();
   }
 
   updateLoginStatusState(isLoggedIn) {
@@ -360,24 +387,26 @@ class LoginManager {
     }
 
     loginBtns.forEach(btn => {
+      btn.classList.add("icon-only"); // Added for circular styling
       if (this.isLoggedIn) {
         btn.innerHTML = `
-          <i data-feather="log-out"></i>
-          LOGOUT
+          <div class="user-avatar" style="background: #2c3e50; width:32px; height:32px; font-size:14px;">A</div>
         `;
         btn.classList.add("admin-logged-in");
       } else {
         btn.innerHTML = `
-          <i data-feather="log-in"></i>
-          LOGIN
+          <div class="guest-avatar" style="width:32px; height:32px; display:flex; align-items:center; justify-content:center; background:#f1f5f9; color:#2c3e50; border-radius:50%;">
+            <i data-feather="user" style="width:18px; height:18px;"></i>
+          </div>
         `;
         btn.classList.remove("admin-logged-in");
       }
     });
-    
+
     if (typeof feather !== 'undefined') {
       feather.replace();
     }
+    this.renderMobileAuth();
   }
 
   updateUploadSection() {
@@ -414,6 +443,28 @@ class LoginManager {
     this.checkLoginStatus();
     this.updateLoginButton();
     this.updateUploadSection();
+  }
+
+  renderMobileAuth() {
+    const mobileHeaderAuth = document.getElementById('mobileAuthHeader');
+    if (!mobileHeaderAuth) return;
+
+    if (this.isLoggedIn) {
+        mobileHeaderAuth.innerHTML = `
+            <div class="user-profile btn-register admin-logged-in" style="cursor:pointer">
+                <div class="user-avatar" style="background: #2c3e50">A</div>
+            </div>
+        `;
+    } else {
+        mobileHeaderAuth.innerHTML = `
+            <div class="guest-profile btn-register" style="cursor:pointer">
+                <div class="guest-avatar">
+                    <i data-feather="user"></i>
+                </div>
+            </div>
+        `;
+    }
+    if (typeof feather !== 'undefined') feather.replace();
   }
 }
 

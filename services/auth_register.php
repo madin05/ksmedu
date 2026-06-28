@@ -2,6 +2,7 @@
 // api/auth_register.php
 session_start();
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/jwt_helper.php';
 
 // Set header JSON
 header('Content-Type: application/json; charset=utf-8');
@@ -49,8 +50,21 @@ try {
 
     $userId = $pdo->lastInsertId();
 
-    // Start session
+    // Set PHP Session (backward compatibility)
     $_SESSION['user_id'] = $userId;
+    $_SESSION['role'] = 'user';
+    $_SESSION['name'] = $name;
+    $_SESSION['email'] = $email;
+
+    // Generate JWT Tokens
+    $userData = [
+        'id' => $userId,
+        'name' => $name,
+        'email' => $email,
+        'role' => 'user'
+    ];
+    $accessToken = generate_access_token($userData);
+    $refreshToken = generate_refresh_token($userData);
 
     echo json_encode([
         'ok' => true, 
@@ -60,7 +74,10 @@ try {
             'name' => $name,
             'email' => $email,
             'role' => 'user'
-        ]
+        ],
+        'access_token' => $accessToken['token'],
+        'refresh_token' => $refreshToken['token'],
+        'expires_in' => $accessToken['expires_in']
     ]);
 
 } catch (Exception $e) {

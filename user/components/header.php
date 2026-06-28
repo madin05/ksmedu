@@ -7,10 +7,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo isset($page_title) ? $page_title : 'KSM Education'; ?></title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Preconnect for Google Fonts CDN fallback -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Montserrat: offline-first via fonts.css, CDN sebagai fallback -->
+    <link rel="stylesheet" href="../styles/fonts.css" />
     <link rel="shortcut icon" type="image/x-icon" href="../assets/favicon.ico" />
     <?php if (isset($base_css)) echo $base_css; ?>
     <link rel="stylesheet" href="../styles/header.css?v=20260323" />

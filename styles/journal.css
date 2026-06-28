@@ -1,4 +1,4 @@
-/* ===== COMPACT JOURNAL DISPLAY (Homepage) ===== */
+﻿/* ===== COMPACT JOURNAL DISPLAY (Homepage) ===== */
 
 .journal-item {
   background-color: white;
@@ -215,7 +215,7 @@
   background: none;
   outline: none;
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .search-box i {
@@ -443,7 +443,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   transition: all 0.2s;
 }
 
@@ -520,7 +520,7 @@
   font-size: 14px;
   font-weight: 500;
   color: #333;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   text-align: left;
 }
 
@@ -612,7 +612,7 @@
 
   /* Header adjustments */
   .header-container {
-    padding: 15px 20px;
+    padding: 0.75rem;
   }
 
   /* Journal items responsive */
@@ -673,7 +673,7 @@
     background: none;
     outline: none;
     font-size: 14px;
-    font-family: "Inter", sans-serif;
+    font-family: 'Montserrat', sans-serif;
   }
 
   .search-box i {

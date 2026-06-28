@@ -1,4 +1,4 @@
-/* ===== ERROR PAGES STYLING ===== */
+﻿/* ===== ERROR PAGES STYLING ===== */
 
 :root {
     --bg-dark: #0f172a;
@@ -12,7 +12,7 @@
 body.error-page {
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-primary);
     height: 100vh;
@@ -127,3 +127,4 @@ body.error-page {
     .error-title { font-size: 22px; }
     .error-actions { flex-direction: column; }
 }
+

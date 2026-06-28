@@ -1,4 +1,4 @@
-/* ===== Preview Modal ===== */
+﻿/* ===== Preview Modal ===== */
 .preview-container {
   width: min(1000px, 92vw);
   height: min(84vh, 900px);
@@ -18,12 +18,12 @@
 }
 .preview-meta h3 {
   margin: 0;
-  font: 600 16px/1.3 Inter, system-ui, sans-serif;
+  font: 600 16px/1.3 'Montserrat', system-ui, sans-serif;
   color: #2c3e50;
 }
 .preview-meta p {
   margin: 2px 0 0;
-  font: 500 12px/1.2 Inter, system-ui, sans-serif;
+  font: 500 12px/1.2 'Montserrat', system-ui, sans-serif;
   color: #6b7280;
 }
 
@@ -49,10 +49,11 @@
   text-align: center;
   color: #475569;
   padding: 24px;
-  font: 500 14px/1.6 Inter, system-ui, sans-serif;
+  font: 500 14px/1.6 'Montserrat', system-ui, sans-serif;
 }
 .preview-fallback .hint {
   margin-top: 10px;
   color: #64748b;
   font-size: 12px;
 }
+

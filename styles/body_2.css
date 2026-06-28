@@ -1,4 +1,4 @@
-/* ===== EDIT MODAL ===== */
+﻿/* ===== EDIT MODAL ===== */
 #editModal {
   display: none;
   position: fixed;
@@ -91,7 +91,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   transition: all 0.3s;
   box-sizing: border-box;
 }
@@ -140,10 +140,10 @@
   gap: 6px !important;
   background: transparent !important;
   color: #3b82f6 !important;
-  padding: 4px 12px !important;
+  padding:4  px 10px !important;
   border: 1px solid #3b82f6 !important;
-  border-radius: 8px !important;
-  font-size: 12px !important;
+  border-radius: 2px !important;
+  font-size: 10px !important;
   font-weight: 500 !important;
 }
 
@@ -213,7 +213,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 6px;
   font-size: 14px;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   transition: all 0.3s;
 }
 
@@ -649,3 +649,4 @@
     max-width: 100%;
   }
 }
+

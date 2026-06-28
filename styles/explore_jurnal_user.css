@@ -1,4 +1,4 @@
-/* ===== RESET & BASE STYLES ===== */
+﻿/* ===== RESET & BASE STYLES ===== */
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +6,7 @@
 }
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   background: #f5f5f5;
   color: #333;
 }
@@ -105,7 +105,7 @@ body {
   border: 1px solid #e2e8f0;
   padding: 6px 14px;
   border-radius: 8px;
-  font: 600 12px "Inter", sans-serif;
+  font: 600 12px 'Montserrat', sans-serif;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
@@ -1114,7 +1114,7 @@ body.menu-open {
   border: none;
   outline: none;
   resize: none;
-  font-family: "Inter", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   line-height: 1.6;
   color: #334155;
@@ -1332,7 +1332,7 @@ body.menu-open {
   border: 1px solid #e2e8f0;
   padding: 6px 14px;
   border-radius: 8px;
-  font: 600 12px "Inter", sans-serif;
+  font: 600 12px 'Montserrat', sans-serif;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
@@ -1384,3 +1384,4 @@ body.menu-open {
     padding-left: 10px;
   }
 }
+

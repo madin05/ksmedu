@@ -26,7 +26,13 @@
     // Check current user session
     try {
       const isAdminPage = window.location.pathname.includes('/admin/');
-      const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`, { credentials: 'include' });
+      // Build auth headers with JWT if available
+      const authHeaders = {};
+      if (window.TokenManager && window.TokenManager.hasTokens()) {
+        const token = await window.TokenManager.getValidToken();
+        if (token) authHeaders['Authorization'] = `Bearer ${token}`;
+      }
+      const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`, { credentials: 'include', headers: authHeaders });
       const data = await res.json();
       
       if (data.ok && data.user) {
@@ -78,7 +84,6 @@
                rows="3"
              ></textarea>
              <div class="comment-form-footer">
-               <span class="comment-char-count"><span id="charCount">0</span>/2000</span>
                <button id="submitComment" class="btn-comment-submit">
                  <i data-feather="send"></i> Kirim
                </button>
@@ -297,10 +302,16 @@
     }
 
     try {
+      // Build auth headers with JWT
+      const headers = { 'Content-Type': 'application/json' };
+      if (window.TokenManager && window.TokenManager.hasTokens()) {
+        const token = await window.TokenManager.getValidToken();
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      }
       const res = await fetch(`${window.APP_CONFIG.apiBase}/comments/add.php`, {
         method:      'POST',
         credentials: 'include',
-        headers:     { 'Content-Type': 'application/json' },
+        headers,
         body:        JSON.stringify({ 
           article_id: articleId, 
           article_type: articleType, 
@@ -312,7 +323,8 @@
 
       if (data.ok) {
         textarea.value = '';
-        if (!parentId) document.getElementById('charCount').textContent = '0';
+        const charCountEl = document.getElementById('charCount');
+        if (charCountEl) charCountEl.textContent = '0';
         showCommentToast('Komentar berhasil dikirim!', 'success');
         await loadComments(articleId, articleType);
       } else {
@@ -336,10 +348,16 @@
     if (!confirmed) return;
 
     try {
+      // Build auth headers with JWT
+      const headers = { 'Content-Type': 'application/json' };
+      if (window.TokenManager && window.TokenManager.hasTokens()) {
+        const token = await window.TokenManager.getValidToken();
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+      }
       const res = await fetch(`${window.APP_CONFIG.apiBase}/comments/delete.php`, {
         method:      'POST',
         credentials: 'include',
-        headers:     { 'Content-Type': 'application/json' },
+        headers,
         body:        JSON.stringify({ comment_id: commentId }),
       });
       const data = await res.json();

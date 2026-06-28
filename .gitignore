@@ -1,148 +1,40 @@
-# PHP Journal Management System
-# .gitignore File
-
-# --SENSITIVE FILES--
-# Configuration files dengan credentials
-config/config.php
-config/database.php
-config/credentials.php
-db.php
+# Environment & Secrets
 .env
-.env.local
+.env.*
+!.env.example
 
-# Backup files dengan data sensitif
-*.sql
-*.dump
-backup/
-backups/
-
-# --USER UPLOADS--
-# PDF files yang diupload user
-uploads/*
-uploads/pdf/*
-!uploads/.gitkeep
-!uploads/pdf/.gitkeep
-
-# --DEPENDENCIES--
-# Composer
-vendor/
-composer.lock
-composer.phar
-
-# Node modules
-node_modules/
-package-lock.json
-yarn.lock
-
-# --IDE & EDITOR--
-# VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.code-workspace
-
-# PhpStorm / IntelliJ
-.idea/
-*.iml
-*.ipr
-*.iws
-
-# Sublime Text
-*.sublime-project
-*.sublime-workspace
-
-# --OPERATING SYSTEM--
-# Windows
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-
-# macOS
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-
-# Linux
-*~
-
-# --LOGS & DEBUG--
-# PHP logs
-*.log
-logs/
-error_log
-debug.log
-
-# Apache/Nginx logs
-access.log
-error.log
-
-# --TEMPORARY FILES--
-# PHP temporary files
-*.tmp
-*.temp
-*.cache
-cache/*
-!cache/.gitkeep
-
-# Session files
-sessions/
-tmp/
-
-# --BUILD & COMPILED--
-# Compiled files
-*.com
-*.class
-*.dll
-*.exe
-*.o
-*.so
-
-# Distribution files
-dist/
-build/
-
-# --TESTING--
-# Testing files
-test/
-tests/
-phpunit.xml
-.phpunit.result.cache
-
-# --VERSION CONTROL--
-# Git
-.git/
-*.orig
-
-# SVN
-.svn/
-
-# --MISC--
-# Backup files
-*.bak
-*.backup
-*.old
-*.swp
-*.swo
-
-# Archives
+# Zip Archives & Backups
 *.zip
-*.tar
-*.gz
 *.rar
+*.tar.gz
 *.7z
+*.bak
+*.sql
 
-# Documentation yang auto-generated
-docs/_build/
+# Error logs
+error_log
+services/error_log
+*.log
 
-# --PROJECT SPECIFIC--
-# Migration files yang sudah dijalankan (optional)
-# database/migrations/executed/
+# Debug/Utility scripts (should not be in production/git)
+services/debug_db.php
+services/fix_admin_prod.php
+list_all_users_prod.php
+list_temp_users.php
+services/list_all_users_prod.php
+services/list_temp_users.php
 
-# API keys & tokens
-api_keys.txt
-tokens.txt
-secrets.txt
+# User Uploads (Ignore files, but keep directory structure)
+uploads/*
+!uploads/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Google verification files (hacker artifacts)
+google*.html

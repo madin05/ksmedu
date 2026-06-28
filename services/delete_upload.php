@@ -1,6 +1,11 @@
 <?php
 // delete_upload.php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/jwt_middleware.php';
+
+// ===== SECURITY: Require admin authentication =====
+require_admin();
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') { echo json_encode(['ok'=>false,'message'=>'Only POST']); exit; }
 $raw = file_get_contents('php://input');
 $data = json_decode($raw,true);

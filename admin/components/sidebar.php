@@ -7,16 +7,19 @@
           <a href="dashboard_admin.php"><img src="../assets/main_logo.png" alt="Logo" /></a>
         </div>
 
-        <button
-          class="hamburger-menu"
-          aria-label="Toggle menu"
-          aria-expanded="false"
-          type="button"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+        <div class="header-right">
+          <div class="mobile-auth-header" id="mobileAuthHeader"></div>
+          <button
+            class="hamburger-menu"
+            aria-label="Toggle menu"
+            aria-expanded="false"
+            type="button"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
 
         <nav>
           <a href="dashboard_admin.php">HOME</a>

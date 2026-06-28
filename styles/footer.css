@@ -1,9 +1,9 @@
-/* ===== MAIN FOOTER ===== */
+﻿/* ===== MAIN FOOTER ===== */
 .main-footer {
     background-color: #2c3e50;
     color: #f3f4f6;
     padding: 60px 0 30px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     margin-top: 60px;
 }
 
@@ -171,3 +171,4 @@
         text-align: center;
     }
 }
+

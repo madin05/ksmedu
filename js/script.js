@@ -709,7 +709,9 @@ class EditJournalManager {
 
       this.showLoading("Menyimpan perubahan...");
 
-      const response = await fetch(`${window.APP_CONFIG.apiBase}/update_journal.php`, {
+      // Use authFetch if available for JWT support
+      const fetchFn = window.authFetch || fetch;
+      const response = await fetchFn(`${window.APP_CONFIG.apiBase}/update_journal.php`, {
         method: "POST",
         body: formData,
       });
@@ -893,7 +895,9 @@ window.deleteOpinion = async function (id, title) {
   }
 
   try {
-    const response = await fetch(`${window.APP_CONFIG.apiBase}/delete_opinion.php?id=${id}`, {
+    // Use authFetch for JWT support
+    const fetchFn = window.authFetch || fetch;
+    const response = await fetchFn(`${window.APP_CONFIG.apiBase}/delete_opinion.php?id=${id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
@@ -1130,7 +1134,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-          const response = await fetch(`${window.APP_CONFIG.apiBase}/update_opinion.php`, {
+          // Use authFetch for JWT support
+          const fetchFn = window.authFetch || fetch;
+          const response = await fetchFn(`${window.APP_CONFIG.apiBase}/update_opinion.php`, {
             method: "POST",
             body: formData,
           });
@@ -1242,7 +1248,6 @@ async function updateNavbarAuth() {
         return;
     }
 
-    // Target both desktop ID and mobile class containers
     // Target all auth containers
     const authContainers = [];
     const desktopAuth = document.getElementById('navbarAuth');
@@ -1257,7 +1262,13 @@ async function updateNavbarAuth() {
 
     try {
         // Fetch current user from API
-        const response = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`, { credentials: 'include' });
+        // Build auth headers with JWT if available
+        const authHeaders = {};
+        if (window.TokenManager && window.TokenManager.hasTokens()) {
+            const token = await window.TokenManager.getValidToken();
+            if (token) authHeaders['Authorization'] = `Bearer ${token}`;
+        }
+        const response = await fetch(`${window.APP_CONFIG.apiBase}/auth_me.php`, { credentials: 'include', headers: authHeaders });
         const result = await response.json();
 
         if (result.ok && result.user) {
@@ -1355,9 +1366,24 @@ function setupMobileHeaderAuth() {
             e.preventDefault();
             e.stopPropagation();
             try {
-                const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`, { credentials: 'include' });
+                // Blacklist JWT tokens
+                const logoutHeaders = { 'Content-Type': 'application/json' };
+                const logoutBody = {};
+                if (window.TokenManager) {
+                    const at = window.TokenManager.getAccessToken();
+                    const rt = window.TokenManager.getRefreshToken();
+                    if (at) logoutHeaders['Authorization'] = `Bearer ${at}`;
+                    if (rt) logoutBody.refresh_token = rt;
+                }
+                const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: logoutHeaders,
+                    body: JSON.stringify(logoutBody)
+                });
                 const out = await res.json();
                 if (out.ok) {
+                    if (window.TokenManager) window.TokenManager.clearTokens();
                     sessionStorage.clear();
                     window.location.href = window.location.origin + window.APP_CONFIG.root + '/user/dashboard_user.php';
                 }
@@ -1384,10 +1410,25 @@ document.addEventListener('click', async (e) => {
         e.preventDefault();
         try {
             console.log("Logout initiated...");
-            const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`, { credentials: 'include' });
+            // Blacklist JWT tokens on logout
+            const logoutHeaders = { 'Content-Type': 'application/json' };
+            const logoutBody = {};
+            if (window.TokenManager) {
+                const at = window.TokenManager.getAccessToken();
+                const rt = window.TokenManager.getRefreshToken();
+                if (at) logoutHeaders['Authorization'] = `Bearer ${at}`;
+                if (rt) logoutBody.refresh_token = rt;
+            }
+            const res = await fetch(`${window.APP_CONFIG.apiBase}/auth_logout.php`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: logoutHeaders,
+                body: JSON.stringify(logoutBody)
+            });
             const out = await res.json();
             
             if (out.ok) {
+                if (window.TokenManager) window.TokenManager.clearTokens();
                 sessionStorage.clear();
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('adminLoggedIn');

@@ -1,4 +1,4 @@
-/* Header Styles */
+﻿/* Header Styles */
 header {
   background-color: white;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -30,11 +30,14 @@ body.menu-open header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative; 
 }
 
 .header-right {
   display: none;
 }
+
+/* Mobile Header Profiling - visible only on mobile */
 
 .logo {
   display: flex;
@@ -58,6 +61,11 @@ nav {
   display: flex;
   align-items: center;
   gap: 30px;
+  /* Centering the nav group absolutely within the header */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 }
 
 nav a {
@@ -120,7 +128,7 @@ nav a.active {
   border: 0;
   color: #64748b;
   cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-size: 14px;
   font-weight: 500;
   padding: 8px 16px;
@@ -160,7 +168,7 @@ nav a.active {
   border-radius: 6px;
   color: #334155;
   text-decoration: none;
-  font: 500 13px/1.2 Inter, system-ui, sans-serif;
+  font: 500 13px/1.2 'Montserrat', system-ui, sans-serif;
 }
 
 .dropdown-menu a:hover {
@@ -202,6 +210,23 @@ nav a.active {
   color: #2c3e50;
 }
 
+/* Optimized for icon-only/profile-only appearance on Admin page */
+.btn-register.icon-only, .user-profile.btn-register.icon-only, .guest-profile.btn-register.icon-only {
+  width: 44px;
+  height: 44px;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  gap: 0 !important;
+}
+
+.user-profile.btn-register.icon-only .user-avatar, 
+.guest-profile.btn-register.icon-only .guest-avatar {
+  margin: 0 !important;
+}
+
 .auth-section .btn-user-login:hover,
 .auth-section .btn-login:hover,
 .auth-section .btn-register:hover {
@@ -217,12 +242,6 @@ nav a.active {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Icon styling */
-.btn-user-login svg,
-.btn-register svg {
-  width: 16px;
-  height: 16px;
-}
 
 /* Nav auth section - only visible on mobile (inside side nav) */
 .nav-auth-section {
@@ -234,11 +253,11 @@ nav a.active {
   display: flex !important;
   align-items: center;
   gap: 10px;
-  background: #f8fafc;
-  padding: 8px 12px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border-radius: 160px;
   transition: all 0.2s ease;
+  background: transparent;
+  border: 1.5px solid #2c3e50;
+  color: #2c3e50;
 }
 
 .user-avatar {
@@ -336,7 +355,7 @@ nav a.active {
   }
   
   .header-container {
-    padding: 15px 20px;
+    padding: .75rem;
   }
 
   .auth-section {
@@ -348,15 +367,10 @@ nav a.active {
   .btn-register {
     width: 100%;
     justify-content: center;
-    padding: 12px 20px;
+    padding: 5px;
   }
 
-  /* Mobile Header Profiling */
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  /* Hover for mobile buttons (same as global, retained for specificity in mobile context) */
 
   .mobile-auth-header {
     display: block;
@@ -374,8 +388,6 @@ nav a.active {
   }
 
   .mobile-auth-header .guest-avatar {
-    width: 32px;
-    height: 32px;
     background: #f1f5f9;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     border: 1px solid #e2e8f0;
@@ -470,6 +482,7 @@ nav a.active {
     position: fixed !important;
     top: 0 !important;
     left: -100% !important;
+    transform: none !important; 
     width: 80% !important;
     max-width: 300px !important;
     height: 100vh !important;
@@ -479,7 +492,7 @@ nav a.active {
     gap: 0 !important;
     transition: left 0.3s ease !important;
     box-shadow: 15px 0 40px rgba(0, 0, 0, 0.1) !important;
-    z-index: 9999 !important; /* Extremely high to beat any blur context */
+    z-index: 9999 !important; 
     display: flex !important;
     overflow-y: auto !important;
     align-items: stretch !important;
@@ -552,16 +565,20 @@ nav a.active {
 .navbar-search-container {
   position: relative;
   box-sizing: border-box;
-  width: fit-content;
+  width: 44px; 
+  height: 44px;
   display: flex;
   align-items: center;
-  margin-right: 15px;
+  justify-content: center; 
+  margin-left: auto; 
+  margin-right: 20px; 
   order: 3;
 }
 
 .navbar-search-mainbox {
   box-sizing: border-box;
-  position: relative;
+  position: absolute; /* Take out of flow to prevent shifting siblings */
+  right: 0; /* Pin to right edge of container */
   width: 230px;
   height: 44px;
   display: flex;
@@ -577,10 +594,10 @@ nav a.active {
 
 .navbar-search-checkbox {
   box-sizing: border-box;
-  width: 30px;
-  height: 30px;
+  width: 44px; /* Same as container */
+  height: 44px; /* Same as container */
   position: absolute;
-  right: 17px;
+  right: 0;
   top: 50%;
   transform: translateY(-50%);
   z-index: 9;
@@ -621,13 +638,13 @@ nav a.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-right: 12px;
   flex-shrink: 0;
 }
 
 .navbar-search-icon {
   fill: #f1f5f9;
   font-size: 1.3em;
+  
 }
 
 /* Flex Order for Desktop Layout */
@@ -643,13 +660,18 @@ nav { order: 2; }
   }
 
   .header-container .navbar-search-container {
+    left: 0;
     order: 2 !important;
-    margin-right: 5px !important;
     display: block !important;
     position: relative;
     z-index: 1010;
     width: 42px;
     height: 42px;
+    margin-right: 0;
+  }
+
+  .navbar-search-icon {
+    margin-right: 15px; /* mobile-only offset */
   }
 
   .header-container .header-right {
@@ -705,3 +727,4 @@ nav { order: 2; }
     color: white;
   }
 }
+

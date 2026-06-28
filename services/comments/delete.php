@@ -11,11 +11,7 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
-
-ini_set('session.cookie_httponly', 1);
-ini_set('session.cookie_samesite', 'Lax');
-session_start();
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -28,16 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// ===== AUTH CHECK =====
-if (empty($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['ok' => false, 'message' => 'Login required']);
-    exit;
-}
-
 require_once __DIR__ . '/../db.php';
 
-$session_user_id = (int) $_SESSION['user_id'];
+// ===== AUTH CHECK (JWT + Session Hybrid) =====
+require_once __DIR__ . '/../jwt_middleware.php';
+$auth_user = require_auth();
+
+$session_user_id = (int) $auth_user['id'];
 
 // ===== GET CURRENT USER ROLE =====
 $userStmt = $pdo->prepare("SELECT role FROM users WHERE id = ? LIMIT 1");

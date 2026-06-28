@@ -1,4 +1,4 @@
-/* ===== RESET & BASE STYLES ===== */
+﻿/* ===== RESET & BASE STYLES ===== */
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +6,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   background: #f5f5f5;
   min-height: 100vh;
   display: flex;
@@ -134,7 +134,7 @@ body {
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.3s ease;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .form-group input:focus {

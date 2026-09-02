@@ -1,10 +1,10 @@
 <?php
 $page_title = 'Riwayat Token - KSM Education';
-$base_css = '<link rel="stylesheet" href="../styles/user/dashboard_user.css?v=202501111545" />
+$base_css = '<link rel="stylesheet" href="../styles/user/dashboard_user.css?v=20260902_v108" />
   <link rel="stylesheet" href="../styles/user/token_wallet.css?v=20260715" />
   <link rel="stylesheet" href="../styles/user/upload_journal_modal.css?v=20260715" />
   <link rel="stylesheet" href="../styles/user/my_journals_user.css?v=20260715" />
-  <link rel="stylesheet" href="../styles/user/token_history_user.css?v=20260815" />';
+  <link rel="stylesheet" href="../styles/user/token_history_user.css?v=20260902_v109" />';
 include 'components/header.php';
 include 'components/navbar.php';
 ?>
@@ -84,7 +84,7 @@ $extra_scripts = <<<'EOT'
     <script src="../js/custom_alerts.js"></script>
     <script src="../js/api.js?v=20260729"></script>
     <script src="../js/token_wallet.js?v=20260815"></script>
-    <script src="../js/token_history_user.js?v=20260814"></script>
+    <script src="../js/token_history_user.js?v=20260902_v108"></script>
     <script src="../js/mobile_menu.js?v=20251130"></script>
     <script>
       feather.replace();

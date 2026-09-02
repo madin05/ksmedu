@@ -69,6 +69,7 @@
     approved: "Disetujui",
     rejected: "Ditolak",
     cancelled: "Dibatalkan",
+    expired: "Kedaluwarsa",
   };
 
   const TYPE_LABEL = {
@@ -78,6 +79,28 @@
     adjustment: "Penyesuaian",
   };
 
+  async function syncStatus(requestId, orderId) {
+    if (state.busy) return;
+    state.busy = true;
+    try {
+      notify("Menghubungkan ke API Midtrans...", "info");
+      const res = await apiFetch(`${window.APP_CONFIG.apiBase}/admin/token_sync_status.php`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ request_id: Number(requestId), order_id: orderId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error(data.message || "Gagal sinkronisasi status.");
+      notify(data.message, "success");
+      await loadRequests();
+      if (state.view === "transactions") await loadTransactions();
+    } catch (err) {
+      notify(err.message || "Gagal sinkronisasi status.", "error");
+    } finally {
+      state.busy = false;
+    }
+  }
+
   // ===== LOAD: PERMINTAAN TOP-UP =====
   async function loadRequests() {
     const tbody = $("tokenTableBody");
@@ -85,7 +108,7 @@
 
     tbody.innerHTML = `
       <tr>
-        <td colspan="5" class="review-empty-cell">
+        <td colspan="7" class="review-empty-cell">
           <div class="loader" style="margin:0 auto 12px;"></div>
           Memuat permintaan token...
         </td>
@@ -108,7 +131,7 @@
     } catch (err) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="5" class="review-empty-cell review-error">
+          <td colspan="7" class="review-empty-cell review-error">
             ${escapeHtml(err.message || "Gagal memuat permintaan token.")}
           </td>
         </tr>`;
@@ -158,7 +181,7 @@
     if (!rows.length) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="5" class="review-empty-cell">
+          <td colspan="7" class="review-empty-cell">
             Tidak ada permintaan pada filter ini.
           </td>
         </tr>`;
@@ -173,33 +196,41 @@
         return `
         <tr>
           <td>
-            <div class="review-title">${escapeHtml(item.publicId)}</div>
-            <div class="review-sub">
-              ${escapeHtml(item.userName || "Pengguna #" + item.userId)}
-              &middot; ${escapeHtml(item.userEmail || "-")}
-            </div>
-            <div class="review-sub">Saldo saat ini: ${Number(
-              item.userBalance || 0
-            ).toLocaleString("id-ID")} token</div>
+            <div class="review-title" style="font-weight:600;">${escapeHtml(item.userName || "User #" + item.userId)}</div>
+            <div class="review-sub">ID User: #${item.userId} &middot; ${escapeHtml(item.userEmail || "-")}</div>
+            <div class="review-sub" style="font-size:11px; color:#0284c7;">Order ID: <strong>${escapeHtml(item.midtransOrderId || item.publicId)}</strong></div>
           </td>
           <td>
-            <strong>${Number(item.amount).toLocaleString("id-ID")}</strong> token
-            <div class="review-sub">${formatRupiah(item.priceRupiah)}</div>
+            <div style="font-size:12px; font-family:monospace; font-weight:600; color:#334155;">${escapeHtml(item.midtransTransactionId || '-')}</div>
+            <div class="review-sub">Metode: ${escapeHtml(item.paymentType || 'QRIS/Midtrans')}</div>
+          </td>
+          <td>
+            <strong>${Number(item.amount).toLocaleString("id-ID")} Token</strong>
+            <div class="review-sub">Gross: ${formatRupiah(item.priceRupiah)}</div>
+          </td>
+          <td>
+            <div style="font-size:12px; color:#64748b;">MDR: ${formatRupiah(item.mdrFee)}</div>
+            <div style="font-size:12px; font-weight:600; color:#059669;">Net: ${formatRupiah(item.netAmount)}</div>
           </td>
           <td>
             <span class="review-status status-${escapeHtml(item.status)}">
               ${escapeHtml(STATUS_LABEL[item.status] || item.status)}
             </span>
-            ${item.hasProof ? '<div class="review-sub">Bukti terkirim</div>' : ""}
           </td>
-          <td>${formatDate(item.createdAt)}</td>
+          <td>
+            <div style="font-size:11px;">Dibuat: ${formatDate(item.createdAt)}</div>
+            ${item.approvedAt || item.settledAt ? `<div style="font-size:11px; color:#059669;">Lunas: ${formatDate(item.settledAt || item.approvedAt)}</div>` : ''}
+          </td>
           <td class="col-actions">
+            <button type="button" class="btn-icon btn-icon-sync" data-sync="${item.id}" data-order="${escapeHtml(item.midtransOrderId || '')}" title="Sinkronkan Status ke Midtrans Gateway">
+              <i data-feather="refresh-cw"></i>
+            </button>
             <button type="button" class="btn-icon" data-detail="${item.id}" title="Lihat detail">
               <i data-feather="eye"></i>
             </button>
             ${
               canDecide
-                ? `<button type="button" class="btn-icon btn-icon-approve" data-approve="${item.id}" title="Setujui">
+                ? `<button type="button" class="btn-icon btn-icon-approve" data-approve="${item.id}" title="Setujui Manual">
                      <i data-feather="check"></i>
                    </button>
                    <button type="button" class="btn-icon btn-icon-reject" data-reject="${item.id}" title="Tolak">
@@ -523,6 +554,9 @@
     $("txnRefresh")?.addEventListener("click", loadTransactions);
 
     $("tokenTableBody").addEventListener("click", (event) => {
+      const sync = event.target.closest("[data-sync]");
+      if (sync) return syncStatus(sync.dataset.sync, sync.dataset.order);
+
       const detail = event.target.closest("[data-detail]");
       if (detail) return openModal(detail.dataset.detail);
 

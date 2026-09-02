@@ -1,17 +1,3 @@
-// js/dashboard_user.js
-// ─────────────────────────────────────────────────────────────────────────────
-// ORCHESTRATOR — bootstraps the User Dashboard.
-// All feature logic lives in js/dashboard/*.js (loaded before this file).
-//
-// Load order (in dashboard_user.php):
-//   1. js/dashboard/utils.js
-//   2. js/dashboard/article_store.js
-//   3. js/dashboard/article_renderer.js
-//   4. js/dashboard/activity_feed.js
-//   5. js/dashboard/share_manager.js
-//   6. js/dashboard_user.js  ← this file
-// ─────────────────────────────────────────────────────────────────────────────
-
 'use strict';
 
 // ─── Auth UI ──────────────────────────────────────────────────────────────────

@@ -102,30 +102,62 @@
   display: none;
 }
 
+.ksm-token-history-list {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
 .ksm-token-history-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
-  padding: 18px 22px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 0;
+  transition: background 0.15s ease;
 }
 
-.ksm-token-history-left {
+.ksm-token-history-card:last-child {
+  border-bottom: none;
+}
+
+.ksm-token-history-card:hover {
+  background: #f8fafc;
+  box-shadow: none;
+  border-color: #f1f5f9;
+}
+
+.ksm-token-history-main {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ksm-history-checkbox {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .ksm-token-history-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: #eef4ff;
-  color: #3b82f6;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #1b2a4a;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -133,19 +165,96 @@
 }
 
 .ksm-token-history-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
+}
+
+.ksm-token-history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
 }
 
 .ksm-token-history-amount {
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 700;
-  color: #2c3e50;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.ksm-token-price {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #0284c7;
 }
 
 .ksm-token-history-date {
-  font-size: 12px;
-  color: #999;
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+.ksm-token-history-method {
+  font-size: 11px;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+.ksm-token-history-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-view-detail {
+  padding: 5px 11px;
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-view-detail:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-cancel-order {
+  padding: 5px 11px;
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-cancel-order:hover {
+  background: #fee2e2;
+}
+
+.btn-pay-order {
+  padding: 5px 11px;
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-pay-order:hover {
+  background: #15803d;
 }
 
 @media (max-width: 640px) {
@@ -173,15 +282,14 @@
     justify-content: center;
     margin-left: 0;
   }
-}
 
-.ksm-history-checkbox {
-  display: flex;
-  align-items: center;
-}
-
-.ksm-token-history-main {
-  display: flex;
-  align-items: center;
-  gap: 18px;
+  .ksm-token-history-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .ksm-token-history-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

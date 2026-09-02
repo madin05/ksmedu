@@ -9,7 +9,7 @@ if (empty($_SESSION['user_id'])) {
 }
 
 $page_title = 'KSM Education';
-$base_css = '<link rel="stylesheet" href="../styles/user/dashboard_user.css?v=20260824_v104" />
+$base_css = '<link rel="stylesheet" href="../styles/user/dashboard_user.css?v=20260902_v106" />
   <link rel="stylesheet" href="../styles/user/token_wallet.css?v=20260824_v104" />
   <link rel="stylesheet" href="../styles/user/upload_journal_modal.css?v=20260715" />';
 include 'components/header.php';
@@ -191,6 +191,12 @@ $extra_scripts = <<<'EOT'
     <script src="../js/mobile_menu.js?v=20251130"></script>
     <script>
       feather.replace();
+      if (new URLSearchParams(window.location.search).get('payment') === 'success') {
+        if (typeof showToast === 'function') {
+          showToast('Pembayaran berhasil! Saldo token Anda telah bertambah.', 'success');
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
     </script>
   
 EOT;

@@ -47,7 +47,7 @@ function user_activity_token_events(PDO $pdo, int $userId, int $limit): array
             $events[] = [
                 'kind' => 'token_credit',
                 'icon' => 'plus-circle',
-                'colorClass' => 'activity-icon--purple',
+                'colorClass' => 'activity-icon--navy',
                 'text' => 'Token bertambah +' . abs($amount),
                 'time' => $row['created_at'],
             ];
@@ -57,7 +57,7 @@ function user_activity_token_events(PDO $pdo, int $userId, int $limit): array
         $events[] = [
             'kind' => 'token_debit',
             'icon' => 'minus-circle',
-            'colorClass' => 'activity-icon--warning',
+            'colorClass' => 'activity-icon--navy',
             'text' => 'Token digunakan ' . $amount . ' (' . ($row['description'] ?: 'unggahan konten') . ')',
             'time' => $row['created_at'],
         ];
@@ -88,7 +88,7 @@ function user_activity_purchase_events(PDO $pdo, int $userId, int $limit): array
                 $events[] = [
                     'kind' => 'purchase_rejected',
                     'icon' => 'x-circle',
-                    'colorClass' => 'activity-icon--danger',
+                    'colorClass' => 'activity-icon--navy',
                     'text' => 'Pembelian ' . $amount . ' token ditolak (' . $row['public_id'] . ')',
                     'time' => $row['rejected_at'] ?: $row['created_at'],
                 ];
@@ -97,7 +97,7 @@ function user_activity_purchase_events(PDO $pdo, int $userId, int $limit): array
                 $events[] = [
                     'kind' => 'purchase_cancelled',
                     'icon' => 'slash',
-                    'colorClass' => 'activity-icon--muted',
+                    'colorClass' => 'activity-icon--navy',
                     'text' => 'Pembelian ' . $amount . ' token dibatalkan (' . $row['public_id'] . ')',
                     'time' => $row['created_at'],
                 ];
@@ -106,7 +106,7 @@ function user_activity_purchase_events(PDO $pdo, int $userId, int $limit): array
                 $events[] = [
                     'kind' => 'purchase_pending',
                     'icon' => 'clock',
-                    'colorClass' => 'activity-icon--info',
+                    'colorClass' => 'activity-icon--navy',
                     'text' => 'Pembelian ' . $amount . ' token menunggu persetujuan admin',
                     'time' => $row['submitted_at'] ?: $row['created_at'],
                 ];
@@ -147,7 +147,7 @@ function user_activity_content_events(PDO $pdo, int $userId, int $limit): array
                 $events[] = [
                     'kind' => 'content_published',
                     'icon' => 'check',
-                    'colorClass' => 'activity-icon--success',
+                    'colorClass' => 'activity-icon--navy',
                     'text' => $name . ' "' . $title . '" dipublikasikan',
                     'time' => $row['reviewed_at'] ?: $row['created_at'],
                 ];
@@ -156,7 +156,7 @@ function user_activity_content_events(PDO $pdo, int $userId, int $limit): array
                 $events[] = [
                     'kind' => 'content_rejected',
                     'icon' => 'x-circle',
-                    'colorClass' => 'activity-icon--danger',
+                    'colorClass' => 'activity-icon--navy',
                     'text' => $name . ' "' . $title . '" ditolak reviewer',
                     'time' => $row['reviewed_at'] ?: $row['created_at'],
                 ];
@@ -165,7 +165,7 @@ function user_activity_content_events(PDO $pdo, int $userId, int $limit): array
                 $events[] = [
                     'kind' => 'content_pending',
                     'icon' => 'upload-cloud',
-                    'colorClass' => 'activity-icon--info',
+                    'colorClass' => 'activity-icon--navy',
                     'text' => $name . ' "' . $title . '" sedang direview',
                     'time' => $row['created_at'],
                 ];

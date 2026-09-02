@@ -129,10 +129,48 @@
         resolve(global.snap);
         return;
       }
+
+      const targetSrc = snapJsUrl || "https://app.sandbox.midtrans.com/snap/snap.js";
+      const existingScript = document.querySelector('script[src*="snap.js"]');
+
+      if (existingScript) {
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts++;
+          if (global.snap) {
+            clearInterval(interval);
+            resolve(global.snap);
+          } else if (attempts > 15) {
+            clearInterval(interval);
+            reject(new Error("Gagal memuat SDK Pembayaran Midtrans Snap."));
+          }
+        }, 200);
+        return;
+      }
+
       const script = document.createElement("script");
-      script.src = snapJsUrl || "https://app.sandbox.midtrans.com/snap/snap.js";
-      script.setAttribute("data-client-key", clientKey || "");
-      script.onload = () => resolve(global.snap);
+      script.id = "midtrans-snap-script";
+      script.src = targetSrc;
+      if (clientKey) {
+        script.setAttribute("data-client-key", clientKey);
+      }
+      script.onload = () => {
+        if (global.snap) {
+          resolve(global.snap);
+        } else {
+          let checkCount = 0;
+          const pollSnap = setInterval(() => {
+            checkCount++;
+            if (global.snap) {
+              clearInterval(pollSnap);
+              resolve(global.snap);
+            } else if (checkCount > 10) {
+              clearInterval(pollSnap);
+              reject(new Error("Gagal memuat SDK Pembayaran Midtrans Snap."));
+            }
+          }, 200);
+        }
+      };
       script.onerror = () => reject(new Error("Gagal memuat SDK Pembayaran Midtrans Snap."));
       document.head.appendChild(script);
     });
@@ -199,8 +237,17 @@
           throw new Error(data.message || "Gagal membuat transaksi pembayaran Midtrans.");
         }
 
-        // Load Midtrans Snap SDK if needed
-        await loadSnapJs(data.client_key, data.snap_js_url);
+        // Load Midtrans Snap SDK if needed, with automatic fallback to redirect URL
+        try {
+          await loadSnapJs(data.client_key, data.snap_js_url);
+        } catch (snapErr) {
+          console.warn("Midtrans Snap SDK load warning:", snapErr);
+          if (data.redirect_url) {
+            global.location.href = data.redirect_url;
+            return;
+          }
+          throw snapErr;
+        }
 
         if (!global.snap || typeof global.snap.pay !== "function") {
           // Fallback to redirect URL if snap.pay unavailable
@@ -222,6 +269,9 @@
             }
             close();
             KsmTokenWallet.refresh();
+            setTimeout(() => {
+              window.location.href = "dashboard_user.php?payment=success";
+            }, 800);
           },
           onPending: function (result) {
             console.log("Midtrans payment pending:", result);

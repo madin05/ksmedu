@@ -1,8 +1,8 @@
 <?php
 $page_title = 'Kontak - KSM Education';
-$base_css = '<link rel="stylesheet" href="../styles/user/static_pages.css?v=20260824" />' . "\n"
+$base_css = '<link rel="stylesheet" href="../styles/user/static_pages.css?v=20260902_v108" />' . "\n"
   . '    <link rel="stylesheet" href="../styles/user/profile_pages.css?v=20260824" />' . "\n"
-  . '    <link rel="stylesheet" href="../styles/user/contact_user.css?v=20260824" />';
+  . '    <link rel="stylesheet" href="../styles/user/contact_user.css?v=20260902_v108" />';
 include 'components/header.php';
 include 'components/navbar.php';
 ?>

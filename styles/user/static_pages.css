@@ -11,8 +11,8 @@
 
 .static-hero-tag {
   display: inline-block;
-  background: rgba(59, 130, 246, 0.1);
-  color: #3b82f6;
+  background: rgba(27, 42, 74, 0.08);
+  color: #1b2a4a;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -309,29 +309,34 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(99, 102, 241, 0.12));
+  background: rgba(27, 42, 74, 0.08);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.2s ease, background 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .contact-info-card:hover .contact-info-icon {
   transform: scale(1.05);
-  background: rgba(59, 130, 246, 0.2);
+  background: #1b2a4a;
+}
+
+.contact-info-card:hover .contact-info-icon svg {
+  color: #ffffff;
 }
 
 .contact-info-icon svg {
   width: 20px;
   height: 20px;
-  color: #3b82f6;
+  color: #1b2a4a;
+  transition: color 0.2s ease;
 }
 
 .contact-info-card h4 {
   font-size: 14px;
   font-weight: 700;
-  color: #2c3e50;
+  color: #1e293b;
   margin-bottom: 4px;
 }
 
@@ -356,15 +361,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2c3e50;
+  color: #1b2a4a;
   transition: all 0.2s ease;
 }
 
 .contact-social a:hover {
-  background: #3b82f6;
+  background: #1b2a4a;
   color: white;
   transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(27, 42, 74, 0.25);
 }
 
 .contact-social svg {

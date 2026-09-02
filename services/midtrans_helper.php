@@ -32,6 +32,26 @@ function midtrans_get_config(): array
     ];
 }
 
+function midtrans_get_app_base_url(): string
+{
+    $envUrl = trim((string)get_env_var('APP_URL', ''));
+    if (!empty($envUrl)) {
+        return rtrim($envUrl, '/');
+    }
+
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+    $baseDir = preg_replace('#/(services|user|admin|api).*$#i', '', $scriptDir);
+    $baseDir = str_replace('\\', '/', $baseDir);
+    if ($baseDir === '/' || $baseDir === '.') {
+        $baseDir = '';
+    }
+
+    return $scheme . '://' . $host . $baseDir;
+}
+
 /**
  * Request Snap Token & Redirect URL from Midtrans API.
  */
@@ -149,4 +169,77 @@ function midtrans_get_token_packages(): array
             'discount' => 36
         ],
     ];
+}
+
+/**
+ * Auto-sync a single pending transaction with Midtrans API.
+ */
+function midtrans_sync_single_request(PDO $pdo, array $request): array
+{
+    if (empty($request['id']) || empty($request['midtrans_order_id']) || ($request['status'] ?? '') !== 'pending') {
+        return $request;
+    }
+
+    try {
+        require_once __DIR__ . '/token_service.php';
+        $config = midtrans_get_config();
+        $baseUrl = $config['is_production'] ? 'https://api.midtrans.com' : 'https://api.sandbox.midtrans.com';
+        $statusUrl = $baseUrl . '/v2/' . urlencode($request['midtrans_order_id']) . '/status';
+
+        $ch = curl_init($statusUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPGET => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Authorization: Basic ' . base64_encode($config['server_key'] . ':'),
+            ],
+            CURLOPT_CONNECTTIMEOUT => 3,
+            CURLOPT_TIMEOUT => 5,
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200 || empty($response)) {
+            return $request;
+        }
+
+        $resData = json_decode($response, true) ?? [];
+        $txnStatus = strtolower((string)($resData['transaction_status'] ?? ''));
+        $paymentType = (string)($resData['payment_type'] ?? '');
+        $midtransTxId = (string)($resData['transaction_id'] ?? '');
+
+        if ($txnStatus === 'settlement' || ($txnStatus === 'capture' && ($resData['fraud_status'] ?? '') !== 'challenge')) {
+            $grossAmt = (float)($resData['gross_amount'] ?? $request['price_rupiah'] ?? 0);
+            $mdrFee = (strpos(strtolower($paymentType), 'qris') !== false || strpos(strtolower($paymentType), 'gopay') !== false)
+                ? round($grossAmt * 0.007, 2)
+                : 0.00;
+            $netAmt = max(0, $grossAmt - $mdrFee);
+
+            $upStmt = $pdo->prepare(
+                'UPDATE token_purchase_requests
+                 SET midtrans_transaction_id = ?, payment_type = ?, mdr_fee = ?, net_amount = ?, settled_at = CURRENT_TIMESTAMP
+                 WHERE id = ?'
+            );
+            $upStmt->execute([$midtransTxId, $paymentType, $mdrFee, $netAmt, (int)$request['id']]);
+
+            token_admin_approve_purchase($pdo, (int)$request['id'], 0);
+            $request['status'] = 'approved';
+            $request['payment_type'] = $paymentType;
+        } elseif (in_array($txnStatus, ['cancel', 'deny'], true)) {
+            $upStmt = $pdo->prepare("UPDATE token_purchase_requests SET status = 'cancelled', rejected_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $upStmt->execute([(int)$request['id']]);
+            $request['status'] = 'cancelled';
+        } elseif ($txnStatus === 'expire') {
+            $upStmt = $pdo->prepare("UPDATE token_purchase_requests SET status = 'expired', rejected_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $upStmt->execute([(int)$request['id']]);
+            $request['status'] = 'expired';
+        }
+    } catch (Throwable $e) {
+        // Ignore background sync errors to avoid blocking page load
+    }
+
+    return $request;
 }

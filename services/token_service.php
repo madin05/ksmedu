@@ -31,14 +31,23 @@ function token_get_wallet(PDO $pdo, int $userId): array
 
 function token_get_history(PDO $pdo, int $userId, int $limit = 100): array
 {
+    require_once __DIR__ . '/midtrans_helper.php';
     $limit = max(1, min(100, $limit));
     $stmt = $pdo->prepare(
-        "SELECT id, public_id, amount, status, created_at, approved_at, rejected_at
+        "SELECT id, public_id, midtrans_order_id, snap_token, amount, price_rupiah, payment_type, status, created_at, approved_at, rejected_at
          FROM token_purchase_requests
          WHERE user_id = ?
          ORDER BY id DESC LIMIT {$limit}"
     );
     $stmt->execute([$userId]);
+    $rows = $stmt->fetchAll();
+
+    foreach ($rows as &$row) {
+        if (($row['status'] ?? '') === 'pending' && !empty($row['midtrans_order_id'])) {
+            $row = midtrans_sync_single_request($pdo, $row);
+        }
+    }
+    unset($row);
 
     return array_map(static function (array $row): array {
         return [
@@ -46,13 +55,17 @@ function token_get_history(PDO $pdo, int $userId, int $limit = 100): array
             // belum memiliki public_id. Dipakai oleh aksi hapus milik user.
             'id' => (string)$row['id'],
             'publicId' => $row['public_id'],
+            'orderId' => $row['midtrans_order_id'] ?: $row['public_id'],
+            'snapToken' => $row['snap_token'],
+            'priceRupiah' => (int)($row['price_rupiah'] ?? 0),
+            'paymentType' => $row['payment_type'] ?: 'QRIS / Midtrans',
             'amount' => (int)$row['amount'],
             'status' => $row['status'],
             'createdAt' => $row['created_at'],
             'approvedAt' => $row['approved_at'],
             'rejectedAt' => $row['rejected_at'],
         ];
-    }, $stmt->fetchAll());
+    }, $rows);
 }
 
 /**

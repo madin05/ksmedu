@@ -169,3 +169,18 @@
     padding: 18px;
   }
 }
+
+/* Navy Blue Theme Overrides for Contact Form */
+.contact-form-col .form-group input:focus,
+.contact-form-col .form-group textarea:focus {
+  border-color: #1b2a4a;
+  box-shadow: 0 0 0 3px rgba(27, 42, 74, 0.08);
+}
+
+.contact-form-col .btn-save-profile {
+  background: #1b2a4a;
+}
+
+.contact-form-col .btn-save-profile:hover {
+  background: #0f172a;
+}

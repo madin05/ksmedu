@@ -46,6 +46,22 @@ try {
         throw new InvalidArgumentException('Pilihan paket token tidak valid.');
     }
 
+    // Validasi maksimal 2 pesanan PENDING per pengguna
+    $pendingStmt = $pdo->prepare(
+        "SELECT COUNT(*) FROM token_purchase_requests WHERE user_id = ? AND status = 'pending'"
+    );
+    $pendingStmt->execute([(int)$user['id']]);
+    $pendingCount = (int)$pendingStmt->fetchColumn();
+
+    if ($pendingCount >= 2) {
+        http_response_code(400);
+        echo json_encode([
+            'ok' => false,
+            'message' => 'Anda memiliki 2 pesanan yang masih PENDING. Silakan selesaikan atau batalkan pesanan sebelumnya di halaman Riwayat Token terlebih dahulu.',
+        ]);
+        exit;
+    }
+
     $publicId = token_generate_public_id();
     $midtransOrderId = 'TOK-MID-' . date('YmdHis') . '-' . substr(bin2hex(random_bytes(4)), 0, 6);
 
@@ -84,8 +100,19 @@ try {
             'first_name' => $user['name'] ?? 'User KSM',
             'email' => $user['email'] ?? 'user@ksmeducation.com',
         ],
+        'enabled_payments' => [
+            'gopay', 'qris', 'shopeepay',
+            'bca_va', 'bni_va', 'bri_va', 'mandiri_va', 'permata_va', 'other_va',
+            'credit_card', 'indomaret', 'alfamart', 'akulaku'
+        ],
+        'custom_expiry' => [
+            'expiry_duration' => 15,
+            'unit' => 'minute',
+        ],
         'callbacks' => [
-            'finish' => (defined('APP_URL') ? APP_URL : '') . '/user/token_history_user.php',
+            'finish' => midtrans_get_app_base_url() . '/user/dashboard_user.php?payment=success',
+            'unfinish' => midtrans_get_app_base_url() . '/user/token_history_user.php',
+            'error' => midtrans_get_app_base_url() . '/user/token_history_user.php',
         ]
     ];
 

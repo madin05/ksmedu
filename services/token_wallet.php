@@ -13,10 +13,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 }
 
 try {
+    // Sync status Midtrans via token_get_history terlebih dahulu sebelum membaca saldo wallet,
+    // agar jika ada transaksi baru yang sukses, saldo yang dikembalikan sudah yang terbaru.
+    $history = token_get_history($pdo, (int)$user['id']);
+    $wallet = token_get_wallet($pdo, (int)$user['id']);
+
     echo json_encode([
         'ok' => true,
-        'wallet' => token_get_wallet($pdo, (int)$user['id']),
-        'history' => token_get_history($pdo, (int)$user['id']),
+        'wallet' => $wallet,
+        'history' => $history,
     ]);
 } catch (Throwable $e) {
     error_log('Token wallet read error: ' . $e->getMessage());

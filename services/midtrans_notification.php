@@ -71,11 +71,29 @@ try {
             $stmt = $pdo->prepare("UPDATE token_purchase_requests SET status = 'pending' WHERE id = ?");
             $stmt->execute([$requestId]);
         } else {
-            // Payment Success: Approve transaction and credit user's wallet
+            // Payment Success: Update financial metrics & approve token credit
+            $midtransTxId = (string)($notif['transaction_id'] ?? '');
+            $grossAmt = (float)($notif['gross_amount'] ?? 0);
+            $mdrFee = (strpos(strtolower($paymentType), 'qris') !== false || strpos(strtolower($paymentType), 'gopay') !== false)
+                ? round($grossAmt * 0.007, 2)
+                : 0.00;
+            $netAmt = max(0, $grossAmt - $mdrFee);
+
+            $stmt = $pdo->prepare(
+                'UPDATE token_purchase_requests
+                 SET midtrans_transaction_id = ?, payment_type = ?, mdr_fee = ?, net_amount = ?, settled_at = CURRENT_TIMESTAMP
+                 WHERE id = ?'
+            );
+            $stmt->execute([$midtransTxId, $paymentType, $mdrFee, $netAmt, $requestId]);
+
+            // Atomic & Idempotent Token Approval
             token_admin_approve_purchase($pdo, $requestId, 0);
         }
-    } elseif (in_array($transactionStatus, ['cancel', 'deny', 'expire'], true)) {
+    } elseif (in_array($transactionStatus, ['cancel', 'deny'], true)) {
         $stmt = $pdo->prepare("UPDATE token_purchase_requests SET status = 'cancelled', rejected_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $stmt->execute([$requestId]);
+    } elseif ($transactionStatus === 'expire') {
+        $stmt = $pdo->prepare("UPDATE token_purchase_requests SET status = 'expired', rejected_at = CURRENT_TIMESTAMP WHERE id = ?");
         $stmt->execute([$requestId]);
     } elseif ($transactionStatus === 'pending') {
         $stmt = $pdo->prepare("UPDATE token_purchase_requests SET status = 'pending' WHERE id = ?");

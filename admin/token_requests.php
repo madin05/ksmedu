@@ -87,16 +87,18 @@ include 'components/sidebar.php';
       <table class="review-table" id="tokenTable">
         <thead>
           <tr>
-            <th scope="col">Kode / Pengguna</th>
-            <th scope="col">Jumlah</th>
+            <th scope="col">User &amp; Order ID</th>
+            <th scope="col">Midtrans Tx ID</th>
+            <th scope="col">Paket / Nominal</th>
+            <th scope="col">MDR &amp; Bersih</th>
             <th scope="col">Status</th>
             <th scope="col">Tanggal</th>
-            <th scope="col" class="col-actions">Aksi</th>
+            <th scope="col" class="col-actions">Aksi &amp; Sync</th>
           </tr>
         </thead>
         <tbody id="tokenTableBody">
           <tr>
-            <td colspan="5" class="review-empty-cell">
+            <td colspan="7" class="review-empty-cell">
               <div class="loader" style="margin:0 auto 12px;"></div>
               Memuat permintaan token...
             </td>

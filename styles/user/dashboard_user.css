@@ -428,6 +428,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  background: #1b2a4a;
 }
 
 .activity-icon svg {
@@ -436,20 +437,17 @@ body {
   color: white;
 }
 
-.activity-icon--success {
-  background: #10b981;
-}
-
-.activity-icon--info {
-  background: #3b82f6;
-}
-
-.activity-icon--warning {
-  background: #f59e0b;
-}
-
-.activity-icon--purple {
-  background: #8b5cf6;
+.activity-icon,
+.activity-icon--navy,
+.activity-icon--success,
+.activity-icon--info,
+.activity-icon--warning,
+.activity-icon--purple,
+.activity-icon--danger,
+.activity-icon--muted,
+span.activity-icon {
+  background: #1b2a4a !important;
+  color: #ffffff !important;
 }
 
 .activity-text {

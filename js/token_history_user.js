@@ -15,17 +15,27 @@
       pending: { label: "Pending", icon: "clock", cls: "ksm-status-pending" },
       approved: { label: "Disetujui", icon: "check-circle", cls: "ksm-status-published" },
       rejected: { label: "Ditolak", icon: "x-circle", cls: "ksm-status-rejected" },
+      cancelled: { label: "Dibatalkan", icon: "slash", cls: "ksm-status-rejected" },
+      expired: { label: "Kedaluwarsa", icon: "alert-circle", cls: "ksm-status-rejected" },
     };
     const info = map[status] || map.pending;
     return `<span class="ksm-status-badge ${info.cls}"><i data-feather="${info.icon}"></i>${info.label}</span>`;
   }
 
   function formatDate(iso) {
-    return new Date(iso).toLocaleDateString("id-ID", {
+    if (!iso) return "-";
+    return new Date(iso).toLocaleString("id-ID", {
       year: "numeric",
       month: "short",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
+  }
+
+  function formatRupiah(num) {
+    if (!num) return "Rp 0";
+    return "Rp " + Number(num).toLocaleString("id-ID");
   }
 
   function visibleHistory() {
@@ -52,6 +62,99 @@
     }
     if (deleteButton) deleteButton.disabled = selectedIds.size === 0;
     if (count) count.textContent = selectedIds.size ? `${selectedIds.size} riwayat dipilih` : "";
+  }
+
+  async function cancelOrder(id) {
+    if (!confirm("Apakah Anda yakin ingin membatalkan pesanan token ini?")) return;
+    try {
+      const response = await authFetch(`${window.APP_CONFIG.apiBase}/cancel_token_transaction.php`, {
+        method: "POST",
+        body: JSON.stringify({ id: id }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.message || "Gagal membatalkan pesanan.");
+      if (typeof window.showToast === "function") window.showToast(data.message, "success");
+      await KsmTokenWallet.refresh();
+    } catch (err) {
+      alert(err.message || "Gagal membatalkan pesanan.");
+    }
+  }
+
+  function payOrder(snapToken) {
+    if (typeof snap !== "undefined" && snap.pay) {
+      snap.pay(snapToken, {
+        onSuccess: function () {
+          if (typeof window.showToast === "function") window.showToast("Pembayaran berhasil!", "success");
+          KsmTokenWallet.refresh();
+        },
+        onPending: function () {
+          if (typeof window.showToast === "function") window.showToast("Pembayaran pending.", "info");
+          KsmTokenWallet.refresh();
+        },
+        onError: function () {
+          alert("Pembayaran gagal.");
+        },
+      });
+    } else {
+      alert("SDK Pembayaran Midtrans Snap tidak tersedia.");
+    }
+  }  function showDetailModal(item) {
+    let existingModal = document.getElementById("ksmUserTxnDetailModal");
+    if (!existingModal) {
+      existingModal = document.createElement("div");
+      existingModal.id = "ksmUserTxnDetailModal";
+      existingModal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); z-index:99999; display:flex; align-items:center; justify-content:center; padding:16px;";
+      document.body.appendChild(existingModal);
+    }
+
+    existingModal.innerHTML = `
+      <div style="background:#fff; border-radius:16px; max-width:440px; width:100%; padding:24px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1); position:relative;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+          <h3 style="margin:0; font-size:18px; font-weight:700; color:#1e293b;">Rincian Pembelian Token</h3>
+          <button type="button" id="closeUserTxnDetailModal" style="background:none; border:none; font-size:20px; color:#64748b; cursor:pointer; padding:4px;">&times;</button>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px; font-size:14px; color:#334155;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:1px solid #f1f5f9;">
+            <span style="color:#64748b;">Status</span>
+            <span>${statusBadge(item.status)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #f1f5f9;">
+            <span style="color:#64748b;">Order ID</span>
+            <span style="font-family:monospace; font-weight:600; color:#0284c7;">${item.orderId || item.publicId || '-'}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #f1f5f9;">
+            <span style="color:#64748b;">Jumlah Token</span>
+            <span style="font-weight:700; color:#1e293b;">${item.amount} Token</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #f1f5f9;">
+            <span style="color:#64748b;">Total Bayar</span>
+            <span style="font-weight:700; color:#059669;">${formatRupiah(item.priceRupiah)}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #f1f5f9;">
+            <span style="color:#64748b;">Metode Pembayaran</span>
+            <span>${item.paymentType || 'QRIS / Midtrans'}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; padding-bottom:8px; border-bottom:1px solid #f1f5f9;">
+            <span style="color:#64748b;">Waktu Pemesanan</span>
+            <span>${formatDate(item.createdAt)}</span>
+          </div>
+          ${item.approvedAt ? `
+          <div style="display:flex; justify-content:space-between;">
+            <span style="color:#64748b;">Waktu Disetujui/Lunas</span>
+            <span style="color:#059669; font-weight:600;">${formatDate(item.approvedAt)}</span>
+          </div>` : ''}
+        </div>
+        <div style="margin-top:20px; text-align:right;">
+          <button type="button" id="btnDoneUserTxnDetail" style="padding:10px 20px; background:#1e293b; color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Tutup</button>
+        </div>
+      </div>
+    `;
+
+    existingModal.style.display = "flex";
+    if (typeof feather !== "undefined") feather.replace();
+    const close = () => { existingModal.style.display = "none"; };
+    document.getElementById("closeUserTxnDetailModal").onclick = close;
+    document.getElementById("btnDoneUserTxnDetail").onclick = close;
   }
 
   function render() {
@@ -84,18 +187,27 @@
           <label class="ksm-history-checkbox" aria-label="Pilih riwayat ${item.amount} Token">
             <input type="checkbox" class="ksm-history-item-checkbox" value="${item.id}" ${selectedIds.has(item.id) ? "checked" : ""} />
           </label>
-          <div class="ksm-token-history-left">
-            <div class="ksm-token-history-icon"><i data-feather="zap"></i></div>
-            <div>
-              <div class="ksm-token-history-amount">${item.amount} Token</div>
-              <div class="ksm-token-history-date">${formatDate(item.createdAt)}</div>
-            </div>
+          <div class="ksm-token-history-icon">
+            <i data-feather="zap"></i>
+          </div>
+          <div class="ksm-token-history-info">
+            <div class="ksm-token-history-amount">${item.amount} Token <span class="ksm-token-price">(${formatRupiah(item.priceRupiah)})</span></div>
+            <div class="ksm-token-history-date">Order ID: <strong>${item.orderId || item.publicId || '-'}</strong> • ${formatDate(item.createdAt)}</div>
+            <div class="ksm-token-history-method">Metode: ${item.paymentType || 'QRIS / Midtrans'}</div>
           </div>
         </div>
-        ${statusBadge(item.status)}
+        <div class="ksm-token-history-actions">
+          ${statusBadge(item.status)}
+          <button type="button" class="btn-view-detail" data-id="${item.id}">Rincian</button>
+          ${item.status === 'pending' ? `
+            <button type="button" class="btn-cancel-order" data-id="${item.id}">Batalkan</button>
+            ${item.snapToken ? `<button type="button" class="btn-pay-order" data-token="${item.snapToken}">Bayar Sekarang</button>` : ''}
+          ` : ''}
+        </div>
       </div>`).join("");
 
     if (typeof feather !== "undefined") feather.replace();
+
     container.querySelectorAll(".ksm-history-item-checkbox").forEach((checkbox) => {
       checkbox.addEventListener("change", () => {
         if (checkbox.checked) selectedIds.add(checkbox.value);
@@ -103,6 +215,22 @@
         updateSelectionControls(filtered);
       });
     });
+
+    container.querySelectorAll(".btn-view-detail").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const item = filtered.find((i) => i.id === btn.dataset.id);
+        if (item) showDetailModal(item);
+      });
+    });
+
+    container.querySelectorAll(".btn-cancel-order").forEach((btn) => {
+      btn.addEventListener("click", () => cancelOrder(btn.dataset.id));
+    });
+
+    container.querySelectorAll(".btn-pay-order").forEach((btn) => {
+      btn.addEventListener("click", () => payOrder(btn.dataset.token));
+    });
+
     updateSelectionControls(filtered);
   }
 

@@ -310,8 +310,9 @@ body {
 /* Hero Section */
 .landing-hero {
   position: relative;
-  min-height: 520px;
-  padding: calc(80px + 3rem) 24px 75px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: calc(80px + 2rem) 24px 60px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -663,8 +664,9 @@ body {
 
 @media (max-width: 720px) {
   .landing-hero {
-    min-height: auto;
-    padding: 125px 20px 55px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 110px 20px 50px;
   }
 
   .landing-hero-control {
@@ -1521,6 +1523,8 @@ body {
   }
 
   .landing-hero {
+    min-height: 100vh;
+    min-height: 100dvh;
     padding-top: 105px;
     padding-bottom: 50px;
   }

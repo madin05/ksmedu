@@ -57,9 +57,21 @@ $user_name = $user_name ?? '';
             </div>
         </div>
 
-        <!-- Hamburger Button for Mobile -->
-        <button class="landing-mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu" aria-expanded="false">
-            <i data-feather="menu"></i>
-        </button>
+        <!-- Mobile Actions: Tombol Daftar di sebelah kiri Hamburger Button -->
+        <div class="landing-mobile-actions">
+            <?php if ($is_logged_in): ?>
+                <a href="user/dashboard_user.php" class="btn-mobile-nav-user" title="<?php echo htmlspecialchars($user_name); ?>">
+                    <div class="avatar"><?php echo $user_avatar_char; ?></div>
+                </a>
+            <?php else: ?>
+                <a href="user/register_user.php" class="btn-mobile-register">
+                    <?php echo $lang === 'en' ? 'Register' : 'Daftar'; ?>
+                </a>
+            <?php endif; ?>
+
+            <button class="landing-mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu" aria-expanded="false">
+                <i data-feather="menu"></i>
+            </button>
+        </div>
     </div>
 </header>

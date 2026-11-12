@@ -18,7 +18,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
  */
 $nav_sections = [
     [
-        'label' => 'KONTEN',
+        'label' => 'Konten',
         'items' => [
             ['file' => 'journals.php',     'url' => 'journals', 'label' => 'Artikel Jurnal', 'icon' => 'book'],
             ['file' => 'opinions.php',     'url' => 'opinions', 'label' => 'Artikel Opini',  'icon' => 'edit-3'],
@@ -26,7 +26,7 @@ $nav_sections = [
         ],
     ],
     [
-        'label' => 'MODERASI',
+        'label' => 'Moderasi',
         'items' => [
             ['file' => 'review_journals.php',  'url' => 'review_journals',  'label' => 'Review Kiriman', 'icon' => 'inbox',          'badge' => 'navBadgeReview'],
             ['file' => 'comments.php',         'url' => 'comments',         'label' => 'Komentar',       'icon' => 'message-square'],
@@ -34,7 +34,7 @@ $nav_sections = [
         ],
     ],
     [
-        'label' => 'OPERASIONAL',
+        'label' => 'Operasional',
         'items' => [
             ['file' => 'token_requests.php',    'url' => 'token_requests',    'label' => 'Verifikasi Token', 'icon' => 'credit-card', 'badge' => 'navBadgeToken'],
             ['file' => 'visitor_analytics.php', 'url' => 'visitor_analytics', 'label' => 'Analitik',         'icon' => 'bar-chart-2'],
@@ -76,7 +76,7 @@ $admin_initial = strtoupper(mb_substr($admin_session_user['name'] ?? 'A', 0, 1, 
   <div class="sidebar-brand">
     <a href="dashboard" class="brand-link" title="KSM Education - Dashboard admin">
       <img src="../assets/main_logo.png" alt="Logo KSM Education" />
-      <span class="brand-text">KSM<small>ADMIN PANEL</small></span>
+      <span class="brand-text">KSM<small>Admin Panel</small></span>
     </a>
     <button
       id="sidebarCollapse"

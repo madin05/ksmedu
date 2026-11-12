@@ -266,7 +266,7 @@ class PaginationManager {
           <div class="journal-views">
             <i data-feather="eye"></i> ${item.views}
           </div>
-          <div class="card-type-badge badge-jurnal">JURNAL</div>
+          <div class="card-type-badge badge-jurnal">Jurnal</div>
         </div>
         <div class="journal-content">
           <h3 class="journal-title">${truncate(item.title, 60)}</h3>
@@ -330,7 +330,7 @@ class PaginationManager {
           <div class="opinion-views">
             <i data-feather="eye"></i> ${item.views}
           </div>
-          <div class="card-type-badge badge-opini">OPINI</div>
+          <div class="card-type-badge badge-opini">Opini</div>
         </div>
         <div class="opinion-content">
           <h3 class="opinion-title">${truncate(item.title, 60)}</h3>

@@ -25,7 +25,7 @@ include 'components/sidebar.php';
           class="upload-tab-content active"
           style="display: block"
         >
-          <h2>UPLOAD ARTIKEL JURNAL</h2>
+          <h2>Upload Artikel Jurnal</h2>
 
           <div class="document-upload-section">
             <h3>Upload File Jurnal (PDF)</h3>
@@ -252,12 +252,12 @@ include 'components/sidebar.php';
               ></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">SUBMIT JURNAL</button>
+            <button type="submit" class="btn-submit">Submit Jurnal</button>
           </form>
         </div>
 
         <div id="opiniTab" class="upload-tab-content" style="display: none">
-          <h2>UPLOAD ARTIKEL OPINI</h2>
+          <h2>Upload Artikel Opini</h2>
 
           <div class="document-upload-section">
             <h3>Upload File Opini (PDF)</h3>
@@ -437,7 +437,7 @@ include 'components/sidebar.php';
               ></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">SUBMIT OPINI</button>
+            <button type="submit" class="btn-submit">Submit Opini</button>
           </form>
         </div>
       </section>

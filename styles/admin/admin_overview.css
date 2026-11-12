@@ -17,10 +17,9 @@
 .admin-overview-head h2 {
   margin: 0 !important;
   font-size: 14.5px !important;
-  letter-spacing: 0.05em !important;
+  letter-spacing: 0.02em !important;
   color: #2c3e50 !important;
   font-weight: 700 !important;
-  text-transform: uppercase !important;
 }
 
 .admin-overview-grid {
@@ -93,9 +92,8 @@
 }
 
 .overview-label {
-  font-size: 12px !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.04em !important;
+  font-size: 12.5px !important;
+  letter-spacing: 0.01em !important;
   color: #64748b !important;
   font-weight: 600 !important;
 }

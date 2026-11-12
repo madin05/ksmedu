@@ -11,7 +11,7 @@
         alt="KSM Education Logo"
         class="login-logo"
       />
-      <h2>ADMIN LOGIN</h2>
+      <h2>Admin Login</h2>
       <p style="color: #666; font-size: 14px; margin-top: 8px">
         Login sebagai Administrator
       </p>
@@ -43,7 +43,7 @@
         </label>
         <a href="#" class="forgot-password">Forgot Password?</a>
       </div>
-      <button type="submit" class="btn-login">MASUK</button>
+      <button type="submit" class="btn-login">Masuk</button>
     </form>
   </div>
 </div>

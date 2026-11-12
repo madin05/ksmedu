@@ -281,8 +281,7 @@ button:focus-visible {
   font-weight: 700;
   margin-bottom: 16px;
   color: var(--color-primary, #2c3e50);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  letter-spacing: 0.2px;
 }
 
 .upload-icon svg,
@@ -458,8 +457,7 @@ button:focus-visible {
   font-weight: 700 !important;
   margin-bottom: 18px !important;
   color: var(--color-primary, #2c3e50) !important;
-  letter-spacing: 0.05em !important;
-  text-transform: uppercase !important;
+  letter-spacing: 0.02em !important;
 }
 
 .stats-grid {
@@ -528,11 +526,14 @@ button:focus-visible {
 }
 
 .stat-label {
-  font-size: 12px !important;
+  font-size: 12.5px !important;
   font-weight: 600 !important;
   color: #64748b !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.04em !important;
+  letter-spacing: 0.01em !important;
+}
+
+.card-type-badge {
+  text-transform: none !important;
 }
 
 /* 2. Admin Latest Articles & Journal Container Overrides */

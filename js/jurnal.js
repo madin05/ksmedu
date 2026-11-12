@@ -368,7 +368,7 @@
           <div style="position:absolute; top:12px; left:12px; background:${
             journal._type === "opini" ? "#9b59b6" : "#3498db"
           }; color:white; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600;">
-    ${journal._type === "opini" ? "OPINI" : "JURNAL"}
+    ${journal._type === "opini" ? "Opini" : "Jurnal"}
   </div>
         </div>
         

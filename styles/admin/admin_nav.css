@@ -518,9 +518,8 @@ body.sidebar-collapsed .admin-topbar {
 
 .topbar-crumb {
   font-size: 11px !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.1em !important;
-  text-transform: uppercase !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
   color: var(--sidebar-muted) !important;
 }
 

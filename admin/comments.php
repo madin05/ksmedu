@@ -27,14 +27,14 @@ include 'components/sidebar.php';
           <i data-feather="filter"></i>
         </button>
         <div class="sort-menu" id="filterSortMenu">
-          <div class="menu-section-label">TIPE ARTIKEL</div>
+          <div class="menu-section-label">Tipe Artikel</div>
           <button data-type="" class="filter-type-item active">Semua Tipe</button>
           <button data-type="jurnal" class="filter-type-item">Jurnal</button>
           <button data-type="opini" class="filter-type-item">Opini</button>
           
           <div class="menu-separator"></div>
           
-          <div class="menu-section-label">URUTKAN</div>
+          <div class="menu-section-label">Urutkan</div>
           <button data-sort="newest" class="filter-sort-item active">
             <i data-feather="clock"></i> Terbaru
           </button>

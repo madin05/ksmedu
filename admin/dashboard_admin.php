@@ -15,7 +15,7 @@ include 'components/sidebar.php';
       <!-- Ringkasan Operasional (data langsung dari DB) -->
       <section class="admin-overview">
         <div class="admin-overview-head">
-          <h2>RINGKASAN OPERASIONAL</h2>
+          <h2>Ringkasan Operasional</h2>
           <button type="button" class="btn-refresh" id="adminOverviewRefresh" title="Muat ulang ringkasan">
             <i data-feather="refresh-cw"></i>
           </button>
@@ -85,7 +85,7 @@ include 'components/sidebar.php';
 
       <!-- Statistics Section -->
       <section class="statistics">
-        <h2>STATISTIK</h2>
+        <h2>Statistik</h2>
 
         <div class="stats-grid">
           <div class="stat-card">
@@ -107,7 +107,7 @@ include 'components/sidebar.php';
 
       <!-- Journal List Section -->
       <section id="journal" class="journal-list">
-        <h2>ARTIKEL TERBARU</h2>
+        <h2>Artikel Terbaru</h2>
         <div class="articles-wrapper">
           <div id="journalContainer" class="articles-grid"></div>
         </div>
@@ -132,7 +132,7 @@ include 'components/sidebar.php';
         <button type="button" class="close-modal" id="closeEditModal">
           <i data-feather="x"></i>
         </button>
-        <h2>EDIT JURNAL</h2>
+        <h2>Edit Jurnal</h2>
         <form id="editForm">
           <input type="hidden" id="editJournalId" />
           <div class="form-group">

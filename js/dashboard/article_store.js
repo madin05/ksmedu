@@ -59,7 +59,10 @@ function _mapJournal(j) {
 
 /** @param {object} o - raw opinion row from the API */
 function _mapOpinion(o) {
-  const authorName = o.author_name || 'Anonymous';
+  const authors    = typeof parseOpinionAuthors === 'function'
+    ? parseOpinionAuthors(o.authors, o.author_name)
+    : [o.author_name || 'Anonymous'];
+  const authorName = authors[0] || 'Anonymous';
   const tags       = parseJsonField(o.tags);
   const cover      = formatPublicUrl(o.cover_url);
   const file       = formatPublicUrl(o.file_url);
@@ -71,8 +74,8 @@ function _mapOpinion(o) {
     abstract:    o.description,
     abstrak:     o.description,
     category:    o.category || 'opini',
-    author:      [authorName],
-    authors:     [authorName],
+    author:      authors,
+    authors:     authors,
     penulis:     authorName,
     tags,
     date:        o.created_at,

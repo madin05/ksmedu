@@ -17,6 +17,75 @@ if (typeof PDFTextExtractor !== "undefined") {
   console.warn("PDF Extractor not available - text extraction disabled");
 }
 
+// ===== MULTI-AUTHOR HELPER FOR OPINIONS =====
+const ACADEMIC_DEGREE_PATTERN = new RegExp(
+  '^(?:s\\.pd|s\\.e|s\\.t|s\\.kom|s\\.si|s\\.ked|s\\.sos|s\\.ag|s\\.h|s\\.sn|' +
+  'm\\.pd|m\\.e|m\\.t|m\\.kom|m\\.si|m\\.m|m\\.a|m\\.h|m\\.sn|m\\.sc|' +
+  'ph\\.d|dr|dra|drs|prof|a\\.ks|se|mm|ma|st|spd|skom|msi|mpd)\\.?$',
+  'i'
+);
+
+function _isAcademicDegree(word) {
+  if (!word || typeof word !== 'string') return false;
+  const clean = word.replace(/^[,\s.]+|[,\s.]+$/g, '').trim();
+  return ACADEMIC_DEGREE_PATTERN.test(clean);
+}
+
+function parseOpinionAuthors(rawAuthors, rawAuthorName) {
+  if (Array.isArray(rawAuthors) && rawAuthors.length > 0) {
+    const list = rawAuthors.map((a) => (typeof a === 'string' ? a.trim() : String(a))).filter(Boolean);
+    if (list.length > 0) return list;
+  }
+  if (typeof rawAuthors === 'string' && rawAuthors.trim().startsWith('[')) {
+    try {
+      const parsed = JSON.parse(rawAuthors);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const list = parsed.map((a) => (typeof a === 'string' ? a.trim() : String(a))).filter(Boolean);
+        if (list.length > 0) return list;
+      }
+    } catch (e) {}
+  }
+
+  if (!rawAuthorName || typeof rawAuthorName !== 'string') {
+    return ['Anonymous'];
+  }
+  const str = rawAuthorName.trim();
+  if (!str) return ['Anonymous'];
+
+  if (/[;\n|]/.test(str)) {
+    const list = str.split(/[;\n|]+/).map((s) => s.trim()).filter(Boolean);
+    if (list.length > 0) return list;
+  }
+
+  const parts = str.split(',').map((p) => p.trim()).filter(Boolean);
+  if (parts.length <= 1) {
+    return [str];
+  }
+
+  const authors = [];
+  let currentAuthor = '';
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    const words = part.split(/\s+/).filter(Boolean);
+    const allWordsAreDegrees = words.length > 0 && words.every((w) => _isAcademicDegree(w));
+
+    if (currentAuthor && allWordsAreDegrees) {
+      currentAuthor += ', ' + part;
+    } else {
+      if (currentAuthor) {
+        authors.push(currentAuthor);
+      }
+      currentAuthor = part;
+    }
+  }
+  if (currentAuthor) {
+    authors.push(currentAuthor);
+  }
+
+  return authors.length > 0 ? authors : [str];
+}
+
 // ===== GET ARTICLE BY ID FROM DATABASE =====
 async function getArticleById(id, type) {
   console.log("Getting article from database:", id, type);
@@ -98,6 +167,7 @@ async function getArticleById(id, type) {
       const o = data.opinion || data.result;
 
       if (data.ok && o) {
+        const authorsList = parseOpinionAuthors(o.authors, o.author_name);
         return {
           id: o.id,
           title: o.title,
@@ -106,9 +176,9 @@ async function getArticleById(id, type) {
           abstract: o.description,
           abstrak: o.description,
           category: o.category || "opini",
-          author: [o.author_name || "Anonymous"],
-          authors: [o.author_name || "Anonymous"],
-          penulis: o.author_name || "Anonymous",
+          author: authorsList,
+          authors: authorsList,
+          penulis: authorsList[0] || "Anonymous",
           email: o.email || "",
           kontak: o.kontak || o.contact || "",
           date: o.created_at,
@@ -274,6 +344,14 @@ async function displayArticle(article, type) {
   const viewsElement = document.getElementById("articleViews");
   if (viewsElement) {
     viewsElement.textContent = article.views || 0;
+  }
+
+  const authorMetaElement = document.getElementById("articleAuthor");
+  if (authorMetaElement) {
+    const firstAuthor = Array.isArray(article.authors) && article.authors.length > 0
+      ? article.authors[0]
+      : (article.penulis || article.author || "Admin");
+    authorMetaElement.textContent = firstAuthor;
   }
 
   // Abstract

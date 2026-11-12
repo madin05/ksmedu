@@ -51,6 +51,81 @@ function parseJsonField(value, fallback = []) {
   try { return JSON.parse(value); } catch { return fallback; }
 }
 
+const ACADEMIC_DEGREE_PATTERN = new RegExp(
+  '^(?:s\\.pd|s\\.e|s\\.t|s\\.kom|s\\.si|s\\.ked|s\\.sos|s\\.ag|s\\.h|s\\.sn|' +
+  'm\\.pd|m\\.e|m\\.t|m\\.kom|m\\.si|m\\.m|m\\.a|m\\.h|m\\.sn|m\\.sc|' +
+  'ph\\.d|dr|dra|drs|prof|a\\.ks|se|mm|ma|st|spd|skom|msi|mpd)\\.?$',
+  'i'
+);
+
+function _isAcademicDegree(word) {
+  if (!word || typeof word !== 'string') return false;
+  const clean = word.replace(/^[,\s.]+|[,\s.]+$/g, '').trim();
+  return ACADEMIC_DEGREE_PATTERN.test(clean);
+}
+
+/**
+ * Normalises single-string or JSON authors for opinions, splitting multiple
+ * comma-separated authors while preserving academic degrees.
+ * @param {any} rawAuthors
+ * @param {string|null} rawAuthorName
+ * @returns {string[]}
+ */
+function parseOpinionAuthors(rawAuthors, rawAuthorName) {
+  if (Array.isArray(rawAuthors) && rawAuthors.length > 0) {
+    const list = rawAuthors.map((a) => (typeof a === 'string' ? a.trim() : String(a))).filter(Boolean);
+    if (list.length > 0) return list;
+  }
+  if (typeof rawAuthors === 'string' && rawAuthors.trim().startsWith('[')) {
+    try {
+      const parsed = JSON.parse(rawAuthors);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const list = parsed.map((a) => (typeof a === 'string' ? a.trim() : String(a))).filter(Boolean);
+        if (list.length > 0) return list;
+      }
+    } catch (e) {}
+  }
+
+  if (!rawAuthorName || typeof rawAuthorName !== 'string') {
+    return ['Anonymous'];
+  }
+  const str = rawAuthorName.trim();
+  if (!str) return ['Anonymous'];
+
+  if (/[;\n|]/.test(str)) {
+    const list = str.split(/[;\n|]+/).map((s) => s.trim()).filter(Boolean);
+    if (list.length > 0) return list;
+  }
+
+  const parts = str.split(',').map((p) => p.trim()).filter(Boolean);
+  if (parts.length <= 1) {
+    return [str];
+  }
+
+  const authors = [];
+  let currentAuthor = '';
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    const words = part.split(/\s+/).filter(Boolean);
+    const allWordsAreDegrees = words.length > 0 && words.every((w) => _isAcademicDegree(w));
+
+    if (currentAuthor && allWordsAreDegrees) {
+      currentAuthor += ', ' + part;
+    } else {
+      if (currentAuthor) {
+        authors.push(currentAuthor);
+      }
+      currentAuthor = part;
+    }
+  }
+  if (currentAuthor) {
+    authors.push(currentAuthor);
+  }
+
+  return authors.length > 0 ? authors : [str];
+}
+
 /**
  * Returns the first author name from any of the known author-related fields.
  * @param {object} article

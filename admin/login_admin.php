@@ -2,14 +2,38 @@
 // admin/login_admin.php
 // Halaman login khusus administrator. Tidak boleh memakai auth_guard
 // (halaman ini justru tujuan redirect dari guard).
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../services/auth_context.php';
+ksmedu_session_start(KSMEDU_CTX_ADMIN);
 
-// Jika sudah login sebagai admin, langsung ke dashboard.
+// Jika sudah login sebagai admin di sesi admin, verifikasi ke DB sebelum redirect ke dashboard.
+// Cegah loop tak berujung (ERR_TOO_MANY_REDIRECTS) jika session ada tetapi tidak lolos di auth_guard.
 if (!empty($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'admin') {
-    header('Location: dashboard_admin.php');
-    exit;
+    try {
+        require_once __DIR__ . '/../services/db.php';
+        $ksmedu_stmt = $pdo->prepare(
+            "SELECT role, account_status FROM users WHERE id = ? LIMIT 1"
+        );
+        $ksmedu_stmt->execute([(int)$_SESSION['user_id']]);
+        $ksmedu_row = $ksmedu_stmt->fetch();
+        if ($ksmedu_row && ($ksmedu_row['role'] ?? '') === 'admin' && (($ksmedu_row['account_status'] ?? 'active') === 'active')) {
+            header('Location: dashboard_admin.php');
+            exit;
+        } else {
+            // Sesi kedaluwarsa atau bukan admin aktif di DB, bersihkan agar tidak loop
+            $_SESSION = [];
+            if (ini_get("session.use_cookies")) {
+                $params = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000,
+                    $params["path"], $params["domain"],
+                    $params["secure"], $params["httponly"]
+                );
+            }
+            session_destroy();
+        }
+    } catch (Throwable $e) {
+        error_log('Admin login precheck error: ' . $e->getMessage());
+        // Jika koneksi DB bermasalah, jangan redirect agar tidak loop
+    }
 }
 
 // Halaman tujuan setelah login (whitelist nama file di folder admin).

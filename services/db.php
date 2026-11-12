@@ -24,7 +24,7 @@ if ($app_root === DIRECTORY_SEPARATOR || $app_root === '.') {
     $app_root = '';
 }
 define('APP_ROOT', $app_root);
-define('UPLOAD_DIR_ABS', $_SERVER['DOCUMENT_ROOT'] . APP_ROOT . '/uploads/');
+define('UPLOAD_DIR_ABS', str_replace('\\', '/', dirname(__DIR__)) . '/uploads/');
 
 // Load environment variables
 require_once __DIR__ . '/env_loader.php';
@@ -50,7 +50,7 @@ $DB_PORT = get_env_var('DB_PORT', '3306');
 
 try {
     // Buat instance PDO baru untuk menghubungkan PHP ke MySQL
-    $pdo = new PDO("mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4", $DB_USER, $DB_PASS, [
+    $pdo = new PDO("mysql:host={$DB_HOST};port={$DB_PORT};dbname={$DB_NAME};charset=utf8mb4", $DB_USER, $DB_PASS, [
         // Mode error: lemparkan exception jika ada kesalahan query
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         // Mode fetch default: kembalikan hasil query sebagai array asosiatif

@@ -98,14 +98,14 @@ function ksmedu_request_context(): string
     }
 
     $script = (string)($_SERVER['SCRIPT_NAME'] ?? '');
-    if (strpos($script, '/admin/') !== false) {
+    if (strpos($script, '/admin/') !== false || preg_match('#/(admin)(/|$|\.)#', $script)) {
         return $resolved = KSMEDU_CTX_ADMIN;
     }
 
     $referer = (string)($_SERVER['HTTP_REFERER'] ?? '');
     if ($referer !== '') {
         $path = (string)(parse_url($referer, PHP_URL_PATH) ?? '');
-        if (strpos($path, '/admin/') !== false) {
+        if (strpos($path, '/admin/') !== false || preg_match('#/(admin)(/|$)#', $path)) {
             return $resolved = KSMEDU_CTX_ADMIN;
         }
     }

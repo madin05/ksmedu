@@ -10,7 +10,7 @@
 // berjalan tidak terputus setelah update ini.
 const KSMEDU_AUTH_CONTEXT = (function () {
   try {
-    return /(^|\/)admin\//.test(window.location.pathname) ? 'admin' : 'user';
+    return /(^|\/)admin(\/|$)/.test(window.location.pathname) ? 'admin' : 'user';
   } catch (err) {
     return 'user';
   }

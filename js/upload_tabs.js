@@ -2,14 +2,18 @@
 (function () {
   "use strict";
 
+  let retryCount = 0;
+  const MAX_RETRIES = 20;
+
   function initTabs() {
     const tabs = document.querySelectorAll(".upload-tab");
     const jurnalTab = document.getElementById("jurnalTab");
     const opiniTab = document.getElementById("opiniTab");
 
     if (tabs.length === 0 || !jurnalTab || !opiniTab) {
-      console.warn("Tabs not ready, retrying...");
-      setTimeout(initTabs, 100);
+      if (++retryCount <= MAX_RETRIES) {
+        setTimeout(initTabs, 100);
+      }
       return;
     }
 

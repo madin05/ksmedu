@@ -29,7 +29,7 @@ require_once __DIR__ . '/services/landing_controller.php';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="styles/base/fonts.css">
-    <link rel="stylesheet" href="styles/user/landing.css?v=20260813mobile">
+    <link rel="stylesheet" href="styles/user/landing.css?v=20260813hidebtn">
     <link rel="stylesheet" href="styles/user/ad_carousel.css?v=20260717">
     <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico" />
     <script src="https://unpkg.com/feather-icons"></script>
@@ -214,7 +214,7 @@ require_once __DIR__ . '/services/landing_controller.php';
     <?php require_once __DIR__ . '/user/components/landing_footer.php'; ?>
 
     <!-- Interactive Scripts -->
-    <script src="js/landing.js?v=202607161225"></script>
+    <script src="js/landing.js?v=20260813nav"></script>
     <script src="js/ad_carousel.js?v=20260717"></script>
     <script>
         if (typeof feather !== 'undefined') {

@@ -1477,6 +1477,12 @@ body {
     color: #ffffff;
   }
 
+  /* Sembunyikan tombol aksi mobile header saat sidebar aktif */
+  body.menu-open .btn-mobile-register,
+  body.menu-open .btn-mobile-nav-user {
+    display: none !important;
+  }
+
   .btn-mobile-nav-user {
     display: flex;
     align-items: center;

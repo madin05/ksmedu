@@ -86,8 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
             landingNavMenu.classList.remove('active');
             document.body.classList.remove('menu-open');
             mobileMenuBtn.setAttribute('aria-expanded', 'false');
-            const icon = mobileMenuBtn.querySelector('i');
-            if (icon) icon.setAttribute('data-feather', 'menu');
+            mobileMenuBtn.innerHTML = '<i data-feather="menu"></i>';
             if (typeof feather !== 'undefined') feather.replace();
         };
 
@@ -107,12 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
             mobileMenuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             
             // Toggle between menu and x icon
-            const icon = mobileMenuBtn.querySelector('i');
-            if (isOpen) {
-                icon.setAttribute('data-feather', 'x');
-            } else {
-                icon.setAttribute('data-feather', 'menu');
-            }
+            mobileMenuBtn.innerHTML = isOpen ? '<i data-feather="x"></i>' : '<i data-feather="menu"></i>';
             if (typeof feather !== 'undefined') feather.replace();
         });
 

@@ -62,23 +62,38 @@ try {
     $email = strtolower(trim($payload['email']));
     $name = trim($payload['name'] ?? explode('@', $email)[0]);
 
-    // Cari user berdasarkan email
-    $stmt = $pdo->prepare("SELECT id, name, role, email, email_verified_at FROM users WHERE email = ? LIMIT 1");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
+    // Cari user berdasarkan email (resilient terhadap ketiadaan kolom email_verified_at)
+    $hasVerifiedCol = true;
+    try {
+        $stmt = $pdo->prepare("SELECT id, name, role, email, email_verified_at FROM users WHERE email = ? LIMIT 1");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+    } catch (Throwable $e) {
+        $hasVerifiedCol = false;
+        $stmt = $pdo->prepare("SELECT id, name, role, email FROM users WHERE email = ? LIMIT 1");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+    }
 
     if ($user) {
         // Update email_verified_at bila belum terverifikasi
-        if (empty($user['email_verified_at'])) {
-            $updateStmt = $pdo->prepare("UPDATE users SET email_verified_at = NOW() WHERE id = ?");
-            $updateStmt->execute([$user['id']]);
-            $user['email_verified_at'] = date('Y-m-d H:i:s');
+        if ($hasVerifiedCol && empty($user['email_verified_at'])) {
+            try {
+                $updateStmt = $pdo->prepare("UPDATE users SET email_verified_at = NOW() WHERE id = ?");
+                $updateStmt->execute([$user['id']]);
+                $user['email_verified_at'] = date('Y-m-d H:i:s');
+            } catch (Throwable $e) {}
         }
     } else {
         // Buat user baru otomatis
         $randomPassword = password_hash(bin2hex(random_bytes(16)), PASSWORD_DEFAULT);
-        $insertStmt = $pdo->prepare("INSERT INTO users (email, email_verified_at, password_hash, name, role, created_at) VALUES (?, NOW(), ?, ?, 'user', NOW())");
-        $insertStmt->execute([$email, $randomPassword, $name]);
+        if ($hasVerifiedCol) {
+            $insertStmt = $pdo->prepare("INSERT INTO users (email, email_verified_at, password_hash, name, role, created_at) VALUES (?, NOW(), ?, ?, 'user', NOW())");
+            $insertStmt->execute([$email, $randomPassword, $name]);
+        } else {
+            $insertStmt = $pdo->prepare("INSERT INTO users (email, password_hash, name, role, created_at) VALUES (?, ?, ?, 'user', NOW())");
+            $insertStmt->execute([$email, $randomPassword, $name]);
+        }
 
         $newUserId = $pdo->lastInsertId();
         $user = [
@@ -86,8 +101,10 @@ try {
             'email' => $email,
             'name' => $name,
             'role' => 'user',
-            'email_verified_at' => date('Y-m-d H:i:s')
         ];
+        if ($hasVerifiedCol) {
+            $user['email_verified_at'] = date('Y-m-d H:i:s');
+        }
     }
 
     // Set PHP Session

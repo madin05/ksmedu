@@ -32,7 +32,7 @@ try {
         exit;
     }
 
-    $googleClientId = getenv('GOOGLE_CLIENT_ID') ?: '725947779944-0ka8orralbvn0fi34jgp02no84t1i34g.apps.googleusercontent.com';
+    $googleClientId = getenv('GOOGLE_CLIENT_ID') ?: '563246418789-mh2d9pt5edcpm161g00ehsts29nslstb.apps.googleusercontent.com';
 
     // Verifikasi Token ke Endpoint Google tokeninfo API
     $url = 'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($idToken);

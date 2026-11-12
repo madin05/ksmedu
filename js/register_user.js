@@ -132,7 +132,7 @@ function initGoogleAuth(textType = 'signup_with') {
     const container = document.getElementById('googleBtnContainer');
     if (!container) return;
 
-    const clientId = window.GOOGLE_CLIENT_ID || '725947779944-0ka8orralbvn0fi34jgp02no84t1i34g.apps.googleusercontent.com';
+    const clientId = window.GOOGLE_CLIENT_ID || '563246418789-mh2d9pt5edcpm161g00ehsts29nslstb.apps.googleusercontent.com';
 
     let isGoogleInitialized = false;
 

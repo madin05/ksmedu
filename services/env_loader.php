@@ -52,6 +52,8 @@ function loadEnv($path) {
     return true;
 }
 
-// Automatically load from root if possible
+// Automatically load from root if possible, or 1 level above public_html in cPanel
 $envPath = __DIR__ . '/../.env';
-loadEnv($envPath);
+if (!loadEnv($envPath)) {
+    loadEnv(dirname(__DIR__, 2) . '/.env');
+}

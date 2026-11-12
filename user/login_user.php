@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../services/env_loader.php';
 $page_title = 'User Login - KSM Education';
-$google_client_id = getenv('GOOGLE_CLIENT_ID') ?: '725947779944-0ka8orralbvn0fi34jgp02no84t1i34g.apps.googleusercontent.com';
+$google_client_id = getenv('GOOGLE_CLIENT_ID') ?: '563246418789-mh2d9pt5edcpm161g00ehsts29nslstb.apps.googleusercontent.com';
 ?>
 <!DOCTYPE html>
 <html lang="id">

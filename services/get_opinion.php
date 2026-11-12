@@ -19,6 +19,21 @@ try {
     }
 
 
+    // Cek kolom status dan updated_at secara resilient
+    $hasStatus = false;
+    $hasUpdatedAt = false;
+    try {
+        $cStatus = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'status'");
+        $hasStatus = (bool)$cStatus->fetch();
+    } catch (Throwable $e) {}
+    try {
+        $cUpdated = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'updated_at'");
+        $hasUpdatedAt = (bool)$cUpdated->fetch();
+    } catch (Throwable $e) {}
+
+    $updatedAtSelect = $hasUpdatedAt ? "o.updated_at," : "NULL AS updated_at,";
+    $statusClause = $hasStatus ? " AND o.status = 'published'" : "";
+
     $stmt = $pdo->prepare("
         SELECT 
             o.id,
@@ -34,14 +49,14 @@ try {
             o.contact,
             o.client_temp_id,
             o.created_at,
-            o.updated_at,
+            {$updatedAtSelect}
             o.views,
             uf.url AS file_url,
             uc.url AS cover_url
         FROM opinions o
         LEFT JOIN uploads uf ON o.file_upload_id = uf.id
         LEFT JOIN uploads uc ON o.cover_upload_id = uc.id
-        WHERE o.id = ? AND o.status = 'published'
+        WHERE o.id = ?{$statusClause}
     ");
 
     $stmt->execute([$id]);

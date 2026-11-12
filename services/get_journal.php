@@ -17,6 +17,15 @@ if (!$id) {
 }
 
 try {
+    // Cek kolom status secara resilient
+    $hasStatus = false;
+    try {
+        $cStatus = $pdo->query("SHOW COLUMNS FROM journals LIKE 'status'");
+        $hasStatus = (bool)$cStatus->fetch();
+    } catch (Throwable $e) {}
+
+    $statusClause = $hasStatus ? " AND j.status = 'published'" : "";
+
     //  JOIN dengan uploads table untuk get URL terbaru!
     $stmt = $pdo->prepare("
         SELECT 
@@ -39,7 +48,7 @@ try {
         FROM journals j
         LEFT JOIN uploads f ON j.file_upload_id = f.id
         LEFT JOIN uploads c ON j.cover_upload_id = c.id
-        WHERE j.id = ? AND j.status = 'published'
+        WHERE j.id = ?{$statusClause}
     ");
 
     $stmt->execute([$id]);

@@ -28,15 +28,34 @@ try {
     if ($authUser && !empty($authUser['id']) && $scope !== 'global' && ($authUser['role'] ?? 'user') !== 'admin') {
         $userId = (int)$authUser['id'];
 
+        $hasUserIdJ = false;
+        $hasUserIdO = false;
+        try {
+            $cJ = $pdo->query("SHOW COLUMNS FROM journals LIKE 'user_id'");
+            $hasUserIdJ = (bool)$cJ->fetch();
+        } catch (Throwable $e) {}
+        try {
+            $cO = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'user_id'");
+            $hasUserIdO = (bool)$cO->fetch();
+        } catch (Throwable $e) {}
+
         // Get total user journals & views
-        $stmtJ = $pdo->prepare("SELECT COUNT(*) as total, COALESCE(SUM(views), 0) as views FROM journals WHERE user_id = ?");
-        $stmtJ->execute([$userId]);
-        $jData = $stmtJ->fetch(PDO::FETCH_ASSOC);
+        if ($hasUserIdJ) {
+            $stmtJ = $pdo->prepare("SELECT COUNT(*) as total, COALESCE(SUM(views), 0) as views FROM journals WHERE user_id = ?");
+            $stmtJ->execute([$userId]);
+            $jData = $stmtJ->fetch(PDO::FETCH_ASSOC);
+        } else {
+            $jData = ['total' => 0, 'views' => 0];
+        }
 
         // Get total user opinions & views
-        $stmtO = $pdo->prepare("SELECT COUNT(*) as total, COALESCE(SUM(views), 0) as views FROM opinions WHERE user_id = ?");
-        $stmtO->execute([$userId]);
-        $oData = $stmtO->fetch(PDO::FETCH_ASSOC);
+        if ($hasUserIdO) {
+            $stmtO = $pdo->prepare("SELECT COUNT(*) as total, COALESCE(SUM(views), 0) as views FROM opinions WHERE user_id = ?");
+            $stmtO->execute([$userId]);
+            $oData = $stmtO->fetch(PDO::FETCH_ASSOC);
+        } else {
+            $oData = ['total' => 0, 'views' => 0];
+        }
 
         $userJournals = (int)($jData['total'] ?? 0);
         $userOpinions = (int)($oData['total'] ?? 0);
@@ -58,16 +77,30 @@ try {
     }
 
     // Global Stats Fallback (Admin / Public / Unauthenticated)
-    $stmtJournals = $pdo->query("SELECT COUNT(*) as total FROM journals WHERE status = 'published'");
+    $hasStatusJ = false;
+    $hasStatusO = false;
+    try {
+        $cJ = $pdo->query("SHOW COLUMNS FROM journals LIKE 'status'");
+        $hasStatusJ = (bool)$cJ->fetch();
+    } catch (Throwable $e) {}
+    try {
+        $cO = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'status'");
+        $hasStatusO = (bool)$cO->fetch();
+    } catch (Throwable $e) {}
+
+    $condJ = $hasStatusJ ? " WHERE status = 'published'" : "";
+    $condO = $hasStatusO ? " WHERE status = 'published'" : "";
+
+    $stmtJournals = $pdo->query("SELECT COUNT(*) as total FROM journals{$condJ}");
     $totalJournals = $stmtJournals->fetch(PDO::FETCH_ASSOC)['total'];
 
-    $stmtOpinions = $pdo->query("SELECT COUNT(*) as total FROM opinions WHERE status = 'published'");
+    $stmtOpinions = $pdo->query("SELECT COUNT(*) as total FROM opinions{$condO}");
     $totalOpinions = $stmtOpinions->fetch(PDO::FETCH_ASSOC)['total'];
 
-    $stmtViewsJ = $pdo->query("SELECT COALESCE(SUM(views), 0) as total FROM journals WHERE status = 'published'");
+    $stmtViewsJ = $pdo->query("SELECT COALESCE(SUM(views), 0) as total FROM journals{$condJ}");
     $viewsJournals = $stmtViewsJ->fetch(PDO::FETCH_ASSOC)['total'];
 
-    $stmtViewsO = $pdo->query("SELECT COALESCE(SUM(views), 0) as total FROM opinions WHERE status = 'published'");
+    $stmtViewsO = $pdo->query("SELECT COALESCE(SUM(views), 0) as total FROM opinions{$condO}");
     $viewsOpinions = $stmtViewsO->fetch(PDO::FETCH_ASSOC)['total'];
 
     $totalViews = $viewsJournals + $viewsOpinions;

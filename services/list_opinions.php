@@ -26,6 +26,20 @@ try {
     error_log("=== LIST OPINIONS API ===");
     error_log("Limit: $limit, Offset: $offset, Category: " . ($category ?? 'all'));
 
+    // Cek kolom opsional status dan updated_at
+    $hasStatus = false;
+    $hasUpdatedAt = false;
+    try {
+        $cStatus = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'status'");
+        $hasStatus = (bool)$cStatus->fetch();
+    } catch (Throwable $e) {}
+    try {
+        $cUpdated = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'updated_at'");
+        $hasUpdatedAt = (bool)$cUpdated->fetch();
+    } catch (Throwable $e) {}
+
+    $updatedAtSelect = $hasUpdatedAt ? "o.updated_at," : "NULL AS updated_at,";
+
     $sql = "
         SELECT 
             o.id,
@@ -41,7 +55,7 @@ try {
             o.contact,
             o.client_temp_id,
             o.created_at,
-            o.updated_at,
+            {$updatedAtSelect}
             o.views,
             uf.url AS file_url,
             uc.url AS cover_url
@@ -51,14 +65,19 @@ try {
     ";
 
     $params = [];
-    $conditions = ["o.status = 'published'"];
+    $conditions = [];
+    if ($hasStatus) {
+        $conditions[] = "o.status = 'published'";
+    }
 
     if ($category && $category !== 'all') {
         $conditions[] = 'o.category = ?';
         $params[] = $category;
     }
 
-    $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    if (!empty($conditions)) {
+        $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    }
     $sql .= " ORDER BY o.created_at DESC LIMIT $limit OFFSET $offset";
 
     $stmt = $pdo->prepare($sql);
@@ -69,14 +88,22 @@ try {
     error_log("Found " . count($opinions) . " opinions");
 
     // Get total count
-    $countSql = "SELECT COUNT(*) as total FROM opinions WHERE status = 'published'";
-    if ($category && $category !== 'all') {
-        $countSql .= " AND category = ?";
-        $countStmt = $pdo->prepare($countSql);
-        $countStmt->execute([$category]);
-    } else {
-        $countStmt = $pdo->query($countSql);
+    $countConditions = [];
+    $countParams = [];
+    if ($hasStatus) {
+        $countConditions[] = "status = 'published'";
     }
+    if ($category && $category !== 'all') {
+        $countConditions[] = "category = ?";
+        $countParams[] = $category;
+    }
+
+    $countSql = "SELECT COUNT(*) as total FROM opinions";
+    if (!empty($countConditions)) {
+        $countSql .= " WHERE " . implode(' AND ', $countConditions);
+    }
+    $countStmt = $pdo->prepare($countSql);
+    $countStmt->execute($countParams);
 
     $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
 

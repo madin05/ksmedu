@@ -43,7 +43,15 @@ try {
 
     $table = $tableByType[$type];
 
-    $stmt = $pdo->prepare("UPDATE $table SET views = views + 1 WHERE id = ? AND status = 'published'");
+    // Cek kolom status secara resilient
+    $hasStatus = false;
+    try {
+        $cStatus = $pdo->query("SHOW COLUMNS FROM $table LIKE 'status'");
+        $hasStatus = (bool)$cStatus->fetch();
+    } catch (Throwable $e) {}
+
+    $statusClause = $hasStatus ? " AND status = 'published'" : "";
+    $stmt = $pdo->prepare("UPDATE $table SET views = views + 1 WHERE id = ?{$statusClause}");
     $stmt->execute([(int) $id]);
 
     if ($stmt->rowCount() === 0) {

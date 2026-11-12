@@ -16,6 +16,17 @@ try {
     $limit = isset($_GET['limit']) ? min(100, max(1, (int)$_GET['limit'])) : 50;
     $offset = isset($_GET['offset']) ? max(0, (int)$_GET['offset']) : 0;
 
+    // Cek ketersediaan kolom status secara resilient
+    $hasStatus = false;
+    try {
+        $colCheck = $pdo->query("SHOW COLUMNS FROM journals LIKE 'status'");
+        $hasStatus = (bool)$colCheck->fetch();
+    } catch (Throwable $e) {
+        $hasStatus = false;
+    }
+
+    $whereClause = $hasStatus ? "WHERE j.status = 'published'" : "";
+
     // Single query with JOINs — resolving upload URLs per row previously issued
     // two extra queries per journal (up to 101 queries for one page).
     $stmt = $pdo->prepare("
@@ -27,7 +38,7 @@ try {
         FROM journals j
         LEFT JOIN uploads f ON j.file_upload_id = f.id
         LEFT JOIN uploads c ON j.cover_upload_id = c.id
-        WHERE j.status = 'published'
+        {$whereClause}
         ORDER BY j.created_at DESC
         LIMIT ? OFFSET ?
     ");
@@ -49,6 +60,7 @@ try {
     http_response_code(500);
     echo json_encode([
         'ok' => false,
-        'message' => 'Gagal memuat daftar jurnal.'
+        'message' => 'Gagal memuat daftar jurnal.',
+        'error' => $e->getMessage()
     ]);
 }

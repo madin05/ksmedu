@@ -57,6 +57,7 @@ try {
 
     $hasUserId = false;
     $hasStatus = false;
+    $hasAuthors = false;
     try {
         $c = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'user_id'");
         $hasUserId = (bool)$c->fetch();
@@ -65,31 +66,32 @@ try {
         $c = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'status'");
         $hasStatus = (bool)$c->fetch();
     } catch (Throwable $e) {}
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'authors'");
+        $hasAuthors = (bool)$c->fetch();
+    } catch (Throwable $e) {}
 
-    if ($hasUserId && $hasStatus) {
-        $stmt = $pdo->prepare(
-            "INSERT INTO opinions
-               (user_id, status, title, description, category, author_name,
-                file_upload_id, cover_upload_id, authors, tags, email, contact,
-                rejection_reason, reviewed_by, reviewed_at)
-             VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)"
-        );
-        $stmt->execute([
-            $userId, $title, $description, $category, $authorName,
-            $fileUploadId, $coverUploadId, $authors, $tags, $email, $contact,
-        ]);
-    } else {
-        $stmt = $pdo->prepare(
-            "INSERT INTO opinions
-               (title, description, category, author_name,
-                file_upload_id, cover_upload_id, authors, tags, email, contact)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        );
-        $stmt->execute([
-            $title, $description, $category, $authorName,
-            $fileUploadId, $coverUploadId, $authors, $tags, $email, $contact,
-        ]);
+    $cols = ['title', 'description', 'category', 'author_name', 'file_upload_id', 'cover_upload_id', 'tags', 'email', 'contact'];
+    $placeholders = ['?', '?', '?', '?', '?', '?', '?', '?', '?'];
+    $params = [$title, $description, $category, $authorName, $fileUploadId, $coverUploadId, $tags, $email, $contact];
+
+    if ($hasAuthors) {
+        $cols[] = 'authors';
+        $placeholders[] = '?';
+        $params[] = $authors;
     }
+    if ($hasUserId) {
+        $cols[] = 'user_id';
+        $placeholders[] = '?';
+        $params[] = $userId;
+    }
+    if ($hasStatus) {
+        $cols[] = 'status';
+        $placeholders[] = "'pending'";
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO opinions (" . implode(', ', $cols) . ") VALUES (" . implode(', ', $placeholders) . ")");
+    $stmt->execute($params);
     $opinionId = (int)$pdo->lastInsertId();
 
     $token = token_debit_upload(

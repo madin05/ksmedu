@@ -11,61 +11,139 @@ function token_generate_public_id(): string
     return 'TOK-' . strtoupper(bin2hex(random_bytes(6)));
 }
 
+function token_ensure_tables(PDO $pdo): void
+{
+    static $ensured = false;
+    if ($ensured) return;
+    try {
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS `user_token_wallets` (
+              `user_id` int(11) NOT NULL,
+              `balance` int(10) unsigned NOT NULL DEFAULT 5,
+              `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+              PRIMARY KEY (`user_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+        ");
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS `token_purchase_requests` (
+              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+              `public_id` varchar(32) NOT NULL,
+              `user_id` int(11) NOT NULL,
+              `amount` int(10) unsigned NOT NULL,
+              `price_rupiah` int(10) unsigned NOT NULL DEFAULT 0,
+              `payment_type` varchar(50) DEFAULT 'QRIS / Midtrans',
+              `midtrans_order_id` varchar(100) DEFAULT NULL,
+              `snap_token` varchar(255) DEFAULT NULL,
+              `status` enum('awaiting_proof','pending','approved','rejected','cancelled') NOT NULL DEFAULT 'awaiting_proof',
+              `proof_file_id` int(11) DEFAULT NULL,
+              `telegram_chat_id` bigint(20) DEFAULT NULL,
+              `processed_by` int(11) DEFAULT NULL,
+              `processed_by_telegram_id` bigint(20) DEFAULT NULL,
+              `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+              `submitted_at` datetime DEFAULT NULL,
+              `approved_at` datetime DEFAULT NULL,
+              `rejected_at` datetime DEFAULT NULL,
+              `rejection_reason` varchar(500) DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `uq_token_purchase_public_id` (`public_id`),
+              KEY `idx_token_purchase_user_created` (`user_id`,`created_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+        ");
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS `token_transactions` (
+              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+              `user_id` int(11) NOT NULL,
+              `type` enum('purchase','upload','refund','adjustment') NOT NULL,
+              `amount` int(11) NOT NULL,
+              `balance_after` int(10) unsigned NOT NULL,
+              `reference_type` varchar(50) DEFAULT NULL,
+              `reference_id` bigint(20) unsigned DEFAULT NULL,
+              `status` enum('pending','approved','rejected','completed') NOT NULL DEFAULT 'completed',
+              `description` varchar(500) DEFAULT NULL,
+              `processed_by` int(11) DEFAULT NULL,
+              `processed_by_telegram_id` bigint(20) DEFAULT NULL,
+              `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+              `processed_at` datetime DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              KEY `idx_token_transaction_user_created` (`user_id`,`created_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+        ");
+    } catch (Throwable $e) {
+        error_log('token_ensure_tables warning: ' . $e->getMessage());
+    }
+    $ensured = true;
+}
+
 function token_get_wallet(PDO $pdo, int $userId): array
 {
-    $stmt = $pdo->prepare(
-        'INSERT INTO user_token_wallets (user_id, balance) VALUES (?, 0)
-         ON DUPLICATE KEY UPDATE user_id = VALUES(user_id)'
-    );
-    $stmt->execute([$userId]);
+    token_ensure_tables($pdo);
+    try {
+        $stmt = $pdo->prepare(
+            'INSERT INTO user_token_wallets (user_id, balance) VALUES (?, 5)
+             ON DUPLICATE KEY UPDATE user_id = VALUES(user_id)'
+        );
+        $stmt->execute([$userId]);
 
-    $stmt = $pdo->prepare('SELECT balance, updated_at FROM user_token_wallets WHERE user_id = ? LIMIT 1');
-    $stmt->execute([$userId]);
-    $wallet = $stmt->fetch();
+        $stmt = $pdo->prepare('SELECT balance, updated_at FROM user_token_wallets WHERE user_id = ? LIMIT 1');
+        $stmt->execute([$userId]);
+        $wallet = $stmt->fetch();
 
-    return [
-        'balance' => (int)($wallet['balance'] ?? 0),
-        'updated_at' => $wallet['updated_at'] ?? null,
-    ];
+        return [
+            'balance' => (int)($wallet['balance'] ?? 5),
+            'updated_at' => $wallet['updated_at'] ?? null,
+        ];
+    } catch (Throwable $e) {
+        error_log('token_get_wallet error: ' . $e->getMessage());
+        return [
+            'balance' => 0,
+            'updated_at' => null,
+        ];
+    }
 }
 
 function token_get_history(PDO $pdo, int $userId, int $limit = 100): array
 {
-    require_once __DIR__ . '/midtrans_helper.php';
-    $limit = max(1, min(100, $limit));
-    $stmt = $pdo->prepare(
-        "SELECT id, public_id, midtrans_order_id, snap_token, amount, price_rupiah, payment_type, status, created_at, approved_at, rejected_at
-         FROM token_purchase_requests
-         WHERE user_id = ?
-         ORDER BY id DESC LIMIT {$limit}"
-    );
-    $stmt->execute([$userId]);
-    $rows = $stmt->fetchAll();
+    token_ensure_tables($pdo);
+    try {
+        require_once __DIR__ . '/midtrans_helper.php';
+        $limit = max(1, min(100, $limit));
+        $stmt = $pdo->prepare(
+            "SELECT id, public_id, midtrans_order_id, snap_token, amount, price_rupiah, payment_type, status, created_at, approved_at, rejected_at
+             FROM token_purchase_requests
+             WHERE user_id = ?
+             ORDER BY id DESC LIMIT {$limit}"
+        );
+        $stmt->execute([$userId]);
+        $rows = $stmt->fetchAll();
 
-    foreach ($rows as &$row) {
-        if (($row['status'] ?? '') === 'pending' && !empty($row['midtrans_order_id'])) {
-            $row = midtrans_sync_single_request($pdo, $row);
+        foreach ($rows as &$row) {
+            if (($row['status'] ?? '') === 'pending' && !empty($row['midtrans_order_id'])) {
+                $row = midtrans_sync_single_request($pdo, $row);
+            }
         }
-    }
-    unset($row);
+        unset($row);
 
-    return array_map(static function (array $row): array {
-        return [
-            // ID database selalu tersedia, termasuk untuk riwayat lama yang
-            // belum memiliki public_id. Dipakai oleh aksi hapus milik user.
-            'id' => (string)$row['id'],
-            'publicId' => $row['public_id'],
-            'orderId' => $row['midtrans_order_id'] ?: $row['public_id'],
-            'snapToken' => $row['snap_token'],
-            'priceRupiah' => (int)($row['price_rupiah'] ?? 0),
-            'paymentType' => $row['payment_type'] ?: 'QRIS / Midtrans',
-            'amount' => (int)$row['amount'],
-            'status' => $row['status'],
-            'createdAt' => $row['created_at'],
-            'approvedAt' => $row['approved_at'],
-            'rejectedAt' => $row['rejected_at'],
-        ];
-    }, $rows);
+        return array_map(static function (array $row): array {
+            return [
+                // ID database selalu tersedia, termasuk untuk riwayat lama yang
+                // belum memiliki public_id. Dipakai oleh aksi hapus milik user.
+                'id' => (string)$row['id'],
+                'publicId' => $row['public_id'],
+                'orderId' => $row['midtrans_order_id'] ?: $row['public_id'],
+                'snapToken' => $row['snap_token'],
+                'priceRupiah' => (int)($row['price_rupiah'] ?? 0),
+                'paymentType' => $row['payment_type'] ?: 'QRIS / Midtrans',
+                'amount' => (int)$row['amount'],
+                'status' => $row['status'],
+                'createdAt' => $row['created_at'],
+                'approvedAt' => $row['approved_at'],
+                'rejectedAt' => $row['rejected_at'],
+            ];
+        }, $rows);
+    } catch (Throwable $e) {
+        error_log('token_get_history error: ' . $e->getMessage());
+        return [];
+    }
 }
 
 /**
@@ -94,8 +172,10 @@ function token_debit_upload(
         throw new InvalidArgumentException('Invalid token reference type.');
     }
 
+    token_ensure_tables($pdo);
+
     $stmt = $pdo->prepare(
-        'INSERT INTO user_token_wallets (user_id, balance) VALUES (?, 0)
+        'INSERT INTO user_token_wallets (user_id, balance) VALUES (?, 5)
          ON DUPLICATE KEY UPDATE user_id = VALUES(user_id)'
     );
     $stmt->execute([$userId]);

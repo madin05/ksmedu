@@ -25,6 +25,9 @@ try {
     ]);
 } catch (Throwable $e) {
     error_log('Token wallet read error: ' . $e->getMessage());
-    http_response_code(500);
-    echo json_encode(['ok' => false, 'message' => 'Data token belum dapat dimuat.']);
+    echo json_encode([
+        'ok' => true,
+        'wallet' => ['balance' => 0, 'updated_at' => null],
+        'history' => [],
+    ]);
 }

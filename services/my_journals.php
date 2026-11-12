@@ -22,21 +22,75 @@ try {
         throw new InvalidArgumentException('Filter status tidak valid.');
     }
 
+    $hasUserId = false;
+    $hasStatus = false;
+    $hasRejection = false;
+    $hasReviewed = false;
+    $hasUpdated = false;
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM journals LIKE 'user_id'");
+        $hasUserId = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM journals LIKE 'status'");
+        $hasStatus = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM journals LIKE 'rejection_reason'");
+        $hasRejection = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM journals LIKE 'reviewed_at'");
+        $hasReviewed = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM journals LIKE 'updated_at'");
+        $hasUpdated = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+
+    if (!$hasUserId) {
+        // Table journals belum memiliki kolom user_id, berarti belum ada submission karya user
+        echo json_encode([
+            'ok' => true,
+            'results' => [],
+            'total' => 0,
+            'limit' => $limit,
+            'offset' => $offset,
+        ]);
+        exit;
+    }
+
     $where = 'j.user_id = ?';
     $params = [(int)$auth_user['id']];
     if ($status !== null) {
-        $where .= ' AND j.status = ?';
-        $params[] = $status;
+        if ($hasStatus) {
+            $where .= ' AND j.status = ?';
+            $params[] = $status;
+        } elseif ($status !== 'published') {
+            echo json_encode([
+                'ok' => true,
+                'results' => [],
+                'total' => 0,
+                'limit' => $limit,
+                'offset' => $offset,
+            ]);
+            exit;
+        }
     }
 
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM journals j WHERE {$where}");
     $countStmt->execute($params);
     $total = (int)$countStmt->fetchColumn();
 
+    $statusSelect = $hasStatus ? 'j.status,' : "'published' AS status,";
+    $rejectionSelect = $hasRejection ? 'j.rejection_reason,' : "NULL AS rejection_reason,";
+    $reviewedSelect = $hasReviewed ? 'j.reviewed_at,' : "NULL AS reviewed_at,";
+    $updatedSelect = $hasUpdated ? 'j.updated_at,' : "NULL AS updated_at,";
+
     $stmt = $pdo->prepare(
         "SELECT j.id, j.title, j.abstract, j.authors, j.tags, j.pengurus,
-                j.email, j.contact, j.volume, j.status, j.rejection_reason,
-                j.created_at, j.updated_at, j.reviewed_at,
+                j.email, j.contact, j.volume, {$statusSelect} {$rejectionSelect}
+                j.created_at, {$updatedSelect} {$reviewedSelect}
                 fu.url AS file_url, cu.url AS cover_url
          FROM journals j
          LEFT JOIN uploads fu ON fu.id = j.file_upload_id

@@ -51,30 +51,22 @@ try {
         $hasStatus = (bool)$c->fetch();
     } catch (Throwable $e) {}
 
-    if ($hasUserId && $hasStatus) {
-        $stmt = $pdo->prepare(
-            "INSERT INTO journals
-               (user_id, status, title, abstract, file_upload_id, cover_upload_id,
-                authors, tags, pengurus, email, contact, volume, rejection_reason,
-                reviewed_by, reviewed_at)
-             VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL)"
-        );
-        $stmt->execute([
-            $userId, $title, $abstract, $fileUploadId, $coverUploadId,
-            $authors, $tags, $pengurus, $email, $contact, $volume,
-        ]);
-    } else {
-        $stmt = $pdo->prepare(
-            "INSERT INTO journals
-               (title, abstract, file_upload_id, cover_upload_id,
-                authors, tags, pengurus, email, contact, volume)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        );
-        $stmt->execute([
-            $title, $abstract, $fileUploadId, $coverUploadId,
-            $authors, $tags, $pengurus, $email, $contact, $volume,
-        ]);
+    $cols = ['title', 'abstract', 'file_upload_id', 'cover_upload_id', 'authors', 'tags', 'pengurus', 'email', 'contact', 'volume'];
+    $placeholders = ['?', '?', '?', '?', '?', '?', '?', '?', '?', '?'];
+    $params = [$title, $abstract, $fileUploadId, $coverUploadId, $authors, $tags, $pengurus, $email, $contact, $volume];
+
+    if ($hasUserId) {
+        $cols[] = 'user_id';
+        $placeholders[] = '?';
+        $params[] = $userId;
     }
+    if ($hasStatus) {
+        $cols[] = 'status';
+        $placeholders[] = "'pending'";
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO journals (" . implode(', ', $cols) . ") VALUES (" . implode(', ', $placeholders) . ")");
+    $stmt->execute($params);
     $journalId = (int)$pdo->lastInsertId();
 
     $token = token_debit_upload(

@@ -53,10 +53,19 @@ try {
         exit;
     }
 
+    // Cek kolom account_status secara resilient
+    $hasAccountStatus = false;
+    try {
+        $cStatus = $pdo->query("SHOW COLUMNS FROM users LIKE 'account_status'");
+        $hasAccountStatus = (bool)$cStatus->fetch();
+    } catch (Throwable $e) {}
+
+    $statusClause = $hasAccountStatus ? " AND (account_status = 'active' OR account_status IS NULL)" : "";
+
     $stmt = $pdo->prepare(
         "SELECT id, name, email, role, password_hash
          FROM users
-         WHERE email = ? AND (account_status = 'active' OR account_status IS NULL)
+         WHERE email = ?{$statusClause}
          LIMIT 1"
     );
     $stmt->execute([$email]);
@@ -66,9 +75,7 @@ try {
     $genericError = ['ok' => false, 'message' => 'Email atau password admin salah!'];
 
     if (!$user) {
-        // Dummy verify agar waktu respons untuk email tidak terdaftar mirip
-        // dengan email terdaftar (mengurangi kebocoran lewat timing),
-        // sama seperti auth_login.php.
+        error_log("auth_admin_login: user not found or inactive for email '{$email}'");
         password_verify(
             (string)$data['password'],
             '$2y$10$usesomesillystringforeasyverificationabcdefghijklmnopqrstuv'
@@ -80,7 +87,12 @@ try {
         exit;
     }
 
-    if (!password_verify((string)$data['password'], (string)$user['password_hash'])) {
+    $passInput = (string)$data['password'];
+    $hash = (string)$user['password_hash'];
+    $isMatch = password_verify($passInput, $hash) || password_verify(trim($passInput), $hash);
+
+    if (!$isMatch) {
+        error_log("auth_admin_login: password mismatch for email '{$email}'");
         login_guard_record($pdo, 'admin', $email, false);
         login_guard_delay(login_guard_current_failures($pdo, 'admin', $email));
         http_response_code(401);

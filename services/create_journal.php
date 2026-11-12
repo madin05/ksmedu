@@ -92,24 +92,49 @@ try {
         exit;
     }
 
-    // Prepare SQL statement
-    $stmt = $pdo->prepare("
-        INSERT INTO journals (
-            title, 
-            abstract, 
-            file_upload_id, 
-            cover_upload_id, 
-            authors, 
-            tags, 
-            pengurus,
-            volume,
-            email, 
-            contact, 
-            client_temp_id, 
-            client_updated_at,
-            status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published')
-    ");
+    // Cek kolom status secara resilient
+    $hasStatus = false;
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM journals LIKE 'status'");
+        $hasStatus = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+
+    if ($hasStatus) {
+        $stmt = $pdo->prepare("
+            INSERT INTO journals (
+                title, 
+                abstract, 
+                file_upload_id, 
+                cover_upload_id, 
+                authors, 
+                tags, 
+                pengurus,
+                volume,
+                email, 
+                contact, 
+                client_temp_id, 
+                client_updated_at,
+                status
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published')
+        ");
+    } else {
+        $stmt = $pdo->prepare("
+            INSERT INTO journals (
+                title, 
+                abstract, 
+                file_upload_id, 
+                cover_upload_id, 
+                authors, 
+                tags, 
+                pengurus,
+                volume,
+                email, 
+                contact, 
+                client_temp_id, 
+                client_updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+    }
 
     // Execute insert
     $result = $stmt->execute([

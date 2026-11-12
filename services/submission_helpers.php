@@ -88,14 +88,25 @@ function submission_json_list(array $data, string $field, bool $required = false
 
 function submission_assert_upload(PDO $pdo, int $uploadId, int $userId, string $kind): array
 {
+    $hasUserId = false;
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM uploads LIKE 'user_id'");
+        $hasUserId = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+
+    $selectCols = $hasUserId ? 'id, user_id, mime, url' : 'id, mime, url';
     $stmt = $pdo->prepare(
-        'SELECT id, user_id, mime, url FROM uploads WHERE id = ? LIMIT 1 FOR UPDATE'
+        "SELECT {$selectCols} FROM uploads WHERE id = ? LIMIT 1 FOR UPDATE"
     );
     $stmt->execute([$uploadId]);
     $upload = $stmt->fetch();
 
-    if (!$upload || (int)$upload['user_id'] !== $userId) {
-        throw new DomainException("Upload {$kind} tidak ditemukan atau bukan milik Anda.");
+    if (!$upload) {
+        throw new DomainException("Upload {$kind} tidak ditemukan.");
+    }
+
+    if ($hasUserId && isset($upload['user_id']) && $upload['user_id'] !== null && (int)$upload['user_id'] !== $userId) {
+        throw new DomainException("Upload {$kind} bukan milik Anda.");
     }
 
     $mime = strtolower((string)($upload['mime'] ?? ''));

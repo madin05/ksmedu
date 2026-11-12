@@ -84,14 +84,25 @@ $mime = $detectedMime;
 $size = (int)$file['size'];
 
 try {
-    $stmt = $pdo->prepare("INSERT INTO uploads (user_id, filename, original_name, mime, size, url) VALUES (?,?,?,?,?,?)");
-    $stmt->execute([(int)$auth_user['id'], $safeName, $file['name'], $mime, $size, $publicUrl]);
+    $hasUserId = false;
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM uploads LIKE 'user_id'");
+        $hasUserId = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+
+    if ($hasUserId && !empty($auth_user['id'])) {
+        $stmt = $pdo->prepare("INSERT INTO uploads (user_id, filename, original_name, mime, size, url) VALUES (?,?,?,?,?,?)");
+        $stmt->execute([(int)$auth_user['id'], $safeName, $file['name'], $mime, $size, $publicUrl]);
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO uploads (filename, original_name, mime, size, url) VALUES (?,?,?,?,?)");
+        $stmt->execute([$safeName, $file['name'], $mime, $size, $publicUrl]);
+    }
     $uploadId = $pdo->lastInsertId();
 } catch (Throwable $e) {
     @unlink($target);
     error_log('Upload metadata insert failed: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['ok' => false, 'message' => 'Cannot save upload metadata']);
+    echo json_encode(['ok' => false, 'message' => 'Cannot save upload metadata: ' . $e->getMessage()]);
     exit;
 }
 

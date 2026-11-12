@@ -158,11 +158,26 @@ try {
     // Insert opinion record (BOTH scenarios end up here)
     error_log("Inserting opinion: title=$title, author=$author_name, file_id=$file_upload_id, cover_id=$cover_upload_id");
 
-    $stmt = $pdo->prepare("
-        INSERT INTO opinions 
-        (title, description, category, author_name, email, contact, tags, file_upload_id, cover_upload_id, views, created_at, status)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), 'published')
-    ");
+    // Cek kolom status secara resilient
+    $hasStatus = false;
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'status'");
+        $hasStatus = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+
+    if ($hasStatus) {
+        $stmt = $pdo->prepare("
+            INSERT INTO opinions 
+            (title, description, category, author_name, email, contact, tags, file_upload_id, cover_upload_id, views, created_at, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), 'published')
+        ");
+    } else {
+        $stmt = $pdo->prepare("
+            INSERT INTO opinions 
+            (title, description, category, author_name, email, contact, tags, file_upload_id, cover_upload_id, views, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW())
+        ");
+    }
 
     $stmt->execute([
         $title,

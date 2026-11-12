@@ -1,192 +1,172 @@
 <?php
 // admin/components/sidebar.php
-// Navbar panel admin. Menu dikelompokkan menjadi beberapa dropdown (pola sama
-// seperti dropdown "ARTIKEL" sebelumnya) agar tidak lagi berupa deretan tautan
-// panjang. Halaman aktif ditandai otomatis dari nama file yang sedang dibuka.
+// Sidebar panel admin (collapsible) + topbar ramping.
+// Menu dibuat flat per seksi (tanpa dropdown) agar 1 klik sampai tujuan.
+// Halaman aktif ditandai otomatis dari nama file yang sedang dibuka.
+//
+// Kompatibilitas JS lama:
+//  - id badge navBadgeReview / navBadgeContact / navBadgeToken dipertahankan
+//    (diisi js/admin_nav.js dari services/admin/dashboard_stats.php).
+//  - class .admin-nav dipertahankan (dipakai admin_nav.js & mobile_menu.js).
 
 $current_page = basename($_SERVER['PHP_SELF']);
 
 /**
- * Definisi menu: setiap grup punya label, ikon, dan daftar item.
- * key 'badge' = id elemen badge yang diisi js/admin_nav.js dari
- * services/admin/dashboard_stats.php.
- *
- * 'file' = nama skrip asli (dipakai untuk menandai halaman aktif, karena
- *          rewrite clean URL bersifat internal sehingga PHP_SELF tetap *.php).
+ * 'file' = nama skrip asli (dipakai untuk menandai halaman aktif).
  * 'url'  = clean URL yang dipakai pada atribut href.
+ * 'badge' = id elemen badge yang diisi js/admin_nav.js.
  */
-$nav_groups = [
+$nav_sections = [
     [
         'label' => 'KONTEN',
-        'icon'  => 'book-open',
         'items' => [
-            ['file' => 'journals.php',         'url' => 'journals',   'label' => 'Artikel Jurnal', 'desc' => 'Kelola & terbitkan jurnal',   'icon' => 'book'],
-            ['file' => 'opinions.php',         'url' => 'opinions',   'label' => 'Artikel Opini',  'desc' => 'Kelola & terbitkan opini',    'icon' => 'edit-3'],
-            ['file' => 'upload_admin.php',     'url' => 'upload',     'label' => 'Upload Artikel', 'desc' => 'Unggah konten baru', 'icon' => 'upload-cloud'],
+            ['file' => 'journals.php',     'url' => 'journals', 'label' => 'Artikel Jurnal', 'icon' => 'book'],
+            ['file' => 'opinions.php',     'url' => 'opinions', 'label' => 'Artikel Opini',  'icon' => 'edit-3'],
+            ['file' => 'upload_admin.php', 'url' => 'upload',   'label' => 'Upload Artikel', 'icon' => 'upload-cloud'],
         ],
     ],
     [
         'label' => 'MODERASI',
-        'icon'  => 'shield',
         'items' => [
-            ['file' => 'review_journals.php',  'url' => 'review_journals',  'label' => 'Review Kiriman', 'desc' => 'Antrean jurnal & opini masuk', 'icon' => 'inbox',        'badge' => 'navBadgeReview'],
-            ['file' => 'comments.php',         'url' => 'comments',         'label' => 'Komentar',       'desc' => 'Moderasi komentar pembaca',    'icon' => 'message-square'],
-            ['file' => 'contact_messages.php', 'url' => 'contact_messages', 'label' => 'Pesan Kontak',   'desc' => 'Kotak masuk & balasan',        'icon' => 'mail',         'badge' => 'navBadgeContact'],
+            ['file' => 'review_journals.php',  'url' => 'review_journals',  'label' => 'Review Kiriman', 'icon' => 'inbox',          'badge' => 'navBadgeReview'],
+            ['file' => 'comments.php',         'url' => 'comments',         'label' => 'Komentar',       'icon' => 'message-square'],
+            ['file' => 'contact_messages.php', 'url' => 'contact_messages', 'label' => 'Pesan Kontak',   'icon' => 'mail',           'badge' => 'navBadgeContact'],
         ],
     ],
     [
         'label' => 'OPERASIONAL',
-        'icon'  => 'activity',
         'items' => [
-            ['file' => 'token_requests.php',    'url' => 'token_requests',    'label' => 'Verifikasi Token', 'desc' => 'Top-up manual & ledger',   'icon' => 'credit-card', 'badge' => 'navBadgeToken'],
-            ['file' => 'visitor_analytics.php', 'url' => 'visitor_analytics', 'label' => 'Analitik',         'desc' => 'Statistik pengunjung',     'icon' => 'bar-chart-2'],
+            ['file' => 'token_requests.php',    'url' => 'token_requests',    'label' => 'Verifikasi Token', 'icon' => 'credit-card', 'badge' => 'navBadgeToken'],
+            ['file' => 'visitor_analytics.php', 'url' => 'visitor_analytics', 'label' => 'Analitik',         'icon' => 'bar-chart-2'],
         ],
     ],
 ];
 
-// Cek apakah salah satu item dalam grup adalah halaman aktif.
-$group_is_active = static function (array $group) use ($current_page): bool {
-    foreach ($group['items'] as $item) {
-        if ($item['file'] === $current_page) {
-            return true;
-        }
-    }
-    return false;
-};
+$page_titles = [
+    'dashboard_admin.php'   => 'Dashboard',
+    'journals.php'          => 'Artikel Jurnal',
+    'opinions.php'          => 'Artikel Opini',
+    'upload_admin.php'      => 'Upload Artikel',
+    'review_journals.php'   => 'Review Kiriman',
+    'comments.php'          => 'Moderasi Komentar',
+    'contact_messages.php'  => 'Pesan Kontak',
+    'token_requests.php'    => 'Verifikasi Token',
+    'visitor_analytics.php' => 'Analitik Pengunjung',
+    'explore_jurnal_admin.php' => 'Pratinjau Jurnal',
+    'explore_opini_admin.php'  => 'Pratinjau Opini',
+];
+$topbar_title = $page_titles[$current_page] ?? 'Admin Panel';
+$is_home_active = ($current_page === 'dashboard_admin.php');
+
+$admin_display_name = htmlspecialchars(
+    $admin_session_user['name'] ?? 'Administrator',
+    ENT_QUOTES,
+    'UTF-8'
+);
+$admin_email = htmlspecialchars(
+    $admin_session_user['email'] ?? 'admin@ksmeducation.com',
+    ENT_QUOTES,
+    'UTF-8'
+);
+$admin_initial = strtoupper(mb_substr($admin_session_user['name'] ?? 'A', 0, 1, 'UTF-8'));
 ?>
-    <header>
-      <div class="header-container">
-        <div class="logo">
-          <a href="dashboard"><img src="../assets/main_logo.png" alt="Logo" /></a>
-        </div>
+<div class="admin-overlay" id="adminOverlay" aria-hidden="true"></div>
 
-        <div class="header-right">
-          <div class="mobile-auth-header" id="mobileAuthHeader"></div>
-          <button
-            class="hamburger-menu"
-            aria-label="Toggle menu"
-            aria-expanded="false"
-            type="button"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
+<aside class="admin-sidebar" id="adminSidebar" aria-label="Sidebar admin">
+  <div class="sidebar-brand">
+    <a href="dashboard" class="brand-link" title="KSM Education - Dashboard admin">
+      <img src="../assets/main_logo.png" alt="Logo KSM Education" />
+      <span class="brand-text">KSM<small>ADMIN PANEL</small></span>
+    </a>
+    <button
+      id="sidebarCollapse"
+      class="sidebar-collapse-btn"
+      type="button"
+      title="Ciutkan / bentangkan sidebar"
+      aria-label="Ciutkan atau bentangkan sidebar"
+      aria-expanded="true"
+    >
+      <i data-feather="chevrons-left"></i>
+    </button>
+  </div>
 
-        <nav class="admin-nav" aria-label="Navigasi admin">
+  <nav class="admin-nav" aria-label="Navigasi admin">
+    <a
+      href="dashboard"
+      class="side-link<?php echo $is_home_active ? ' active' : ''; ?>"
+      title="Dashboard"
+      <?php echo $is_home_active ? 'aria-current="page"' : ''; ?>
+    >
+      <span class="side-icon"><i data-feather="home"></i></span>
+      <span class="side-label">Dashboard</span>
+    </a>
+
+    <?php foreach ($nav_sections as $section): ?>
+      <div class="side-section">
+        <span class="side-section-label"><?php echo $section['label']; ?></span>
+        <?php foreach ($section['items'] as $item): ?>
+          <?php $is_active = ($item['file'] === $current_page); ?>
           <a
-            href="dashboard"
-            class="<?php echo $current_page === 'dashboard_admin.php' ? 'active' : ''; ?>"
-            <?php echo $current_page === 'dashboard_admin.php' ? 'aria-current="page"' : ''; ?>
+            href="<?php echo $item['url']; ?>"
+            class="side-link<?php echo $is_active ? ' active' : ''; ?>"
+            title="<?php echo $item['label']; ?>"
+            <?php echo $is_active ? 'aria-current="page"' : ''; ?>
           >
-            <i data-feather="home"></i>
-            HOME
+            <span class="side-icon"><i data-feather="<?php echo $item['icon']; ?>"></i></span>
+            <span class="side-label"><?php echo $item['label']; ?></span>
+            <?php if (isset($item['badge'])): ?>
+              <span class="nav-badge" id="<?php echo $item['badge']; ?>"></span>
+            <?php endif; ?>
           </a>
-
-          <?php foreach ($nav_groups as $group): ?>
-            <?php $active = $group_is_active($group); ?>
-            <div class="nav-dropdown<?php echo $active ? ' has-active' : ''; ?>">
-              <button
-                class="nav-link has-caret"
-                type="button"
-                aria-expanded="false"
-                aria-haspopup="true"
-              >
-                <i data-feather="<?php echo $group['icon']; ?>"></i>
-                <?php echo $group['label']; ?>
-                <span
-                  class="nav-dot"
-                  data-nav-dot="<?php echo strtolower($group['label']); ?>"
-                  aria-hidden="true"
-                  hidden
-                ></span>
-                <svg
-                  class="caret"
-                  viewBox="0 0 24 24"
-                  width="16"
-                  height="16"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  aria-hidden="true"
-                >
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              </button>
-
-              <div class="dropdown-menu" role="menu">
-                <span class="nav-menu-label"><?php echo $group['label']; ?></span>
-                <?php foreach ($group['items'] as $item): ?>
-                  <?php
-                  $href      = ($item['url'] ?? $item['file']) . ($item['hash'] ?? '');
-                  $is_active = !isset($item['hash']) && $item['file'] === $current_page;
-                  ?>
-                  <a
-                    href="<?php echo $href; ?>"
-                    class="nav-menu-item<?php echo $is_active ? ' active' : ''; ?>"
-                    role="menuitem"
-                    <?php echo $is_active ? 'aria-current="page"' : ''; ?>
-                  >
-                    <span class="nav-menu-icon"><i data-feather="<?php echo $item['icon']; ?>"></i></span>
-                    <span class="nav-menu-text">
-                      <strong><?php echo $item['label']; ?></strong>
-                      <small><?php echo $item['desc']; ?></small>
-                    </span>
-                    <?php if (isset($item['badge'])): ?>
-                      <span
-                        class="nav-badge"
-                        id="<?php echo $item['badge']; ?>"
-                        data-nav-group="<?php echo strtolower($group['label']); ?>"
-                      ></span>
-                    <?php endif; ?>
-                  </a>
-                <?php endforeach; ?>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        </nav>
-
-        <div class="auth-section">
-          <?php
-          // Halaman admin hanya dapat dibuka setelah lolos auth_guard.php,
-          // jadi di sini selalu ada sesi admin yang aktif.
-          $admin_display_name = htmlspecialchars(
-              $admin_session_user['name'] ?? 'Administrator',
-              ENT_QUOTES,
-              'UTF-8'
-          );
-          $admin_email = htmlspecialchars(
-              $admin_session_user['email'] ?? 'admin@ksmeducation.com',
-              ENT_QUOTES,
-              'UTF-8'
-          );
-          ?>
-          <div class="user-profile admin-profile-dropdown">
-            <button class="user-profile-trigger admin-profile-btn" type="button" aria-expanded="false" aria-haspopup="true" title="<?php echo $admin_email; ?>">
-              <span class="admin-avatar">
-                <i data-feather="user"></i>
-              </span>
-              <span class="admin-name"><?php echo $admin_display_name; ?></span>
-              <svg class="caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </button>
-            <div class="user-profile-menu admin-profile-menu" role="menu">
-              <div class="user-profile-menu-header">
-                <strong><?php echo $admin_display_name; ?></strong>
-                <span><?php echo $admin_email; ?></span>
-              </div>
-              <a
-                class="user-profile-menu-item user-profile-menu-item--danger"
-                href="../services/auth_logout.php?redirect=<?php echo urlencode('../admin/login'); ?>"
-              >
-                <i data-feather="log-out"></i> Logout
-              </a>
-            </div>
-          </div>
-        </div>
+        <?php endforeach; ?>
       </div>
-    </header>
+    <?php endforeach; ?>
+  </nav>
 
+  <div class="sidebar-footer">
+    <div class="sidebar-profile" title="<?php echo $admin_email; ?>">
+      <span class="sidebar-avatar" aria-hidden="true"><?php echo $admin_initial; ?></span>
+      <span class="sidebar-profile-text">
+        <strong><?php echo $admin_display_name; ?></strong>
+        <small><?php echo $admin_email; ?></small>
+      </span>
+      <a
+        class="sidebar-logout"
+        href="../services/auth_logout.php?redirect=<?php echo urlencode('../admin/login'); ?>"
+        title="Logout"
+        aria-label="Logout"
+      >
+        <i data-feather="log-out"></i>
+      </a>
+    </div>
+  </div>
+</aside>
 
+<header class="admin-topbar">
+  <div class="topbar-left">
+    <button
+      class="hamburger-menu"
+      aria-label="Buka / tutup menu"
+      aria-expanded="false"
+      type="button"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="topbar-title">
+      <span class="topbar-crumb">Admin</span>
+      <h1><?php echo htmlspecialchars($topbar_title, ENT_QUOTES, 'UTF-8'); ?></h1>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-site-link" href="../" title="Lihat situs utama">
+      <i data-feather="external-link"></i>
+      <span>Lihat Situs</span>
+    </a>
+  </div>
+</header>
+
+<script>
+  document.body.classList.add('has-admin-sidebar');
+</script>

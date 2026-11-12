@@ -100,3 +100,4 @@ USER.md
 *.session
 *.sessions
 detail.md
+.agents

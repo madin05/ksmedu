@@ -81,10 +81,10 @@ include 'components/navbar.php';
 <?php
 $extra_scripts = <<<'EOT'
 <script src="../js/script.js?v=2025112910"></script>
-    <script src="../js/custom_alerts.js"></script>
+     <script src="../js/custom_alerts.js?v=20260905"></script>
     <script src="../js/api.js?v=20260729"></script>
-    <script src="../js/token_wallet.js?v=20260815"></script>
-    <script src="../js/token_history_user.js?v=20260902_v108"></script>
+    <script src="../js/token_wallet.js?v=20260905_fix"></script>
+    <script src="../js/token_history_user.js?v=20260905_fix"></script>
     <script src="../js/mobile_menu.js?v=20251130"></script>
     <script>
       feather.replace();

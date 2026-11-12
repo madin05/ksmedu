@@ -7,6 +7,20 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("Initializing mobile menu...");
 
+  // Halaman admin memakai sidebar sendiri (js/admin_sidebar.js). Di sini
+  // hanya efek glassmorphism topbar agar tidak terjadi toggle ganda.
+  if (document.getElementById("adminSidebar")) {
+    const topbar = document.querySelector(".admin-topbar");
+    if (topbar) {
+      const handleTopbarScroll = () => {
+        topbar.classList.toggle("scrolled", window.scrollY > 15);
+      };
+      window.addEventListener("scroll", handleTopbarScroll);
+      handleTopbarScroll();
+    }
+    return;
+  }
+
   // Get elements
   const header = document.querySelector(".header-container");
   const nav = document.querySelector("nav");

@@ -18,8 +18,8 @@ $user_name = $user_name ?? '';
         <nav class="landing-nav-links" id="landingNavMenu">
             <a href=""><?php echo $t['nav_home']; ?></a>
             <a href="user/journals_user.php"><?php echo $t['nav_journals']; ?></a>
-            <a href="user/opinions_user.php"><?php echo $t['nav_articles']; ?></a>
-            <a href="#about"><?php echo $t['nav_about']; ?></a>
+            <a href="<?php echo $is_logged_in ? 'user/opinions_user.php' : 'user/login_user.php'; ?>"><?php echo $t['nav_articles']; ?></a>
+            <a href="user/tentang_kami.php"><?php echo $t['nav_about']; ?></a>
 
             <div class="landing-mobile-nav-footer">
                 <?php if (!$is_logged_in): ?>

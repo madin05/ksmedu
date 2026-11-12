@@ -65,7 +65,18 @@
   }
 
   async function cancelOrder(id) {
-    if (!confirm("Apakah Anda yakin ingin membatalkan pesanan token ini?")) return;
+    let confirmed = false;
+    if (window.showAlert) {
+      confirmed = await window.showAlert.confirm("Pesanan yang dibatalkan tidak dapat dipulihkan. Lanjutkan?", "Batalkan Pesanan?", "Ya, Batalkan", "Tidak");
+    } else if (typeof window.showToast === "function") {
+      // fallback tanpa native confirm: pakai toast lalu batal jika custom alert gagal load
+      window.showToast("Memuat dialog konfirmasi...", "info");
+      return;
+    } else {
+      confirmed = false;
+      return;
+    }
+    if (!confirmed) return;
     try {
       const response = await authFetch(`${window.APP_CONFIG.apiBase}/cancel_token_transaction.php`, {
         method: "POST",
@@ -74,9 +85,12 @@
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || "Gagal membatalkan pesanan.");
       if (typeof window.showToast === "function") window.showToast(data.message, "success");
+      else if (window.showAlert) window.showAlert.success(data.message, "Berhasil");
       await KsmTokenWallet.refresh();
     } catch (err) {
-      alert(err.message || "Gagal membatalkan pesanan.");
+      const msg = err.message || "Gagal membatalkan pesanan.";
+      if (window.showAlert) window.showAlert.error(msg, "Gagal Membatalkan");
+      else if (typeof window.showToast === "function") window.showToast(msg, "error");
     }
   }
 
@@ -85,18 +99,24 @@
       snap.pay(snapToken, {
         onSuccess: function () {
           if (typeof window.showToast === "function") window.showToast("Pembayaran berhasil!", "success");
+          else if (window.showAlert) window.showAlert.success("Pembayaran berhasil! Saldo akan segera bertambah.", "Berhasil");
           KsmTokenWallet.refresh();
         },
         onPending: function () {
-          if (typeof window.showToast === "function") window.showToast("Pembayaran pending.", "info");
+          if (typeof window.showToast === "function") window.showToast("Pembayaran menunggu konfirmasi. Selesaikan pembayaran Anda.", "info");
+          else if (window.showAlert) window.showAlert.warning("Menunggu konfirmasi pembayaran.", "Pending");
           KsmTokenWallet.refresh();
         },
         onError: function () {
-          alert("Pembayaran gagal.");
+          const msg = "Pembayaran gagal. Silakan coba lagi.";
+          if (window.showAlert) window.showAlert.error(msg, "Gagal");
+          else if (typeof window.showToast === "function") window.showToast(msg, "error");
         },
       });
     } else {
-      alert("SDK Pembayaran Midtrans Snap tidak tersedia.");
+      const msg = "SDK Pembayaran Midtrans belum siap. Silakan refresh halaman.";
+      if (window.showAlert) window.showAlert.error(msg, "Gagal Memuat Pembayaran");
+      else if (typeof window.showToast === "function") window.showToast(msg, "error");
     }
   }  function showDetailModal(item) {
     let existingModal = document.getElementById("ksmUserTxnDetailModal");
@@ -260,7 +280,14 @@
     deleteButton?.addEventListener("click", async () => {
       if (!selectedIds.size) return;
       const count = selectedIds.size;
-      if (!window.confirm(`Hapus ${count} riwayat token yang dipilih? Tindakan ini tidak dapat dibatalkan.`)) return;
+      let ok = false;
+      if (window.showAlert) {
+        ok = await window.showAlert.confirm(`Hapus ${count} riwayat token yang dipilih? Tindakan ini tidak dapat dibatalkan.`, "Hapus Riwayat?", "Ya, Hapus", "Batal");
+      } else {
+        if (typeof window.showToast === "function") window.showToast("Dialog konfirmasi tidak tersedia, refresh halaman.", "error");
+        return;
+      }
+      if (!ok) return;
 
       deleteButton.disabled = true;
       try {
@@ -274,8 +301,14 @@
         selectedIds.clear();
         await KsmTokenWallet.refresh();
         if (typeof window.showToast === "function") window.showToast(`${data.deleted} riwayat berhasil dihapus.`, "success");
+        else if (window.showAlert) window.showAlert.success(`${data.deleted} riwayat berhasil dihapus.`, "Berhasil");
       } catch (error) {
-        alert(error.message || "Riwayat gagal dihapus.");
+        const msg = error.message || "Riwayat gagal dihapus.";
+        if (window.showAlert) window.showAlert.error(msg, "Gagal");
+        else if (typeof window.showToast === "function") window.showToast(msg, "error");
+        updateSelectionControls();
+      } finally {
+        deleteButton.disabled = false;
         updateSelectionControls();
       }
     });

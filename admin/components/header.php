@@ -14,8 +14,8 @@ require_once __DIR__ . '/auth_guard.php';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="../styles/base/fonts.css" />
     <link rel="stylesheet" href="../styles/admin/admin.css?v=20260323" />
-    <!-- Navbar admin + tombol muat ulang (berlaku di semua halaman admin) -->
-    <link rel="stylesheet" href="../styles/admin/admin_nav.css?v=20260731" />
+    <!-- Sidebar + topbar admin (berlaku di semua halaman admin) -->
+    <link rel="stylesheet" href="../styles/admin/admin_nav.css?v=20260908" />
     <link rel="stylesheet" href="../styles/base/skeleton.css" />
     <link rel="stylesheet" href="../styles/base/custom_alerts.css" />
 

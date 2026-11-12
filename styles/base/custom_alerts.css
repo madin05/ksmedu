@@ -1,4 +1,4 @@
-﻿/* ===== CUSTOM MODERN ALERT SYSTEM ===== */
+/* ===== CUSTOM MODERN ALERT SYSTEM ===== */
 
 :root {
   --alert-success: 142.1 70.6% 45.3%;
@@ -33,11 +33,11 @@
 
 .custom-alert-modal {
   background: hsl(var(--alert-bg));
-  border-radius: 16px;
-  padding: 32px;
-  max-width: 400px;
+  border-radius: 20px;
+  padding: 36px 32px 32px;
+  max-width: 420px;
   width: 90%;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 30px -5px rgba(0, 0, 0, 0.15), 0 10px 15px -5px rgba(0, 0, 0, 0.08);
   transform: scale(0.9);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   text-align: center;
@@ -48,82 +48,117 @@
 }
 
 .custom-alert-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 20px;
-  border-radius: 50%;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 18px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .custom-alert-icon svg {
-  width: 32px;
-  height: 32px;
+  width: 46px;
+  height: 46px;
 }
 
 .custom-alert-icon.success {
   background: hsla(var(--alert-success), 0.1);
   color: hsl(var(--alert-success));
+  border-radius: 50%;
 }
 
+.custom-alert-icon.danger,
 .custom-alert-icon.error {
   background: hsla(var(--alert-error), 0.1);
   color: hsl(var(--alert-error));
+  border-radius: 50%;
 }
 
 .custom-alert-icon.warning {
-  background: hsla(var(--alert-warning), 0.1);
-  color: hsl(var(--alert-warning));
+  background: transparent;
+  color: #f59e0b;
+}
+
+.custom-alert-icon.info {
+  background: hsla(var(--alert-info), 0.1);
+  color: hsl(var(--alert-info));
+  border-radius: 50%;
 }
 
 .custom-alert-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  color: #1a202c;
+  color: #0f172a;
   margin-bottom: 12px;
 }
 
 .custom-alert-message {
-  font-size: 16px;
-  color: #4a5568;
+  font-size: 15px;
+  color: #64748b;
   line-height: 1.6;
-  margin-bottom: 24px;
+  margin-bottom: 26px;
 }
 
 .custom-alert-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
   justify-content: center;
 }
 
 .custom-alert-btn {
-  padding: 10px 24px;
-  border-radius: 8px;
+  padding: 12px 28px;
+  border-radius: 12px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
+  outline: none;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.4;
+  min-width: 105px;
 }
 
 .custom-alert-btn.primary {
-  background: #3498db;
+  background: #2b8fe5;
   color: white;
+  box-shadow: 0 2px 6px rgba(43, 143, 229, 0.3);
 }
 
 .custom-alert-btn.primary:hover {
-  background: #2980b9;
+  background: #1f79c6;
+  box-shadow: 0 4px 12px rgba(43, 143, 229, 0.4);
+  transform: translateY(-1px);
+}
+
+.custom-alert-btn.danger {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
+}
+
+.custom-alert-btn.danger:hover {
+  background: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  transform: translateY(-1px);
 }
 
 .custom-alert-btn.secondary {
-  background: #f7fafc;
-  color: #4a5568;
-  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #1e293b;
+  border: 1.5px solid #e2e8f0;
 }
 
 .custom-alert-btn.secondary:hover {
-  background: #edf2f7;
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.custom-alert-btn:active {
+  transform: translateY(0);
 }
 
 /* Animations for icons */

@@ -28,61 +28,72 @@
 
     <!-- Pricelist Package Cards -->
     <div class="ksm-token-packages-grid">
-      <!-- 5 Token -->
-      <div class="ksm-pkg-card" data-pkg-id="pkg_5" data-tokens="5" data-price="10000">
-        <span class="ksm-pkg-tag">Hemat 20%</span>
-        <div class="ksm-pkg-tokens">5 <span>Token</span></div>
-        <div class="ksm-pkg-title">Paket Hemat</div>
-        <div class="ksm-pkg-price">Rp10.000</div>
-        <div class="ksm-pkg-subtext">Rp2.000 / token</div>
-      </div>
 
-      <!-- 10 Token (Popular Default) -->
-      <div class="ksm-pkg-card active popular" data-pkg-id="pkg_10" data-tokens="10" data-price="18000">
-        <span class="ksm-pkg-tag popular-badge">⭐ Paling Populer</span>
-        <div class="ksm-pkg-tokens">10 <span>Token</span></div>
-        <div class="ksm-pkg-title">Paket Standar</div>
-        <div class="ksm-pkg-price">Rp18.000</div>
-        <div class="ksm-pkg-subtext">Rp1.800 / token (Hemat 28%)</div>
-      </div>
-
-      <!-- 20 Token -->
-      <div class="ksm-pkg-card" data-pkg-id="pkg_20" data-tokens="20" data-price="34000">
-        <span class="ksm-pkg-tag">Best Value</span>
-        <div class="ksm-pkg-tokens">20 <span>Token</span></div>
-        <div class="ksm-pkg-title">Paket Super</div>
-        <div class="ksm-pkg-price">Rp34.000</div>
-        <div class="ksm-pkg-subtext">Rp1.700 / token (Hemat 32%)</div>
-      </div>
-
-      <!-- 50 Token -->
-      <div class="ksm-pkg-card" data-pkg-id="pkg_50" data-tokens="50" data-price="80000">
-        <span class="ksm-pkg-tag">Sultan</span>
-        <div class="ksm-pkg-tokens">50 <span>Token</span></div>
-        <div class="ksm-pkg-title">Paket Sultan</div>
-        <div class="ksm-pkg-price">Rp80.000</div>
-        <div class="ksm-pkg-subtext">Rp1.600 / token (Hemat 36%)</div>
-      </div>
-
-      <!-- 1 Token Eceran -->
-      <div class="ksm-pkg-card" data-pkg-id="pkg_1" data-tokens="1" data-price="2500">
+      <!-- 1 Token Trial -->
+      <div class="ksm-pkg-card" data-pkg-id="pkg_1" data-tokens="1" data-price="5000">
         <span class="ksm-pkg-tag">Eceran</span>
         <div class="ksm-pkg-tokens">1 <span>Token</span></div>
         <div class="ksm-pkg-title">Paket Trial</div>
-        <div class="ksm-pkg-price">Rp2.500</div>
-        <div class="ksm-pkg-subtext">Rp2.500 / token</div>
+        <div class="ksm-pkg-price">Rp5.000</div>
+        <div class="ksm-pkg-subtext">Rp5.000 / token</div>
       </div>
+
+      <!-- 10 Token Starter -->
+      <div class="ksm-pkg-card" data-pkg-id="pkg_10" data-tokens="10" data-price="30000">
+        <span class="ksm-pkg-tag">Starter</span>
+        <div class="ksm-pkg-tokens">10 <span>Token</span></div>
+        <div class="ksm-pkg-title">Paket Starter</div>
+        <div class="ksm-pkg-price">Rp30.000</div>
+        <div class="ksm-pkg-subtext">Rp3.000 / token</div>
+      </div>
+
+      <!-- 20 Token Standar (Popular Default) -->
+      <div class="ksm-pkg-card active popular" data-pkg-id="pkg_20" data-tokens="20" data-price="55000">
+        <span class="ksm-pkg-tag popular-badge">⭐ Paling Populer</span>
+        <div class="ksm-pkg-tokens">20 <span>Token</span></div>
+        <div class="ksm-pkg-title">Paket Standar</div>
+        <div class="ksm-pkg-price">Rp55.000</div>
+        <div class="ksm-pkg-subtext">Rp2.750 / token (Hemat 8%)</div>
+      </div>
+
+      <!-- 35 Token Plus -->
+      <div class="ksm-pkg-card" data-pkg-id="pkg_35" data-tokens="35" data-price="85000">
+        <span class="ksm-pkg-tag">Best Value</span>
+        <div class="ksm-pkg-tokens">35 <span>Token</span></div>
+        <div class="ksm-pkg-title">Paket Plus</div>
+        <div class="ksm-pkg-price">Rp85.000</div>
+        <div class="ksm-pkg-subtext">Rp2.428 / token (Hemat 19%)</div>
+      </div>
+
+      <!-- 55 Token Pro -->
+      <div class="ksm-pkg-card" data-pkg-id="pkg_55" data-tokens="55" data-price="120000">
+        <span class="ksm-pkg-tag">Pro</span>
+        <div class="ksm-pkg-tokens">55 <span>Token</span></div>
+        <div class="ksm-pkg-title">Paket Pro</div>
+        <div class="ksm-pkg-price">Rp120.000</div>
+        <div class="ksm-pkg-subtext">Rp2.181 / token (Hemat 27%)</div>
+      </div>
+
+      <!-- 75 Token Sultan -->
+      <div class="ksm-pkg-card" data-pkg-id="pkg_75" data-tokens="75" data-price="150000">
+        <span class="ksm-pkg-tag">Sultan</span>
+        <div class="ksm-pkg-tokens">75 <span>Token</span></div>
+        <div class="ksm-pkg-title">Paket Sultan</div>
+        <div class="ksm-pkg-price">Rp150.000</div>
+        <div class="ksm-pkg-subtext">Rp2.000 / token (Hemat 33%)</div>
+      </div>
+
     </div>
 
     <!-- Payment Summary Box -->
     <div class="ksm-token-summary-box">
       <div class="ksm-summary-row">
         <span>Paket Dipilih:</span>
-        <strong id="ksmSelectedPkgName">Paket Standar (10 Token)</strong>
+        <strong id="ksmSelectedPkgName">Paket Standar (20 Token)</strong>
       </div>
       <div class="ksm-summary-row">
         <span>Total Pembayaran:</span>
-        <strong id="ksmSelectedPkgPrice" class="price-highlight">Rp18.000</strong>
+        <strong id="ksmSelectedPkgPrice" class="price-highlight">Rp55.000</strong>
       </div>
       <div class="ksm-payment-methods-icons">
         <span class="method-badge">QRIS</span>

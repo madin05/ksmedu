@@ -587,6 +587,47 @@ body {
   margin: 0;
 }
 
+.loading-spinner.sm::before {
+  width: 18px;
+  height: 18px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+
+/* ===== BUTTON LOADING SPINNER (komentar) ===== */
+.btn-comment-submit {
+  min-width: 90px;
+  min-height: 34px;
+  justify-content: center;
+}
+
+.btn-comment-submit:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-comment-submit:disabled,
+.btn-comment-submit.is-loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  animation: btn-spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes btn-spin {
+  to { transform: rotate(360deg); }
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

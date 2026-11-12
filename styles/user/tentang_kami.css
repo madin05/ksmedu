@@ -1,0 +1,213 @@
+.tentang-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.tentang-hero {
+    padding: 80px 20px;
+    text-align: center;
+    margin: 30px 0;
+}
+
+.tentang-hero-content h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary, #1a202c);
+}
+
+.tentang-subtitle {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-secondary, #4a5568);
+}
+
+.tentang-content {
+    padding: 40px 0 80px;
+}
+
+.tentang-section {
+    margin-bottom: 60px;
+    background: var(--bg-slate, #f8f9fa);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.tentang-icon {
+    display: none;
+}
+
+.tentang-section h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text-primary, #1a202c);
+}
+
+.tentang-section p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-secondary, #4a5568);
+}
+
+.tentang-list {
+    list-style: none;
+    padding: 0;
+}
+
+.tentang-list li {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-secondary, #4a5568);
+    padding-left: 32px;
+    position: relative;
+    margin-bottom: 12px;
+}
+
+.tentang-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.tentang-services {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.service-card {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.service-card svg {
+    width: 48px;
+    height: 48px;
+    color: #2c3e50;
+    margin-bottom: 16px;
+}
+
+.service-card h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary, #1a202c);
+}
+
+.service-card p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-secondary, #4a5568);
+}
+
+.tentang-cta {
+    background: #2c3e50;
+    padding: 60px 40px;
+    border-radius: 16px;
+    text-align: center;
+    color: white;
+    margin-top: 60px;
+}
+
+.tentang-cta h2 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: white;
+}
+
+.tentang-cta p {
+    font-size: 18px;
+    opacity: 0.95;
+    margin-bottom: 32px;
+    color: white;
+}
+
+.tentang-cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tentang-cta-buttons .btn-primary,
+.tentang-cta-buttons .btn-secondary {
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.tentang-cta-buttons .btn-primary {
+    background: white;
+    color: #2c3e50;
+}
+
+.tentang-cta-buttons .btn-primary:hover {
+    background: #f7fafc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tentang-cta-buttons .btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.tentang-cta-buttons .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .tentang-hero-content h1 {
+        font-size: 32px;
+    }
+
+    .tentang-subtitle {
+        font-size: 16px;
+    }
+
+    .tentang-section {
+        padding: 24px;
+    }
+
+    .tentang-section h2 {
+        font-size: 24px;
+    }
+
+    .tentang-services {
+        grid-template-columns: 1fr;
+    }
+
+    .tentang-cta {
+        padding: 40px 24px;
+    }
+
+    .tentang-cta h2 {
+        font-size: 28px;
+    }
+
+    .tentang-cta-buttons {
+        flex-direction: column;
+    }
+
+    .tentang-cta-buttons .btn-primary,
+    .tentang-cta-buttons .btn-secondary {
+        width: 100%;
+    }
+}

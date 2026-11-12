@@ -187,9 +187,9 @@
     const close = () => overlay.classList.remove("active");
     const open = () => overlay.classList.add("active");
 
-    let selectedPackageId = "pkg_10";
-    let selectedTokens = 10;
-    let selectedPrice = 18000;
+    let selectedPackageId = "pkg_20";
+    let selectedTokens = 20;
+    let selectedPrice = 55000;
 
     const pkgCards = overlay.querySelectorAll(".ksm-pkg-card");
     pkgCards.forEach((card) => {
@@ -264,8 +264,8 @@
             console.log("Midtrans payment success:", result);
             if (typeof global.showToast === "function") {
               global.showToast("Pembayaran berhasil! Saldo token telah bertambah.", "success");
-            } else {
-              alert("Pembayaran berhasil! Saldo token Anda telah bertambah.");
+            } else if (global.showAlert) {
+              global.showAlert.success("Pembayaran berhasil! Saldo token telah bertambah.", "Berhasil");
             }
             close();
             KsmTokenWallet.refresh();
@@ -277,14 +277,16 @@
             console.log("Midtrans payment pending:", result);
             if (typeof global.showToast === "function") {
               global.showToast("Menunggu konfirmasi pembayaran QRIS / Transfer.", "info");
-            } else {
-              alert("Menunggu konfirmasi pembayaran Anda. Silakan selesaikan pembayaran.");
+            } else if (global.showAlert) {
+              global.showAlert.warning("Menunggu konfirmasi pembayaran.", "Pending");
             }
             KsmTokenWallet.startAutoRefresh(4000);
           },
           onError: function (result) {
             console.error("Midtrans payment error:", result);
-            alert("Pembayaran gagal atau dibatalkan. Silakan coba lagi.");
+            const msg = "Pembayaran gagal atau dibatalkan. Silakan coba lagi.";
+            if (global.showAlert) global.showAlert.error(msg, "Gagal");
+            else if (typeof global.showToast === "function") global.showToast(msg, "error");
           },
           onClose: function () {
             console.log("Midtrans payment popup closed");
@@ -293,7 +295,9 @@
         });
       } catch (error) {
         console.error("Midtrans purchase error:", error);
-        alert(error.message || "Gagal memproses pembayaran. Silakan periksa koneksi internet Anda.");
+        const msg = error.message || "Gagal memproses pembayaran. Silakan periksa koneksi internet Anda.";
+        if (global.showAlert) global.showAlert.error(msg, "Gagal");
+        else if (typeof global.showToast === "function") global.showToast(msg, "error");
       } finally {
         payBtn.disabled = false;
         payBtn.innerHTML = originalText;

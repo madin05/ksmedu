@@ -1,6 +1,6 @@
 <?php
 $page_title = 'Detail Artikel - KSM Education';
-$base_css = '<link rel="stylesheet" href="../styles/user/explore_jurnal_user.css?v=20260802" />
+$base_css = '<link rel="stylesheet" href="../styles/user/explore_jurnal_user.css?v=20260908" />
 <link rel="stylesheet" href="../styles/base/skeleton.css" />';
 $extra_head = null;
 include 'components/header.php';
@@ -191,13 +191,13 @@ include 'components/navbar.php';
 <?php
 $extra_scripts = <<<'EOT'
 <script src="../js/script.js"></script>
-    <script src="../js/custom_alerts.js"></script>
+    <script src="../js/custom_alerts.js?v=20260907"></script>
     <script src="../js/pdf_text_extractor.js"></script>
     <script src="../js/explore_jurnal_user.js"></script>
     <script src="../js/api.js"></script>
     <script src="../js/storage.js"></script>
     <script src="../js/mobile_menu.js?v=20251130"></script>
-    <script src="../js/comments.js"></script>
+    <script src="../js/comments.js?v=20260908"></script>
     <script>
       if (typeof feather !== 'undefined') feather.replace();
       (function() {

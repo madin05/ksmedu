@@ -81,7 +81,7 @@ require_once __DIR__ . '/services/landing_controller.php';
                     <i data-feather="upload"></i>
                     <?php echo $t['cta_upload']; ?>
                 </a>
-                <a href="user/opinions_user.php" class="btn-hero-secondary">
+                <a href="<?php echo $is_logged_in ? 'user/opinions_user.php' : 'user/login_user.php'; ?>" class="btn-hero-secondary">
                     <?php echo $t['cta_news']; ?>
                 </a>
             </div>
@@ -182,7 +182,7 @@ require_once __DIR__ . '/services/landing_controller.php';
                         <i data-feather="image"></i>
                         <?php echo $t['title_news']; ?>
                     </h2>
-                    <a href="user/opinions_user.php" class="btn-view-all">
+                    <a href="<?php echo $is_logged_in ? 'user/opinions_user.php' : 'user/login_user.php'; ?>" class="btn-view-all">
                         <?php echo $t['btn_view_all']; ?>
                         <i data-feather="arrow-right" style="width: 14px; height: 14px;"></i>
                     </a>

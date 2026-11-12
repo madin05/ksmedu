@@ -92,7 +92,7 @@
          </div>`
       : `<div class="comment-login-prompt">
            <i data-feather="lock"></i>
-           <p>Silakan <a href="${window.APP_CONFIG.ROOT}/user/login">login</a> untuk berkomentar.</p>
+           <p>Silakan <a href="${window.APP_CONFIG.ROOT}/user/login_user.php">login</a> untuk berkomentar.</p>
          </div>`;
 
     section.innerHTML = `
@@ -120,7 +120,8 @@
       });
       const textarea = document.getElementById('commentInput');
       textarea.addEventListener('input', () => {
-        document.getElementById('charCount').textContent = textarea.value.length;
+        const charCountEl = document.getElementById('charCount');
+        if (charCountEl) charCountEl.textContent = textarea.value.length;
       });
     }
 
@@ -294,11 +295,14 @@
       const row = document.getElementById(`replyFormRow-${parentId}`);
       if (row) btn = row.querySelector('.btn-comment-submit');
     }
+
+    const originalBtnHTML = btn ? btn.innerHTML : '';
     
     textarea.disabled = true;
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = '<span class="loading-spinner sm"></span>';
+      btn.classList.add('is-loading');
+      btn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>Mengirim...</span>';
     }
 
     try {
@@ -336,7 +340,8 @@
       textarea.disabled = false;
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<i data-feather="send"></i> ' + (parentId ? 'Balas' : 'Kirim');
+        btn.classList.remove('is-loading');
+        btn.innerHTML = originalBtnHTML || ('<i data-feather="send"></i> ' + (parentId ? 'Balas' : 'Kirim'));
         if (typeof feather !== 'undefined') feather.replace();
       }
     }
@@ -344,7 +349,19 @@
 
   // ========== DELETE COMMENT ==========
   async function deleteComment(commentId) {
-    const confirmed = confirm('Hapus komentar ini? Balasan di bawahnya juga tidak akan memiliki induk atau terhapus tergantung sistem (saat ini tetap ada tapi jadi top-level jika manual di DB, tapi UI akan menyembunyikan jika parent hilang). Tetap hapus?');
+    let confirmed = false;
+    if (window.showAlert && typeof window.showAlert.confirm === 'function') {
+      confirmed = await window.showAlert.confirm(
+        'Hapus komentar ini? Komentar dan balasan terkait akan dihapus dari tampilan.',
+        'Hapus Komentar?',
+        'Ya, Hapus',
+        'Tidak',
+        'warning',
+        'primary'
+      );
+    } else {
+      confirmed = window.confirm('Hapus komentar ini? Komentar dan balasan terkait akan dihapus dari tampilan.');
+    }
     if (!confirmed) return;
 
     try {

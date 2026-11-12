@@ -6,6 +6,7 @@ let currentType = "";
 async function loadAllComments(page = 1) {
   currentPage = page;
   const tbody = document.getElementById("commentsTableBody");
+  const search = document.getElementById("searchInput").value.trim();
 
   tbody.innerHTML = `
       <tr>
@@ -18,6 +19,7 @@ async function loadAllComments(page = 1) {
   let url = `${window.APP_CONFIG.apiBase}/comments/list_all.php?page=${page}&limit=${limit}`;
   if (currentType) url += `&type=${encodeURIComponent(currentType)}`;
   if (currentSort) url += `&sort=${encodeURIComponent(currentSort)}`;
+  if (search) url += `&search=${encodeURIComponent(search)}`;
 
   try {
     const res = await fetch(url, { credentials: "include" });
@@ -124,7 +126,19 @@ function renderPagination(totalPages, current) {
 }
 
 async function adminDeleteComment(commentId) {
-  const confirmed = confirm("Yakin ingin menghapus komentar ini?");
+  let confirmed = false;
+  if (window.showAlert && typeof window.showAlert.confirm === "function") {
+    confirmed = await window.showAlert.confirm(
+      "Yakin ingin menghapus komentar ini? Tindakan ini tidak dapat dibatalkan.",
+      "Hapus Komentar?",
+      "Ya, Hapus",
+      "Tidak",
+      "warning",
+      "primary"
+    );
+  } else {
+    confirmed = window.confirm("Yakin ingin menghapus komentar ini?");
+  }
   if (!confirmed) return;
 
   try {
@@ -147,10 +161,18 @@ async function adminDeleteComment(commentId) {
       if (m)
         tc.textContent = `Total: ${Math.max(0, parseInt(m[0]) - 1)} komentar`;
     } else {
-      alert(data.message || "Gagal menghapus.");
+      if (window.showAlert && typeof window.showAlert.error === "function") {
+        window.showAlert.error(data.message || "Gagal menghapus.");
+      } else {
+        window.alert(data.message || "Gagal menghapus.");
+      }
     }
   } catch (e) {
-    alert("Terjadi kesalahan jaringan.");
+    if (window.showAlert && typeof window.showAlert.error === "function") {
+      window.showAlert.error("Terjadi kesalahan jaringan.");
+    } else {
+      window.alert("Terjadi kesalahan jaringan.");
+    }
   }
 }
 
@@ -205,6 +227,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (this.loadingSpinner) {
         this.loadingSpinner.className = "loader";
     }
+    const searchInput = document.getElementById("searchInput");
+    if (searchInput) {
+        searchInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") loadAllComments();
+        });
+    }
+
     setupFilterDropdown();
     loadAllComments();
     if (typeof feather !== "undefined") feather.replace();

@@ -9,7 +9,7 @@ include 'components/sidebar.php';
     <div class="container">
       <!-- Filter & Search Section -->
       <section class="filter-section">
-        <!-- Row 1: Icon Sort -->
+        <!-- Row 1: Icon Sort + Search Box -->
 
         <div class="filter-row-top">
           <!-- Icon Sort Dropdown -->
@@ -35,6 +35,12 @@ include 'components/sidebar.php';
                 Paling Populer
               </button>
             </div>
+          </div>
+
+          <!-- Search Box -->
+          <div class="search-box">
+            <i data-feather="search"></i>
+            <input type="text" placeholder="Cari opini..." id="searchInput" />
           </div>
 
         </div>

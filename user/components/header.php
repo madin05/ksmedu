@@ -28,7 +28,7 @@
   <?= $base_css ?? '' ?>
   <link rel="stylesheet" href="../styles/base/header.css?v=20260824_v111" />
   <link rel="stylesheet" href="../styles/base/toast.css" />
-  <link rel="stylesheet" href="../styles/base/custom_alerts.css" />
+  <link rel="stylesheet" href="../styles/base/custom_alerts.css?v=20260907" />
   <link rel="stylesheet" href="../styles/user/journal.css?v=20260824_v103" />
   <link rel="stylesheet" href="../styles/base/footer.css" />
   <link rel="stylesheet" href="../styles/base/skeleton.css" />

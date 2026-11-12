@@ -15,9 +15,11 @@
 
 
 <!-- UI Components -->
-<script src="../js/mobile_menu.js"></script>
+<script src="../js/mobile_menu.js?v=20260908"></script>
+<!-- Sidebar admin: mode ciut (desktop) + drawer (mobile) -->
+<script src="../js/admin_sidebar.js?v=20260908"></script>
 <!-- Navbar admin: badge antrean + status tombol muat ulang -->
-<script src="../js/admin_nav.js?v=20260731"></script>
+<script src="../js/admin_nav.js?v=20260908"></script>
 <script src="../js/script.js"></script>
 
 <!-- Initialization -->

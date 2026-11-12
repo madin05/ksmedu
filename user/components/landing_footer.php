@@ -5,6 +5,7 @@
  */
 $lang = $lang ?? 'id';
 $t = $t ?? [];
+$is_logged_in = $is_logged_in ?? false;
 ?>
 <footer id="about" class="landing-footer">
     <div class="landing-footer-grid">
@@ -24,7 +25,7 @@ $t = $t ?? [];
             <ul>
                 <li><a href="#home"><?php echo $t['nav_home']; ?></a></li>
                 <li><a href="user/journals_user.php"><?php echo $t['nav_journals']; ?></a></li>
-                <li><a href="user/opinions_user.php"><?php echo $t['nav_articles']; ?></a></li>
+                <li><a href="<?php echo $is_logged_in ? 'user/opinions_user.php' : 'user/login_user.php'; ?>"><?php echo $t['nav_articles']; ?></a></li>
                 <li><a href="#guidelines"><?php echo $t['guidelines_title']; ?></a></li>
             </ul>
         </div>

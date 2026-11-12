@@ -61,6 +61,12 @@
         await this.loadJournals();
         this.renderJournals();
       });
+
+      window.addEventListener("opinions:changed", async () => {
+        console.log("Opinions changed event received, reloading...");
+        await this.loadJournals();
+        this.renderJournals();
+      });
     }
 
     // ===== LOAD JOURNALS FROM DATABASE =====
@@ -345,6 +351,9 @@
         return "Unknown Author";
       };
 
+      const safeTitle = (journal.title || "").replace(/['"]/g, "");
+      const isOpini = journal._type === "opini";
+
       card.innerHTML = `
         <div style="width: 100%; height: 200px; overflow: hidden; position: relative;">
             <img src="${journal.coverImage}" 
@@ -412,29 +421,41 @@
 
           ${
             isAdmin
-              ? `
+              ? (() => {
+                  const cardType = journal._type || 'jurnal';
+                  const dropdownKey = `${cardType}-${journal.id}`;
+                  return `
             <div class="card-actions">
               <div class="dropdown-menu-container">
-                <button class="dropdown-toggle" onclick="event.stopPropagation(); toggleDropdown('${journal.id}')">
+                <button class="dropdown-toggle" type="button" onclick="event.stopPropagation(); window.toggleDropdown ? window.toggleDropdown('${dropdownKey}') : toggleDropdown('${dropdownKey}')" title="Aksi">
                   <i data-feather="more-vertical"></i>
                 </button>
-                <div id="dropdown-${journal.id}" class="dropdown-content">
-                  <button class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); downloadJournalPdf('${journal.file || journal.fileData || ''}', '${journal.title.replace(/'/g, "\\'")}'); closeDropdown('${journal.id}')">
+                <div id="dropdown-${dropdownKey}" class="dropdown-content">
+                  <button type="button" class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); downloadJournalPdf('${journal.file || journal.fileData || ''}', '${safeTitle}'); window.closeDropdown ? window.closeDropdown('${dropdownKey}') : closeDropdown('${dropdownKey}')">
                     <i data-feather="download"></i> Download
                   </button>
-                  <button class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.editJournalManager.openEditModal('${journal.id}'); closeDropdown('${journal.id}')">
+                  <button type="button" class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); ${
+                    isOpini
+                      ? `window.openEditOpinionModal('${journal.id}')`
+                      : `window.editJournalManager?.openEditModal('${journal.id}')`
+                  }; window.closeDropdown ? window.closeDropdown('${dropdownKey}') : closeDropdown('${dropdownKey}')">
                     <i data-feather="edit"></i> Edit
                   </button>
-                  <button class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); journalManager.deleteJournal('${journal.id}', '${journal.title.replace(/'/g, "\\'")}'); closeDropdown('${journal.id}')">
+                  <button type="button" class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); ${
+                    isOpini
+                      ? `window.deleteOpinion('${journal.id}', '${safeTitle}')`
+                      : `(window.deleteJournal ? window.deleteJournal('${journal.id}', '${safeTitle}') : journalManager.deleteJournal('${journal.id}', '${safeTitle}'))`
+                  }; window.closeDropdown ? window.closeDropdown('${dropdownKey}') : closeDropdown('${dropdownKey}')">
                     <i data-feather="trash-2"></i> Hapus
                   </button>
-                  <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${journal.id}'); closeDropdown('${journal.id}')">
+                  <button type="button" class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${journal.id}', '${cardType}'); window.closeDropdown ? window.closeDropdown('${dropdownKey}') : closeDropdown('${dropdownKey}')">
                     <i data-feather="share-2"></i> Share
                   </button>
                 </div>
               </div>
             </div>
-          `
+                  `;
+                })()
               : ""
           }
         </div>
@@ -661,35 +682,61 @@
   });
 
   // ===== DROPDOWN FUNCTIONS FOR ADMIN ACTIONS =====
-  function toggleDropdown(journalId) {
-    const dropdown = document.getElementById(`dropdown-${journalId}`);
-    const isVisible = dropdown.style.display === "block";
+  function toggleDropdown(key) {
+    let dropdown = document.getElementById(`dropdown-${key}`);
+    if (!dropdown) {
+      dropdown = document.getElementById(`dropdown-jurnal-${key}`) ||
+                 document.getElementById(`dropdown-opini-${key}`) ||
+                 document.getElementById(`pg-dropdown-${key}`);
+    }
+    if (!dropdown) return;
+
+    const isVisible = dropdown.classList.contains("show") || dropdown.style.display === "block";
 
     // Close all other dropdowns first
     document.querySelectorAll(".dropdown-content").forEach((d) => {
       d.style.display = "none";
+      d.classList.remove("show");
     });
 
     // Toggle current dropdown
-    dropdown.style.display = isVisible ? "none" : "block";
-
-    // Close dropdown when clicking outside
     if (!isVisible) {
-      document.addEventListener("click", function closeDropdown(e) {
+      dropdown.style.display = "block";
+      dropdown.classList.add("show");
+
+      const closeHandler = (e) => {
         if (
           !dropdown.contains(e.target) &&
           !e.target.closest(".dropdown-toggle")
         ) {
           dropdown.style.display = "none";
-          document.removeEventListener("click", closeDropdown);
+          dropdown.classList.remove("show");
+          document.removeEventListener("click", closeHandler);
         }
-      });
+      };
+      setTimeout(() => {
+        document.addEventListener("click", closeHandler);
+      }, 10);
+    } else {
+      dropdown.style.display = "none";
+      dropdown.classList.remove("show");
     }
   }
 
-  function closeDropdown(journalId) {
-    const dropdown = document.getElementById(`dropdown-${journalId}`);
-    dropdown.style.display = "none";
+  function closeDropdown(key) {
+    let dropdown = document.getElementById(`dropdown-${key}`);
+    if (!dropdown) {
+      dropdown = document.getElementById(`dropdown-jurnal-${key}`) ||
+                 document.getElementById(`dropdown-opini-${key}`) ||
+                 document.getElementById(`pg-dropdown-${key}`);
+    }
+    if (dropdown) {
+      dropdown.style.display = "none";
+      dropdown.classList.remove("show");
+    }
   }
+
+  window.toggleDropdown = toggleDropdown;
+  window.closeDropdown = closeDropdown;
 
   console.log("jurnal.js loaded (Database Mode)");

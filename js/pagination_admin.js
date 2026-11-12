@@ -250,7 +250,7 @@ class PaginationManager {
       }
     };
 
-    const safeTitle = item.title.replace(/'/g, "\\'");
+    const safeTitle = (item.title || "").replace(/['"]/g, "");
 
     if (this.dataType === "jurnal") {
       const author =
@@ -290,20 +290,20 @@ class PaginationManager {
           }
           <div class="card-actions">
             <div class="dropdown-menu-container">
-              <button class="dropdown-toggle" onclick="event.stopPropagation(); togglePaginationDropdown('jurnal-${item.id}')">
+              <button type="button" class="dropdown-toggle" onclick="event.stopPropagation(); window.togglePaginationDropdown ? window.togglePaginationDropdown('jurnal-${item.id}') : togglePaginationDropdown('jurnal-${item.id}')" title="Aksi">
                 <i data-feather="more-vertical"></i>
               </button>
               <div id="pg-dropdown-jurnal-${item.id}" class="dropdown-content">
-                <button class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); downloadJournalPdf('${item.file || item.fileData || ''}', '${safeTitle}'); closePaginationDropdown('jurnal-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); downloadJournalPdf('${item.file || item.fileData || ''}', '${safeTitle}'); window.closePaginationDropdown ? window.closePaginationDropdown('jurnal-${item.id}') : closePaginationDropdown('jurnal-${item.id}')">
                   <i data-feather="download"></i> Download
                 </button>
-                <button class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.editJournalManager?.openEditModal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.editJournalManager?.openEditModal('${item.id}'); window.closePaginationDropdown ? window.closePaginationDropdown('jurnal-${item.id}') : closePaginationDropdown('jurnal-${item.id}')">
                   <i data-feather="edit"></i> Edit
                 </button>
-                <button class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); window.journalManager?.deleteJournal('${item.id}', '${safeTitle}'); closePaginationDropdown('jurnal-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); (window.deleteJournal ? window.deleteJournal('${item.id}', '${safeTitle}') : window.journalManager?.deleteJournal('${item.id}', '${safeTitle}')); window.closePaginationDropdown ? window.closePaginationDropdown('jurnal-${item.id}') : closePaginationDropdown('jurnal-${item.id}')">
                   <i data-feather="trash-2"></i> Hapus
                 </button>
-                <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${item.id}'); closePaginationDropdown('jurnal-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${item.id}'); window.closePaginationDropdown ? window.closePaginationDropdown('jurnal-${item.id}') : closePaginationDropdown('jurnal-${item.id}')">
                   <i data-feather="share-2"></i> Share
                 </button>
               </div>
@@ -354,20 +354,20 @@ class PaginationManager {
           }
           <div class="card-actions">
             <div class="dropdown-menu-container">
-              <button class="dropdown-toggle" onclick="event.stopPropagation(); togglePaginationDropdown('opini-${item.id}')">
+              <button type="button" class="dropdown-toggle" onclick="event.stopPropagation(); window.togglePaginationDropdown ? window.togglePaginationDropdown('opini-${item.id}') : togglePaginationDropdown('opini-${item.id}')" title="Aksi">
                 <i data-feather="more-vertical"></i>
               </button>
               <div id="pg-dropdown-opini-${item.id}" class="dropdown-content">
-                <button class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); downloadJournalPdf('${item.fileUrl || item.file || ''}', '${safeTitle}'); closePaginationDropdown('opini-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-download" onclick="event.stopPropagation(); downloadJournalPdf('${item.fileUrl || item.file || ''}', '${safeTitle}'); window.closePaginationDropdown ? window.closePaginationDropdown('opini-${item.id}') : closePaginationDropdown('opini-${item.id}')">
                   <i data-feather="download"></i> Download
                 </button>
-                <button class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.openEditOpinionModal('${item.id}'); closePaginationDropdown('opini-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-edit" onclick="event.stopPropagation(); window.openEditOpinionModal('${item.id}'); window.closePaginationDropdown ? window.closePaginationDropdown('opini-${item.id}') : closePaginationDropdown('opini-${item.id}')">
                   <i data-feather="edit"></i> Edit
                 </button>
-                <button class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); window.deleteOpinion('${item.id}', '${safeTitle}'); closePaginationDropdown('opini-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-delete" onclick="event.stopPropagation(); window.deleteOpinion('${item.id}', '${safeTitle}'); window.closePaginationDropdown ? window.closePaginationDropdown('opini-${item.id}') : closePaginationDropdown('opini-${item.id}')">
                   <i data-feather="trash-2"></i> Hapus
                 </button>
-                <button class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${item.id}'); closePaginationDropdown('opini-${item.id}')">
+                <button type="button" class="dropdown-item-btn dd-share" onclick="event.stopPropagation(); openShareModal('${item.id}'); window.closePaginationDropdown ? window.closePaginationDropdown('opini-${item.id}') : closePaginationDropdown('opini-${item.id}')">
                   <i data-feather="share-2"></i> Share
                 </button>
               </div>
@@ -624,5 +624,8 @@ function closePaginationDropdown(key) {
   const dropdown = document.getElementById(`pg-dropdown-${key}`);
   if (dropdown) dropdown.style.display = "none";
 }
+
+window.togglePaginationDropdown = togglePaginationDropdown;
+window.closePaginationDropdown = closePaginationDropdown;
 
 console.log("pagination_admin.js loaded");

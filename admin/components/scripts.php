@@ -11,16 +11,16 @@
       JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
   ); ?>;
 </script>
-<script src="../js/admin_session.js?v=20260731"></script>
+<script src="../js/admin_session.js?v=<?= time() ?>"></script>
 
 
 <!-- UI Components -->
-<script src="../js/mobile_menu.js?v=20260908"></script>
+<script src="../js/mobile_menu.js?v=<?= time() ?>"></script>
 <!-- Sidebar admin: mode ciut (desktop) + drawer (mobile) -->
-<script src="../js/admin_sidebar.js?v=20260908"></script>
+<script src="../js/admin_sidebar.js?v=<?= time() ?>"></script>
 <!-- Navbar admin: badge antrean + status tombol muat ulang -->
-<script src="../js/admin_nav.js?v=20260908"></script>
-<script src="../js/script.js"></script>
+<script src="../js/admin_nav.js?v=<?= time() ?>"></script>
+<script src="../js/script.js?v=<?= time() ?>"></script>
 
 <!-- Initialization -->
 <script>

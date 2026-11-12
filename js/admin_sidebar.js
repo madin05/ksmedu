@@ -50,6 +50,7 @@
     if (collapseBtn) {
       collapseBtn.addEventListener("click", (e) => {
         e.stopPropagation();
+        sidebar.classList.remove("sidebar-hover-open");
         const collapsed = document.body.classList.toggle("sidebar-collapsed");
         collapseBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
         try {
@@ -59,6 +60,22 @@
         }
       });
     }
+
+    // Hover-to-expand saat desktop & mode ciut (sidebar-collapsed)
+    let hoverTimer;
+    sidebar.addEventListener("mouseenter", () => {
+      if (document.body.classList.contains("sidebar-collapsed") && !isMobileView()) {
+        clearTimeout(hoverTimer);
+        sidebar.classList.add("sidebar-hover-open");
+      }
+    });
+
+    sidebar.addEventListener("mouseleave", () => {
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        sidebar.classList.remove("sidebar-hover-open");
+      }, 120);
+    });
 
     if (hamburger) {
       hamburger.addEventListener("click", (e) => {

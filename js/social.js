@@ -30,7 +30,7 @@ function downloadJournalPdf(fileUrl, title) {
   }
 }
 
-function openShareModal(id) {
+function openShareModal(id, explicitType) {
   let article = null;
 
   if (window.journalManager && typeof window.journalManager.getJournalById === "function") {
@@ -66,7 +66,7 @@ function openShareModal(id) {
 
   const isOpiniPage = window.location.pathname.includes("opini");
   const articleType =
-    article._type || article.type || (isOpiniPage ? "opini" : "jurnal");
+    explicitType || article._type || article.type || (isOpiniPage ? "opini" : "jurnal");
   const explorePage = articleType === "opini" ? "explore_opini" : "explore_jurnal";
 
   currentShareUrl = `${baseUrl}${path}/${explorePage}?id=${id}&type=${articleType}`;
@@ -145,3 +145,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+window.openShareModal = openShareModal;
+window.closeShareModal = closeShareModal;
+window.downloadJournalPdf = downloadJournalPdf;
+window.copyShareLink = copyShareLink;
+window.shareToWhatsApp = shareToWhatsApp;
+window.shareToFacebook = shareToFacebook;
+window.shareToTwitter = shareToTwitter;

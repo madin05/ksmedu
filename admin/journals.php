@@ -220,16 +220,15 @@ include 'components/sidebar.php';
     </div>
 
 <?php
-$extra_scripts = <<<'EOT'
-<script src="../js/statistic.js"></script>
-    <script src="../js/file_upload.js"></script>
-    <script src="../js/pagination_admin.js?v=20260321"></script>
-    <script src="../js/jurnal.js?v=20260321"></script>
-    <script src="../js/social.js"></script>
+$extra_scripts = '
+    <script src="../js/statistic.js?v=' . time() . '"></script>
+    <script src="../js/file_upload.js?v=' . time() . '"></script>
+    <script src="../js/pagination_admin.js?v=' . time() . '"></script>
+    <script src="../js/jurnal.js?v=' . time() . '"></script>
+    <script src="../js/social.js?v=' . time() . '"></script>
     <script>
-      if (typeof feather !== 'undefined') feather.replace();
+      if (typeof feather !== \'undefined\') feather.replace();
     </script>
-  
-EOT;
+';
 include 'components/footer.php';
 ?>

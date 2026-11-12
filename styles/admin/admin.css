@@ -553,7 +553,7 @@ button:focus-visible {
   background: #ffffff !important;
   border: 1px solid var(--border-color-soft, rgba(44, 62, 80, 0.15)) !important;
   border-radius: 12px !important;
-  overflow: hidden !important;
+  overflow: visible !important;
   box-shadow: 0 4px 14px rgba(44, 62, 80, 0.06) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease !important;
   display: flex !important;
@@ -628,22 +628,145 @@ button:focus-visible {
   line-height: 1.5 !important;
 }
 
+.articles-wrapper {
+  max-height: none !important;
+  overflow: visible !important;
+  margin-bottom: 24px !important;
+}
+
+.articles-wrapper::after {
+  display: none !important;
+}
+
+.list-view .card-actions,
 .card-actions {
-  margin-top: 14px !important;
+  position: static !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  margin-top: auto !important;
   padding-top: 12px !important;
   border-top: 1px solid var(--border-color-soft, rgba(44, 62, 80, 0.12)) !important;
 }
 
+.dropdown-menu-container {
+  position: relative !important;
+}
+
+.dropdown-toggle {
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 6px !important;
+  border-radius: 6px !important;
+  color: #64748b !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.dropdown-toggle:hover {
+  background: rgba(44, 62, 80, 0.08) !important;
+  color: #1e293b !important;
+}
+
+.list-view .dropdown-content,
 .dropdown-content {
+  display: none;
   position: absolute !important;
-  top: calc(100% + 4px) !important;
-  bottom: auto !important;
+  bottom: calc(100% + 6px) !important;
+  top: auto !important;
   right: 0 !important;
   background: #ffffff !important;
   border: 1px solid var(--border-color-soft, rgba(44, 62, 80, 0.15)) !important;
   border-radius: 10px !important;
-  box-shadow: 0 10px 25px rgba(44, 62, 80, 0.15) !important;
-  z-index: 100 !important;
+  box-shadow: 0 10px 25px rgba(44, 62, 80, 0.18) !important;
+  z-index: 9999 !important;
+  min-width: 150px !important;
+  padding: 6px 0 !important;
+}
+
+.list-view .dropdown-content.show,
+.dropdown-content.show {
+  display: block !important;
+}
+
+.dropdown-item-btn {
+  width: 100% !important;
+  padding: 9px 14px !important;
+  border: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #334155 !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+.dropdown-item-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.dropdown-item-btn svg,
+.dropdown-item-btn i {
+  width: 15px !important;
+  height: 15px !important;
+  stroke-width: 2 !important;
+  flex-shrink: 0 !important;
+}
+
+.dropdown-item-btn.dd-delete {
+  color: #ef4444 !important;
+}
+
+.dropdown-item-btn.dd-delete:hover {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
+}
+
+/* Dark mode overrides for admin dropdown */
+[data-theme="dark"] .list-view .card-actions,
+[data-theme="dark"] .card-actions {
+  border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+[data-theme="dark"] .dropdown-toggle {
+  color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .dropdown-toggle:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .list-view .dropdown-content,
+[data-theme="dark"] .dropdown-content {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-theme="dark"] .dropdown-item-btn {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="dark"] .dropdown-item-btn:hover {
+  background-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .dropdown-item-btn.dd-delete {
+  color: #f87171 !important;
+}
+
+[data-theme="dark"] .dropdown-item-btn.dd-delete:hover {
+  background-color: rgba(239, 68, 68, 0.18) !important;
 }
 
 /* 3. Modal Structural Safeguards */

@@ -133,7 +133,7 @@ include 'components/sidebar.php';
           <i data-feather="x"></i>
         </button>
         <h2>EDIT JURNAL</h2>
-        <form id="editForm" onsubmit="return false;">
+        <form id="editForm">
           <input type="hidden" id="editJournalId" />
           <div class="form-group">
             <label for="editJudulJurnal"
@@ -356,23 +356,18 @@ include 'components/sidebar.php';
     <!-- 0. Custom Alerts -->
     
 <?php
-$extra_scripts = <<<'EOT'
-<script src="../js/statistic.js"></script>
-    <script src="../js/dashboard_admin_overview.js?v=20260731"></script>
-
-    <script src="../js/jurnal.js?v=20260321"></script>
-    <script src="../js/opinions.js?v=20260321"></script>
-    <script src="../js/tags_manager.js?v=20240316"></script>
-    <script src="../js/file_upload.js"></script>
-    <script src="../js/pagination_admin.js?v=20260321"></script>
-    <script src="../js/dual_upload_handler.js"></script>
-    <script src="../js/upload_tabs.js"></script>
-    <script src="../js/social.js"></script>
+$extra_scripts = '
+    <script src="../js/statistic.js?v=' . time() . '"></script>
+    <script src="../js/dashboard_admin_overview.js?v=' . time() . '"></script>
+    <script src="../js/jurnal.js?v=' . time() . '"></script>
+    <script src="../js/opinions.js?v=' . time() . '"></script>
+    <script src="../js/tags_manager.js?v=' . time() . '"></script>
+    <script src="../js/file_upload.js?v=' . time() . '"></script>
+    <script src="../js/pagination_admin.js?v=' . time() . '"></script>
+    <script src="../js/social.js?v=' . time() . '"></script>
     <script>
-      if (typeof feather !== 'undefined') feather.replace();
+      if (typeof feather !== \'undefined\') feather.replace();
     </script>
-
-  
-EOT;
+';
 include 'components/footer.php';
 ?>

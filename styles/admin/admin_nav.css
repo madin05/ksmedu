@@ -380,6 +380,100 @@ body.sidebar-collapsed .sidebar-logout {
 }
 
 /* ===================================================================
+   HOVER-TO-EXPAND SAAT MODE CIUT (DESKTOP)
+   =================================================================== */
+@media (min-width: 1025px) {
+  body.sidebar-collapsed .admin-sidebar:hover,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open {
+    width: var(--sidebar-w) !important;
+    box-shadow: 6px 0 25px rgba(15, 23, 42, 0.16) !important;
+    z-index: 1005 !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .brand-text,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .brand-text,
+  body.sidebar-collapsed .admin-sidebar:hover .side-label,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .side-label,
+  body.sidebar-collapsed .admin-sidebar:hover .sidebar-profile-text,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .sidebar-profile-text {
+    display: flex !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .side-section-label,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .side-section-label {
+    display: block !important;
+    height: auto !important;
+    background: transparent !important;
+    margin: 16px 12px 6px !important;
+    padding: 0 !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .sidebar-brand,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .sidebar-brand {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    padding: 0 12px 0 16px !important;
+    height: var(--topbar-h) !important;
+    min-height: var(--topbar-h) !important;
+    gap: 8px !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .brand-link,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .brand-link {
+    justify-content: flex-start !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .admin-nav,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .admin-nav {
+    padding: 14px 12px !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .side-link,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .side-link {
+    justify-content: flex-start !important;
+    padding: 10px 12px !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .admin-nav .nav-badge,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .admin-nav .nav-badge {
+    position: static !important;
+    transform: none !important;
+    margin-left: auto !important;
+    min-width: 20px !important;
+    font-size: 10.5px !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .sidebar-profile,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .sidebar-profile {
+    justify-content: flex-start !important;
+    padding: 10px !important;
+    background: #f8fafc !important;
+    border-color: var(--sidebar-border) !important;
+  }
+
+  body.sidebar-collapsed .admin-sidebar:hover .sidebar-logout,
+  body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .sidebar-logout {
+    display: inline-flex !important;
+  }
+
+  /* Dark mode overrides saat hover-expanded */
+  [data-theme="dark"] body.sidebar-collapsed .admin-sidebar:hover,
+  [data-theme="dark"] body.sidebar-collapsed .admin-sidebar.sidebar-hover-open,
+  body.dark-mode.sidebar-collapsed .admin-sidebar:hover,
+  body.dark-mode.sidebar-collapsed .admin-sidebar.sidebar-hover-open {
+    box-shadow: 6px 0 25px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  [data-theme="dark"] body.sidebar-collapsed .admin-sidebar:hover .sidebar-profile,
+  [data-theme="dark"] body.sidebar-collapsed .admin-sidebar.sidebar-hover-open .sidebar-profile,
+  body.dark-mode.sidebar-collapsed .admin-sidebar:hover .sidebar-profile,
+  body.dark-mode.sidebar-collapsed .admin-sidebar.sidebar-hover-open .sidebar-profile {
+    background: #0b1220 !important;
+    border-color: #1e293b !important;
+  }
+}
+
+/* ===================================================================
    TOPBAR RAMPING
    =================================================================== */
 .admin-topbar {

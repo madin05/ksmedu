@@ -679,20 +679,34 @@ class EditJournalManager {
     const pengurus = this.getPengurus();
 
     try {
+      const isOpini =
+        this.currentType === "opini" ||
+        this.modal?.dataset.type === "opini";
+
+      const targetEndpoint = isOpini
+        ? `${window.APP_CONFIG.apiBase}/update_opinion.php`
+        : `${window.APP_CONFIG.apiBase}/update_journal.php`;
+
       const formData = new FormData();
 
       formData.append("id", this.currentJournalId);
 
       if (judul) formData.append("title", judul);
-      if (abstrak) formData.append("abstract", abstrak);
+      if (abstrak) {
+        if (isOpini) {
+          formData.append("description", abstrak);
+        } else {
+          formData.append("abstract", abstrak);
+        }
+      }
       if (email) formData.append("email", email);
       if (contact) formData.append("contact", contact);
-      if (volume) formData.append("volume", volume);
+      if (!isOpini && volume) formData.append("volume", volume);
 
       if (authors.length > 0)
         formData.append("authors", JSON.stringify(authors));
       if (tags.length > 0) formData.append("tags", JSON.stringify(tags));
-      if (pengurus.length > 0)
+      if (!isOpini && pengurus.length > 0)
         formData.append("pengurus", JSON.stringify(pengurus));
 
       const fileInput = document.getElementById("editFileInput");
@@ -711,27 +725,35 @@ class EditJournalManager {
 
       // Use authFetch if available for JWT support
       const fetchFn = window.authFetch || fetch;
-      const response = await fetchFn(`${window.APP_CONFIG.apiBase}/update_journal.php`, {
+      const response = await fetchFn(targetEndpoint, {
         method: "POST",
         body: formData,
       });
 
       const result = await response.json();
+      if (!result.ok) {
+        throw new Error(result.message || "Gagal menyimpan perubahan");
+      }
 
       this.hideLoading();
 
       showToast(
-        "Perubahan jurnal telah disimpan ke sistem.",
+        isOpini
+          ? "Artikel opini berhasil diperbarui."
+          : "Perubahan jurnal telah disimpan ke sistem.",
         "success",
         "UPDATE BERHASIL",
       );
       this.closeEditModal();
 
       // Dispatch event to refresh lists without reload
-      const eventName =
-        this.currentType === "jurnal" ? "journals:changed" : "opinions:changed";
       window.dispatchEvent(
-        new CustomEvent(eventName, {
+        new CustomEvent("journals:changed", {
+          detail: { id: this.currentJournalId, action: "updated" },
+        }),
+      );
+      window.dispatchEvent(
+        new CustomEvent("opinions:changed", {
           detail: { id: this.currentJournalId, action: "updated" },
         }),
       );
@@ -880,6 +902,82 @@ function syncLoginStatusUI() {
   }
 }
 
+// ===== GLOBAL DELETE JOURNAL =====
+window.deleteJournal = async function (id, title) {
+  if (!id) {
+    if (typeof showAlert !== "undefined") {
+      showAlert.warning("ID journal tidak valid", "ID Tidak Valid");
+    } else {
+      alert("ID journal tidak valid");
+    }
+    return;
+  }
+  const confirmMsg = title
+    ? `Yakin ingin menghapus jurnal "${title}"?\n\nData akan dihapus permanent dari database!`
+    : `Yakin ingin menghapus jurnal ini?\n\nData akan dihapus permanent dari database!`;
+
+  let confirmed = false;
+  if (typeof showAlert !== "undefined" && typeof showAlert.confirm === "function") {
+    confirmed = await showAlert.confirm(confirmMsg, "Konfirmasi Hapus");
+  } else {
+    confirmed = confirm(confirmMsg);
+  }
+  if (!confirmed) return;
+
+  const card = document.querySelector(
+    `[data-journal-id="${id}"], [data-jurnal-id="${id}"]`
+  );
+  if (card) {
+    card.style.opacity = "0.5";
+    card.style.pointerEvents = "none";
+  }
+
+  try {
+    const fetchFn = window.authFetch || fetch;
+    const response = await fetchFn(
+      `${window.APP_CONFIG.apiBase}/delete_journal.php?id=${encodeURIComponent(id)}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    const result = await response.json();
+    if (result.ok) {
+      if (typeof showAlert !== "undefined") {
+        showAlert.success("Jurnal berhasil dihapus!", "Sukses");
+      } else if (typeof showToast === "function") {
+        showToast("Jurnal berhasil dihapus!", "success");
+      }
+      window.dispatchEvent(
+        new CustomEvent("journals:changed", {
+          detail: { action: "deleted", id: id },
+        })
+      );
+      if (card) {
+        card.remove();
+      }
+      if (window.statisticManager) {
+        setTimeout(async () => {
+          await window.statisticManager.fetchStatistics();
+        }, 500);
+      }
+    } else {
+      throw new Error(result.message || "Gagal menghapus jurnal dari database");
+    }
+  } catch (error) {
+    if (typeof showAlert !== "undefined") {
+      showAlert.error("Gagal menghapus jurnal: " + error.message, "Error");
+    } else {
+      alert("Gagal menghapus jurnal: " + error.message);
+    }
+    if (card) {
+      card.style.opacity = "1";
+      card.style.pointerEvents = "auto";
+    }
+  }
+};
+
 // ===== GLOBAL DELETE OPINION =====
 window.deleteOpinion = async function (id, title) {
   const confirmed = await showAlert.confirm(
@@ -888,7 +986,9 @@ window.deleteOpinion = async function (id, title) {
   );
   if (!confirmed) return;
 
-  const card = document.querySelector(`[data-opinion-id="${id}"]`);
+  const card = document.querySelector(
+    `[data-opinion-id="${id}"], [data-opini-id="${id}"], [data-journal-id="${id}"]`
+  );
   if (card) {
     card.style.opacity = "0.5";
     card.style.pointerEvents = "none";
@@ -897,7 +997,7 @@ window.deleteOpinion = async function (id, title) {
   try {
     // Use authFetch for JWT support
     const fetchFn = window.authFetch || fetch;
-    const response = await fetchFn(`${window.APP_CONFIG.apiBase}/delete_opinion.php?id=${id}`, {
+    const response = await fetchFn(`${window.APP_CONFIG.apiBase}/delete_opinion.php?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
     });
@@ -913,6 +1013,14 @@ window.deleteOpinion = async function (id, title) {
           detail: { id: id, action: "deleted" },
         }),
       );
+      if (card) {
+        card.remove();
+      }
+      if (window.statisticManager) {
+        setTimeout(async () => {
+          await window.statisticManager.fetchStatistics();
+        }, 500);
+      }
     } else {
       throw new Error(result.message || "Gagal menghapus");
     }
@@ -946,6 +1054,8 @@ window.openEditOpinionModal = async function (id) {
 
     // Panggil method EditJournalManager untuk render Tags dan Penulis (Pengurus di skip)
     if (window.editJournalManager) {
+      window.editJournalManager.currentJournalId = id;
+      window.editJournalManager.currentType = "opini";
       window.editJournalManager.populateTags(o.tags || []);
       const authors = o.author || o.authors || ["Anonymous"];
       window.editJournalManager.populateAuthors(authors);

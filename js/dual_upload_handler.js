@@ -618,6 +618,7 @@ if (window._dualUploadHandlerLoaded) {
           description:       abstrak,
           category:          'opini',
           author_name:       authors.join(', '),
+          authors:           JSON.stringify(authors),
           email,
           contact:           kontak,
           tags:              JSON.stringify(tags),

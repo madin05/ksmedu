@@ -35,6 +35,7 @@ try {
         $description = $_POST['description'] ?? '';
         $category = $_POST['category'] ?? 'opini';
         $author_name = $_POST['author_name'] ?? '';
+        $authors = $_POST['authors'] ?? null;
         $email = $_POST['email'] ?? '';
         $contact = $_POST['contact'] ?? '';
         $tags = $_POST['tags'] ?? '[]';
@@ -117,6 +118,7 @@ try {
         $description = $input['description'] ?? '';
         $category = $input['category'] ?? 'opini';
         $author_name = $input['authorname'] ?? $input['author_name'] ?? $input['authorName'] ?? '';
+        $authors = $input['authors'] ?? null;
         $email = $input['email'] ?? '';
         $contact = $input['contact'] ?? '';
         $tags = $input['tags'] ?? '[]';
@@ -155,41 +157,48 @@ try {
         }
     }
 
+    // Normalisasi authors
+    if (is_array($authors)) {
+        $authors = json_encode($authors, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    } elseif (is_string($authors) && trim($authors) !== '') {
+        $authors = trim($authors);
+    } else {
+        $authors = null;
+    }
+
     // Insert opinion record (BOTH scenarios end up here)
     error_log("Inserting opinion: title=$title, author=$author_name, file_id=$file_upload_id, cover_id=$cover_upload_id");
 
-    // Cek kolom status secara resilient
+    // Cek kolom status dan authors secara resilient
     $hasStatus = false;
+    $hasAuthors = false;
     try {
         $c = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'status'");
         $hasStatus = (bool)$c->fetch();
     } catch (Throwable $e) {}
+    try {
+        $c = $pdo->query("SHOW COLUMNS FROM opinions LIKE 'authors'");
+        $hasAuthors = (bool)$c->fetch();
+    } catch (Throwable $e) {}
+
+    $cols = ['title', 'description', 'category', 'author_name', 'email', 'contact', 'tags', 'file_upload_id', 'cover_upload_id', 'views', 'created_at'];
+    $placeholders = ['?', '?', '?', '?', '?', '?', '?', '?', '?', '0', 'NOW()'];
+    $params = [$title, $description, $category, $author_name, $email, $contact, $tags, $file_upload_id, $cover_upload_id];
 
     if ($hasStatus) {
-        $stmt = $pdo->prepare("
-            INSERT INTO opinions 
-            (title, description, category, author_name, email, contact, tags, file_upload_id, cover_upload_id, views, created_at, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW(), 'published')
-        ");
-    } else {
-        $stmt = $pdo->prepare("
-            INSERT INTO opinions 
-            (title, description, category, author_name, email, contact, tags, file_upload_id, cover_upload_id, views, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, NOW())
-        ");
+        $cols[] = 'status';
+        $placeholders[] = "'published'";
     }
 
-    $stmt->execute([
-        $title,
-        $description,
-        $category,
-        $author_name,
-        $email,
-        $contact,
-        $tags,
-        $file_upload_id,
-        $cover_upload_id
-    ]);
+    if ($hasAuthors) {
+        $cols[] = 'authors';
+        $placeholders[] = '?';
+        $params[] = $authors;
+    }
+
+    $sql = "INSERT INTO opinions (" . implode(', ', $cols) . ") VALUES (" . implode(', ', $placeholders) . ")";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
 
     $opinionId = $pdo->lastInsertId();
 

@@ -310,8 +310,8 @@ body {
 /* Hero Section */
 .landing-hero {
   position: relative;
-  min-height: 720px;
-  padding: calc(80px + 3.5rem) 24px 60px;
+  min-height: 520px;
+  padding: calc(80px + 3rem) 24px 75px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -338,7 +338,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(15, 23, 42, 0.55), rgba(15, 23, 42, 0.75));
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.55) 0%, rgba(15, 23, 42, 0.72) 75%, rgba(15, 23, 42, 0.88) 100%);
 }
 
 .landing-hero-slide.active {
@@ -663,8 +663,8 @@ body {
 
 @media (max-width: 720px) {
   .landing-hero {
-    min-height: 680px;
-    padding: 130px 20px 90px;
+    min-height: auto;
+    padding: 125px 20px 55px;
   }
 
   .landing-hero-control {

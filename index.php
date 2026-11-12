@@ -85,39 +85,6 @@ require_once __DIR__ . '/services/landing_controller.php';
                     <?php echo $t['cta_news']; ?>
                 </a>
             </div>
-
-            <!-- Floating Glassmorphism Statistics Bar -->
-            <div class="landing-stats-container">
-                <div class="landing-stat-item">
-                    <div class="landing-stat-icon-wrapper">
-                        <i data-feather="file-text"></i>
-                    </div>
-                    <div class="landing-stat-info">
-                        <span class="landing-stat-val"><?php echo number_format($base_journals_count); ?>+</span>
-                        <span class="landing-stat-lbl"><?php echo $t['stat_journals']; ?></span>
-                    </div>
-                </div>
-
-                <div class="landing-stat-item">
-                    <div class="landing-stat-icon-wrapper">
-                        <i data-feather="globe"></i>
-                    </div>
-                    <div class="landing-stat-info">
-                        <span class="landing-stat-val"><?php echo number_format($base_news_count); ?>+</span>
-                        <span class="landing-stat-lbl"><?php echo $t['stat_news']; ?></span>
-                    </div>
-                </div>
-
-                <div class="landing-stat-item">
-                    <div class="landing-stat-icon-wrapper">
-                        <i data-feather="users"></i>
-                    </div>
-                    <div class="landing-stat-info">
-                        <span class="landing-stat-val"><?php echo number_format($base_readers_count); ?>+</span>
-                        <span class="landing-stat-lbl"><?php echo $t['stat_readers']; ?></span>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
